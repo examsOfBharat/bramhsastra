@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property name="LOGS" value="/usr/share/tomcat8/logs"/>
+    <property name="LOGS" value="/Users/bibhubhushan/Desktop/logs" />
+    <appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS}/agni.log</file>
+        <encoder
+                class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>%d %p %C{1.} [%t] %m%n</Pattern>
+        </encoder>
+
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily and when the file reaches 10 MegaBytes -->
+            <fileNamePattern>${LOGS}/archived/agni-%d{yyyy-MM-dd}.%i.log.gz
+            </fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>1024MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="RollingFile"/>
+    </root>
+
+    <logger name="com.examsofbharat" level="info" additivity="false">
+        <appender-ref ref="RollingFile"/>
+    </logger>
+
+    <logger name="com.examsofbharat" level="info" additivity="false">
+        <appender-ref ref="RollingFile"/>
+    </logger>
+    <!-- LOG everything at INFO level -->
+
+</configuration>
