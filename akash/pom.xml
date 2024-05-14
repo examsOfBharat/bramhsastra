@@ -54,6 +54,19 @@
             <version>${spring.boot.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.examsofbharat.bramhsastra</groupId>
+            <artifactId>jal</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+<!--        <dependency>-->
+<!--            <groupId>com.examsofbharat.bramhsastra</groupId>-->
+<!--            <artifactId>prithvi</artifactId>-->
+<!--            <version>${revision}</version>-->
+<!--        </dependency>-->
+
     </dependencies>
 
 <!--    <build>-->
