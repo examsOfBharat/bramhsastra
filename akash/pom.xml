@@ -13,9 +13,9 @@
     <groupId>com.examsofbharat.bramhsastra</groupId>
     <artifactId>akash</artifactId>
     <version>${revision}</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <name>akash</name>
-    <description>akash</description>
+    <description>business manager</description>
 
 
     <properties>
@@ -55,11 +55,11 @@
             <scope>test</scope>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>com.examsofbharat.bramhsastra</groupId>-->
-<!--            <artifactId>jal</artifactId>-->
-<!--            <version>${revision}</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>com.examsofbharat.bramhsastra</groupId>
+            <artifactId>jal</artifactId>
+            <version>${revision}</version>
+        </dependency>
 
 <!--        <dependency>-->
 <!--            <groupId>com.examsofbharat.bramhsastra</groupId>-->

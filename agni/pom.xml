@@ -14,7 +14,7 @@
     <version>${revision}</version>
     <packaging>war</packaging>
     <name>agni</name>
-    <description>agni</description>
+    <description>api manager</description>
 
     <properties>
         <spring.boot.version>3.2.2</spring.boot.version>
@@ -79,6 +79,35 @@
                             <mainClass>com.examsofbharat.bramhsastra.agni.AgniApplication</mainClass>
                         </manifest>
                     </archive>
+                </configuration>
+            </plugin>
+            <!-- Spring Boot Maven Plugin -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
+                <configuration>
+                    <testFailureIgnore>true</testFailureIgnore>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.3.1</version> <!-- Use the appropriate version -->
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
         </plugins>

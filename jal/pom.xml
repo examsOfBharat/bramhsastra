@@ -13,9 +13,8 @@
     <groupId>com.examsofbharat.bramhsastra</groupId>
     <artifactId>jal</artifactId>
     <version>${revision}</version>
-    <packaging>war</packaging>
-    <name>jal</name>
-    <description>jal</description>
+    <packaging>jar</packaging>
+    <description>dto manager</description>
 
 
     <properties>
