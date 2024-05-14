@@ -34,7 +34,7 @@
         <repository>
             <id>github</id>
             <name>bramhsastra</name>
-            <url>https://maven.pkg.github.com/bibhuExamsOfBharat/bramhsastra</url>
+            <url>https://maven.pkg.github.com/examsOfBharat/bramhsastra</url>
         </repository>
     </distributionManagement>
 
