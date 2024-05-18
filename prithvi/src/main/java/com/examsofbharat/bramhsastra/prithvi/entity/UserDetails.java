@@ -14,47 +14,65 @@ import java.util.Date;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
-@Table(name= "user_details")
+@Table(name= "user_detail")
 public class UserDetails {
 
     @Id
-    @GenericGenerator(name ="generator", strategy = "increment")
-    @GeneratedValue(generator = "generator")
-    int id;
+    @GeneratedValue(generator = "system-uuid")
+    @GenericGenerator(name ="system-uuid", strategy = "uuid")
+    private String id;
 
     @Column(name = "first_name")
-    String firstName;
+    private String firstName;
 
-    @Column(name = "second_name")
-    String secondName;
+    @Column(name = "last_name")
+    private String lastName;
 
     @Column(name = "password")
-    String passWord;
+    private String passWord;
 
     @Column(name = "email_id")
-    String emailId;
+    private String emailId;
 
-    @Column(name = "enable_flag")
-    String enableFlag;
-
+    @Enumerated(EnumType.STRING)
     @Column(name = "user_role")
-    String userRole;
+    private UserDetails.UserRole userRole;
 
     @Column(name = "otp")
-    String otp;
+    private String otp;
 
-    @Column(name = "attempts")
-    int attempts;
+    @Column(name = "attempt")
+    private int attempts;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    String status;
+    private UserDetails.Status status = Status.NOT_CREATED;
 
     @Column(name = "phone_number")
-    String phoneNumber;
+    private String phoneNumber;
+
+    @Column(name = "approver")
+    private String approver;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_status")
+    private UserDetails.UserStatus userStatus;
 
     @Column(name = "date_Created")
-    Date dateCreated;
+    private Date dateCreated;
 
     @Column(name = "date_modified")
-    Date dateModified;
+    private Date dateModified;
+
+    public enum UserRole{
+        ADMIN, OWNER, CEO
+    }
+
+    public enum Status{
+        CREATED, VERIFIED, EXPIRED, NOT_CREATED
+    }
+
+    public enum UserStatus{
+        APPROVED, REJECTED, PENDING
+    }
 }
