@@ -148,6 +148,24 @@ public class CredService {
         return Response.ok(ownerResList).build();
     }
 
+    public Response updateUserStatus(OwnerLandingRequestDTO ownerLandingRequestDTO) {
+        if(Objects.isNull(ownerLandingRequestDTO)) {
+            return webUtils.invalidRequest();
+        }
+
+        UserDetails userDetails = dbMgmtFacade.getUserDetails(ownerLandingRequestDTO.getUserId());
+        if (Objects.isNull(userDetails)) {
+            return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.USER_NOT_FOUND);
+        }
+
+        userDetails.setUserStatus(
+                UserDetails.UserStatus.valueOf(ownerLandingRequestDTO.getUserStatus())
+        );
+        dbMgmtFacade.updateUserDetails(userDetails);
+
+        return webUtils.buildSuccessResponse("SUCCESS");
+    }
+
 
     public boolean isValidPassword(LogInDTO logInDTO, UserDetails userDetails) {
         if (StringUtil.isEmpty(logInDTO.getPassWord())) return false;
