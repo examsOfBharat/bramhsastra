@@ -13,7 +13,7 @@ import java.util.*;
 
 @Component
 @Slf4j
-public class eobInitilizer {
+public class EobInitilizer {
 
     @Autowired
     DBMgmtFacade dbMgmtFacade;
@@ -21,9 +21,13 @@ public class eobInitilizer {
     Integer otpExpiryTime = 5;
     Integer otpMaxAttempts = 3;
 
-    String otpSub;
-    String siginBody;
-    String signUpBody;
+    private static String otpSub;
+    private static String siginBody;
+    private static String signUpBody;
+    private static String statusMailSub;
+    private static String pendingMailBody;
+    private static String approvedMailBody;
+    private static String rejectedMailBody;
     private List<String> approverIdList = new ArrayList<>();
 
     @PostConstruct
@@ -49,6 +53,17 @@ public class eobInitilizer {
         signUpBody = Optional.ofNullable(dbMgmtFacade.getSystemProperty(SystemPropertyProperties.OTP_SIGN_UP_MAIL_BODY))
                 .map(SystemProperty::getValue).orElse(SystemPropertyProperties.DEFAULT_SIGN_UP_BODY);
 
+        statusMailSub = Optional.ofNullable(dbMgmtFacade.getSystemProperty(SystemPropertyProperties.ADMIN_STATUS_MAIL_SUBJECT))
+                .map(SystemProperty::getValue).orElse(SystemPropertyProperties.DEFAULT_ADMIN_MAIL);
+
+        pendingMailBody = Optional.ofNullable(dbMgmtFacade.getSystemProperty(SystemPropertyProperties.ADMIN_PENDING_MAIL_BODY))
+                .map(SystemProperty::getValue).orElse(SystemPropertyProperties.DEFAULT_ADMIN_MAIL);
+
+        approvedMailBody = Optional.ofNullable(dbMgmtFacade.getSystemProperty(SystemPropertyProperties.ADMIN_APPROVED_MAIL_BODY))
+                .map(SystemProperty::getValue).orElse(SystemPropertyProperties.DEFAULT_ADMIN_MAIL);
+
+        rejectedMailBody = Optional.ofNullable(dbMgmtFacade.getSystemProperty(SystemPropertyProperties.ADMIN_REJECTED_MAIL_BODY))
+                .map(SystemProperty::getValue).orElse(SystemPropertyProperties.DEFAULT_ADMIN_MAIL);
 
         approverIdList = Optional.ofNullable(dbMgmtFacade.getSystemProperty(SystemPropertyProperties.ADMIN_APPROVER_ID))
                 .map(SystemProperty::getValue)
@@ -64,6 +79,13 @@ public class eobInitilizer {
     public String getOtpSub() { return otpSub; }
     public String getSiginBody() { return siginBody; }
     public String getSignUpBody() { return signUpBody; }
+
+    public String getApprovedMailBody() {return approvedMailBody;
+    }
+    public  String getRejectedMailBody() { return rejectedMailBody; }
+    public  String getPendingMailBody() { return pendingMailBody; }
+    public String getStatusMailSub(){ return statusMailSub;}
+
     public List<String> getApproverIdList() { return approverIdList; }
 
 }

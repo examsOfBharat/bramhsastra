@@ -64,7 +64,7 @@ public class WebUtils {
         WebResponse webResponse = new WebResponse();
         webResponse.setStatus(status);
         webResponse.setUserId(userId);
-        webResponse.setUserType(userType);
+        webResponse.setUserRole(userType);
         Response.ResponseBuilder responseBuilder = Response.status(Response.Status.OK);
         responseBuilder.entity(new Gson().toJson(webResponse));
         return responseBuilder.build();

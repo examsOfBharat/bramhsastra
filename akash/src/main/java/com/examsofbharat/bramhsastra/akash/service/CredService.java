@@ -1,9 +1,8 @@
 package com.examsofbharat.bramhsastra.akash.service;
 
 import com.examsofbharat.bramhsastra.akash.constants.AgniConstants;
-import com.examsofbharat.bramhsastra.akash.utils.DateUtils;
-import com.examsofbharat.bramhsastra.akash.utils.CredUtil;
-import com.examsofbharat.bramhsastra.akash.utils.WebUtils;
+import com.examsofbharat.bramhsastra.akash.executor.FormExecutorService;
+import com.examsofbharat.bramhsastra.akash.utils.*;
 import com.examsofbharat.bramhsastra.jal.constants.ErrorConstants;
 import com.examsofbharat.bramhsastra.jal.constants.WebConstants;
 import com.examsofbharat.bramhsastra.jal.dto.request.OwnerLandingRequestDTO;
@@ -43,7 +42,10 @@ public class CredService {
     OtpService otpService;
 
     @Autowired
-    private com.examsofbharat.bramhsastra.akash.utils.eobInitilizer eobInitilizer;
+    EmailUtil emailUtil;
+
+    @Autowired
+    private EobInitilizer eobInitilizer;
 
     //Check if user already exist or not
     public Response doUserSignUp(RegisterDTO registerDTO) {
@@ -136,10 +138,10 @@ public class CredService {
         if(userDetails.getUserRole().equals(UserDetails.UserRole.OWNER)){
             List<UserDetails> userList = dbMgmtFacade.getUserDetailsByUserStatus(
                     UserDetails.UserStatus.valueOf(ownerLandingRequestDTO.getUserStatus()));
+
             if(CollectionUtils.isEmpty(userList)){
                 return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.USER_NOT_FOUND);
             }
-
             //build owner response
             ownerResList = buildOwnerResponse(userList);
 
@@ -152,8 +154,8 @@ public class CredService {
         if(Objects.isNull(ownerLandingRequestDTO)) {
             return webUtils.invalidRequest();
         }
-
-        UserDetails userDetails = dbMgmtFacade.getUserDetails(ownerLandingRequestDTO.getUserId());
+        log.info("Updating user status userId ::{}", ownerLandingRequestDTO.getUserId());
+        UserDetails userDetails = dbMgmtFacade.getUserById(ownerLandingRequestDTO.getUserId());
         if (Objects.isNull(userDetails)) {
             return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.USER_NOT_FOUND);
         }
@@ -162,6 +164,9 @@ public class CredService {
                 UserDetails.UserStatus.valueOf(ownerLandingRequestDTO.getUserStatus())
         );
         dbMgmtFacade.updateUserDetails(userDetails);
+
+        FormExecutorService.mailExecutorService.submit(()->
+                sendUserStatusMail(userDetails));
 
         return webUtils.buildSuccessResponse("SUCCESS");
     }
@@ -194,10 +199,13 @@ public class CredService {
         String otp = otpService.generateOTP();
         userDetails = updateUserDetailsWithOtp(userDetails, otp);
 
-        String getOtpSub = getOtpMailSub();
-        String mailBody = getOtpMailBody(service, userDetails);
-        //send otp to user
-        emailService.sendEmail(userDetails.getEmailId(), getOtpSub, mailBody);
+        log.info("sending otp email userId ::{} " ,userDetails.getId());
+
+        UserDetails finalUserDetails = userDetails;
+        FormExecutorService.mailExecutorService.submit(()->{
+            sendOtpMail(finalUserDetails, service);
+        });
+
         return webUtils.buildSuccessResponseWithData(WebConstants.SUCCESS, userDetails.getId(), userDetails.getUserRole().toString());
     }
 
@@ -207,7 +215,7 @@ public class CredService {
         userDetails.setFirstName(registerDTO.getFirstName());
         userDetails.setLastName(registerDTO.getLastName());
         userDetails.setAttempts(-1);
-        userDetails.setUserRole(UserDetails.UserRole.ADMIN);
+        userDetails.setUserRole(UserDetails.UserRole.valueOf(registerDTO.getUserRole()));
         userDetails.setUserStatus(UserDetails.UserStatus.PENDING);
         userDetails.setStatus(UserDetails.Status.CREATED);
         userDetails.setEmailId(registerDTO.getUserName());
@@ -231,7 +239,13 @@ public class CredService {
 
     private String getOtpMailSub(){
         String sub = eobInitilizer.getOtpSub();
-        return CredUtil.formatSubMessage(sub, AgniConstants.EXAMS_OF_BHARAT);
+        return CredUtil.formatMailMessage(sub, AgniConstants.EXAMS_OF_BHARAT);
+    }
+
+    private void sendOtpMail(UserDetails userDetails, String service) {
+        String getOtpSub = getOtpMailSub();
+        String mailBody = getOtpMailBody(service, userDetails);
+        emailService.sendEmail(userDetails.getEmailId(), getOtpSub, mailBody);
     }
 
     private String getOtpMailBody(String service, UserDetails userDetails) {
@@ -268,11 +282,21 @@ public class CredService {
             ownerRes.setEmail(userDetail.getEmailId());
             ownerRes.setPhone(userDetail.getPhoneNumber());
             ownerRes.setUserId(userDetail.getId());
+            ownerRes.setStatus(userDetail.getUserStatus().name());
+            ownerRes.setOwnerRole(userDetail.getUserRole().name());
             ownerRes.setRegisteredTime(DateUtils.getFormatedDate1(userDetail.getDateModified()));
 
             ownerResponseList.add(ownerRes);
         }
 
         return ownerResponseList;
+    }
+
+    public void sendUserStatusMail(UserDetails userDetails) {
+        String mailSub = eobInitilizer.getStatusMailSub();
+        String mailBody = CredUtil.formatMailMessage(emailUtil.getMailBodyByStatus(userDetails.getUserStatus().name()),
+                userDetails.getFirstName());
+
+        emailService.sendEmail(userDetails.getEmailId(), mailSub, mailBody);
     }
 }

@@ -1,9 +1,7 @@
 package com.examsofbharat.bramhsastra.prithvi.facade;
 
-import com.examsofbharat.bramhsastra.prithvi.entity.SystemProperty;
-import com.examsofbharat.bramhsastra.prithvi.entity.UserDetails;
-import com.examsofbharat.bramhsastra.prithvi.manager.SystemRepositoryManagerImp;
-import com.examsofbharat.bramhsastra.prithvi.manager.UserDetailsManagerImp;
+import com.examsofbharat.bramhsastra.prithvi.entity.*;
+import com.examsofbharat.bramhsastra.prithvi.manager.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,9 +18,22 @@ public class DBMgmtFacade {
     @Autowired
     private SystemRepositoryManagerImp systemPropertyManager;
 
+    @Autowired
+    ExamMetaDataManagerImp examMetaDataManagerImp;
+
+    @Autowired
+    AdmitCardManagerImpl admitCardManager;
+
+    @Autowired
+    ResultDetailsManagerImpl resultDetailsManager;
+
     public UserDetails getUserDetails(String userId){
         Optional<UserDetails> userDetails = userDetailsManagerImp.findUserByUserId(userId);
         return userDetails.orElse(null);
+    }
+
+    public UserDetails getUserById(String userId){
+        return userDetailsManagerImp.findUserById(userId);
     }
 
     public List<UserDetails> getUserDetailsByUserStatus(UserDetails.UserStatus userStatus){
@@ -47,5 +58,17 @@ public class DBMgmtFacade {
 
     public void deleteUserDetails(UserDetails userDetails){
         userDetailsManagerImp.delete(userDetails);
+    }
+
+    public List<ExamMetaData> getExamMetaData(){
+        return examMetaDataManagerImp.getExamMetaData();
+    }
+
+    public List<AdmitCard> getAdmitCardList(int count, String dateType){
+        return admitCardManager.getTopXAdmitCard(count, dateType).get();
+    }
+
+    public List<ResultDetails> getResultDetailList(int count, String dateType){
+        return resultDetailsManager.getTopXResult(count, dateType).get();
     }
 }

@@ -27,6 +27,22 @@ public class DateUtils {
         return now.after(fiveMinutesLater);
     }
 
+    public static boolean isTimePassedDays(int day, Date oldDate){
+        // Get the current time
+        Date now = new Date();
+
+        // Add 5 minutes to the timestamp
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(oldDate);
+        calendar.add(Calendar.DATE, day);
+        Date xDaysLater = calendar.getTime();
+
+        // Compare the times
+        return now.after(xDaysLater);
+    }
+
+
+
     public static String getFormatedDate1(Date date){
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy");

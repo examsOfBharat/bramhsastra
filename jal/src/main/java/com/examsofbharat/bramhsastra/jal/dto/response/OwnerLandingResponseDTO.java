@@ -11,5 +11,7 @@ public class OwnerLandingResponseDTO {
     private String lastName;
     private String email;
     private String phone;
+    private String status;
+    private String ownerRole;
     private String registeredTime;
 }

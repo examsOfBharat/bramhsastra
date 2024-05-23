@@ -9,5 +9,5 @@ public class WebResponse {
     private String otpId;
     private String token;
     private String userId;
-    private String userType;
+    private String userRole;
 }

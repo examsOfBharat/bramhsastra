@@ -30,4 +30,5 @@ public class EmailService {
         }
         log.info("Mail sent successfully! ");
     }
+
 }
