@@ -1,8 +1,10 @@
 package com.examsofbharat.bramhsastra.agni.controller;
 
 import com.examsofbharat.bramhsastra.akash.facade.CredFacade;
+import com.examsofbharat.bramhsastra.akash.service.ApplicationClientService;
 import com.examsofbharat.bramhsastra.akash.service.CredService;
 import com.examsofbharat.bramhsastra.akash.service.HomePageService;
+import com.examsofbharat.bramhsastra.jal.dto.request.ApplicationRequestDTO;
 import com.examsofbharat.bramhsastra.jal.dto.request.OwnerLandingRequestDTO;
 import com.examsofbharat.bramhsastra.jal.dto.request.LogInDTO;
 import com.examsofbharat.bramhsastra.jal.dto.request.RegisterDTO;
@@ -26,6 +28,9 @@ public class BackTestController {
 
     @Autowired
     HomePageService homePageService;
+
+    @Autowired
+    ApplicationClientService applicationClientService;
 
     @PostMapping("/register")
     public Response registerUser(@RequestBody RegisterDTO registerData){
@@ -56,11 +61,31 @@ public class BackTestController {
         return credService.updateUserStatus(ownerLandingRequestDTO);
     }
 
-    @PostMapping("/get/landing/page")
-    public Response getLandingPage(){
+    @PostMapping("/update/landing/page")
+    public Response updateLandingPage(){
         log.info("Request reached for landing page");
         return homePageService.buildLandingPageDto();
     }
+
+    @PostMapping("/get/response")
+    public Response getLandingResponse(@RequestParam String responseType){
+        log.info("Request reached for home page responseType :: {}", responseType);
+        return homePageService.fetchHomeResponse(responseType);
+    }
+
+//    @PostMapping("/save/form/detail")
+//    public Response saveFormDetail(@RequestBody FormDetailsDTO formDetailsDTO){
+//        log.info("Save form detail request reached ::{}" ,formDetailsDTO.toString());
+//        return
+//
+//    }
+
+    @PostMapping("/get/form/details")
+    public Response getFormDetails(@RequestBody ApplicationRequestDTO applicationRequestDTO){
+        log.info("Request reached for form details userId :: {}", applicationRequestDTO.getUserId());
+        return applicationClientService.buildAndGetApplication(applicationRequestDTO.getUserId());
+    }
+
 
 
 }

@@ -5,9 +5,6 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class OwnerLandingRequestDTO {
-    private String userId;
-    private String userRole;
-    private String userStatus;
-    private String ownerUserId;
+public class ApplicationRequestDTO {
+    String userId;
 }

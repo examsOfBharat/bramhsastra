@@ -43,6 +43,11 @@
             <optional>true</optional>
         </dependency>
         <dependency>
+            <groupId>com.examsofbharat.bramhsastra</groupId>
+            <artifactId>jal</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
             <version>${spring.boot.version}</version>

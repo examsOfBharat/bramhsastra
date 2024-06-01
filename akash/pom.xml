@@ -72,11 +72,17 @@
             <version>${revision}</version>
         </dependency>
 
-        <!-- JMapper -->
         <dependency>
-            <groupId>com.googlecode.jmapper-framework</groupId>
-            <artifactId>jmapper-core</artifactId>
-            <version>1.6.0.1</version>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>0.1.54</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.modelmapper/modelmapper -->
+        <dependency>
+            <groupId>org.modelmapper</groupId>
+            <artifactId>modelmapper</artifactId>
+            <version>3.2.0</version>
         </dependency>
 
         <!-- Gson -->

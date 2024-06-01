@@ -12,8 +12,10 @@ import com.examsofbharat.bramhsastra.jal.enums.FormSubTypeEnum;
 import com.examsofbharat.bramhsastra.jal.enums.FormTypeEnum;
 import com.examsofbharat.bramhsastra.prithvi.entity.AdmitCard;
 import com.examsofbharat.bramhsastra.prithvi.entity.ExamMetaData;
+import com.examsofbharat.bramhsastra.prithvi.entity.ResponseManagement;
 import com.examsofbharat.bramhsastra.prithvi.entity.ResultDetails;
 import com.examsofbharat.bramhsastra.prithvi.facade.DBMgmtFacade;
+import com.google.gson.Gson;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +43,7 @@ public class HomePageService {
 
         FormLandingPageDTO formLandingPageDTO = null;
         List<LandingSectionDTO> landingSectionDTOS = new ArrayList<>();
+        //TODO shortIndex should be configurable (please try to configure from db)
         int sortIndex = 1;
         for (FormTypeEnum formType : FormTypeEnum.values()) {
             List<ExamMetaData> examList = examMetaDataList.stream()
@@ -57,7 +60,31 @@ public class HomePageService {
         formLandingPageDTO = new FormLandingPageDTO();
         formLandingPageDTO.setLandingSectionDTOS(landingSectionDTOS);
 
-        return Response.ok(formLandingPageDTO).build();
+        String response = (new Gson()).toJson(formLandingPageDTO);
+        pushResponseToDb("HOME_PAGE", response);
+
+        return Response.ok().build();
+    }
+
+    public Response fetchHomeResponse(String responseType){
+        ResponseManagement responseManagement = dbMgmtFacade.getResponseData(responseType);
+        if(Objects.isNull(responseManagement)){
+            return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.DATA_NOT_FOUND);
+        }
+
+        FormLandingPageDTO response = null;
+        try {
+            response = (new Gson()).fromJson(responseManagement.getResponse(), FormLandingPageDTO.class);
+        }catch (Exception e){
+             log.error("Exception occurred while parsing homeResponse responseType :: {}", responseType);
+            return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.DATA_NOT_FOUND);
+        }
+
+        if(Objects.isNull(response)){
+            return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.DATA_NOT_FOUND);
+        }
+
+        return Response.ok(response).build();
     }
 
     public LandingSectionDTO buildAndParse(List<ExamMetaData> examMetaDataList, FormTypeEnum formTypeEnum, int sortIndex) {
@@ -143,5 +170,19 @@ public class HomePageService {
             landingSubSectionDTOS.add(landingSubSectionDTO);
         }
 
+    }
+
+    public void pushResponseToDb(String responseType, String response){
+        ResponseManagement responseManagement = dbMgmtFacade.getResponseData(responseType);
+        if(Objects.isNull(responseManagement)){
+            responseManagement = new ResponseManagement();
+            responseManagement.setDateCreated(new Date());
+        }
+
+        responseManagement.setResponseType(responseType);
+        responseManagement.setResponse(response);
+        responseManagement.setDateModified(new Date());
+
+        dbMgmtFacade.saveResponseData(responseManagement);
     }
 }

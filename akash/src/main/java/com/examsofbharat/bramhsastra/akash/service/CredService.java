@@ -145,6 +145,10 @@ public class CredService {
             //build owner response
             ownerResList = buildOwnerResponse(userList);
 
+            if(CollectionUtils.isEmpty(ownerResList)){
+                return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.USER_NOT_FOUND);
+            }
+
         }
 
         return Response.ok(ownerResList).build();
@@ -155,6 +159,9 @@ public class CredService {
             return webUtils.invalidRequest();
         }
         log.info("Updating user status userId ::{}", ownerLandingRequestDTO.getUserId());
+        UserDetails ownerUserDetail = dbMgmtFacade.getUserById(ownerLandingRequestDTO.getOwnerUserId());
+
+
         UserDetails userDetails = dbMgmtFacade.getUserById(ownerLandingRequestDTO.getUserId());
         if (Objects.isNull(userDetails)) {
             return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.USER_NOT_FOUND);
@@ -163,6 +170,7 @@ public class CredService {
         userDetails.setUserStatus(
                 UserDetails.UserStatus.valueOf(ownerLandingRequestDTO.getUserStatus())
         );
+        userDetails.setApprover(ownerUserDetail.getFirstName());
         dbMgmtFacade.updateUserDetails(userDetails);
 
         FormExecutorService.mailExecutorService.submit(()->
@@ -276,6 +284,9 @@ public class CredService {
     private List<OwnerLandingResponseDTO> buildOwnerResponse(List<UserDetails> userDetails) {
         List<OwnerLandingResponseDTO> ownerResponseList = new ArrayList<>();
         for (UserDetails userDetail : userDetails) {
+            if(userDetail.getUserRole().equals(UserDetails.UserRole.OWNER)){
+                continue;
+            }
             OwnerLandingResponseDTO ownerRes= new OwnerLandingResponseDTO();
             ownerRes.setFirstName(userDetail.getFirstName());
             ownerRes.setLastName(userDetail.getLastName());
