@@ -11,18 +11,15 @@ import java.util.Date;
 public class ApplicationFeeDTO {
 
     String id;
-    String examIdRef;
-    @JsonProperty("default_fee")
+    String appIdRef;
     double defaultFee;
     double general;
     double st;
     double sc;
     double obc;
     double female;
-    @JsonProperty("ex_army")
     double exArmy;
     String information;
-    @JsonProperty("last_payment_date")
     Date lastPaymentDate;
     Date dateCreated;
     Date dateModified;

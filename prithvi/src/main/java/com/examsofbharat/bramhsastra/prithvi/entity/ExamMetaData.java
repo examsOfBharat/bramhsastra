@@ -29,10 +29,10 @@ public class ExamMetaData {
     private String examSubCategory;
 
     @Column(name = "total_vacancy")
-    private Double totalVacancy;
+    private Integer totalVacancy;
 
     @Column(name = "total_form")
-    private Double totalForm;
+    private Integer totalForm;
 
     @Column(name = "query")
     private String query;

@@ -1,13 +1,15 @@
 package com.examsofbharat.bramhsastra.jal.dto.response;
 
-import com.examsofbharat.bramhsastra.jal.enums.FormSubTypeEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LandingSubSectionDTO {
+    private String cardColor;
+    private String id;
     private String title;
+    private String titleColor;
     private String key;
     private String examId;
     private String logoUrl;

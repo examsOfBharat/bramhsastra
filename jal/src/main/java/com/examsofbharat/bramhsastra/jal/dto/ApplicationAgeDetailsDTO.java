@@ -11,16 +11,14 @@ import java.util.Date;
 public class ApplicationAgeDetailsDTO {
 
     String id;
-    String examIdRef;
-    @JsonProperty("min_age")
-    double minAge;
-    double general;
-    double st;
-    double sc;
-    double obc;
-    double female;
-    @JsonProperty("ex_army")
-    double exArmy;
+    String appIdRef;
+    int minAge;
+    int generalAge;
+    int stAge;
+    int scAge;
+    int obcAge;
+    int femaleAge;
+    int exArmy;
     String information;
     Date dateCreated;
     Date dateModified;

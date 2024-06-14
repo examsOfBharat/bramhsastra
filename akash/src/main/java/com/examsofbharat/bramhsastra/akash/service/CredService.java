@@ -1,6 +1,6 @@
 package com.examsofbharat.bramhsastra.akash.service;
 
-import com.examsofbharat.bramhsastra.akash.constants.AgniConstants;
+import com.examsofbharat.bramhsastra.akash.constants.AkashConstants;
 import com.examsofbharat.bramhsastra.akash.executor.FormExecutorService;
 import com.examsofbharat.bramhsastra.akash.utils.*;
 import com.examsofbharat.bramhsastra.jal.constants.ErrorConstants;
@@ -91,7 +91,7 @@ public class CredService {
         //If request contains otpFlag true, then we skip password flow
         if (logInDTO.isOtpFlag()) {
             //generate otp, send email and save to table
-            return createAndSendOtp(userDetails, AgniConstants.SIGN_IN);
+            return createAndSendOtp(userDetails, AkashConstants.SIGN_IN);
         }
 
         if (isValidPassword(logInDTO, userDetails)) {
@@ -195,7 +195,7 @@ public class CredService {
     private Response proceedSignUp(RegisterDTO registerDTO) {
         //Build userDetails object with flag false (not valid)
         UserDetails userDetails = buildUserDetails(registerDTO);
-        return createAndSendOtp(userDetails, AgniConstants.SIGN_UP);
+        return createAndSendOtp(userDetails, AkashConstants.SIGN_UP);
     }
 
     public Response createAndSendOtp(UserDetails userDetails, String service) {
@@ -247,7 +247,7 @@ public class CredService {
 
     private String getOtpMailSub(){
         String sub = eobInitilizer.getOtpSub();
-        return CredUtil.formatMailMessage(sub, AgniConstants.EXAMS_OF_BHARAT);
+        return CredUtil.formatMailMessage(sub, AkashConstants.EXAMS_OF_BHARAT);
     }
 
     private void sendOtpMail(UserDetails userDetails, String service) {
@@ -258,7 +258,7 @@ public class CredService {
 
     private String getOtpMailBody(String service, UserDetails userDetails) {
         String bodyTemplate;
-        if (service.equalsIgnoreCase(AgniConstants.SIGN_IN)) {
+        if (service.equalsIgnoreCase(AkashConstants.SIGN_IN)) {
             bodyTemplate = eobInitilizer.getSiginBody();
         } else {
             bodyTemplate = eobInitilizer.getSignUpBody();
@@ -266,7 +266,7 @@ public class CredService {
 
         return CredUtil.formatBodyMessage(bodyTemplate,
                 userDetails.getFirstName(),
-                AgniConstants.EXAMS_OF_BHARAT,
+                AkashConstants.EXAMS_OF_BHARAT,
                 userDetails.getOtp(),
                 String.valueOf(eobInitilizer.getOtpExpiryTime()));
 

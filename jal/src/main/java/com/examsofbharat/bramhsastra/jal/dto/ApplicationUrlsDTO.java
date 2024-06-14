@@ -11,10 +11,13 @@ import java.util.Date;
 public class ApplicationUrlsDTO {
 
     String id;
-    String examIdRef;
-    @JsonProperty("official_website")
+    String appIdRef;
     String officialWebsite;
     String notification;
+    String apply;
+    String register;
+    String admitCard;
+    String result;
     String others;
     Date dateCreated;
     Date dateModified;

@@ -11,6 +11,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LandingSectionDTO {
     private String title;
+    private String titleColor;
     private FormTypeEnum type;
     private int sortIndex;
     private boolean viewAll;

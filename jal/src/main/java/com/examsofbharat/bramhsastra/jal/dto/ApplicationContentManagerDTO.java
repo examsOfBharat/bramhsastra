@@ -14,7 +14,6 @@ public class ApplicationContentManagerDTO {
     String appIdRef;
     String heading;
     String body;
-    @JsonProperty("add_on")
     String addOn;
     Date dateCreated;
     Date dateModified;

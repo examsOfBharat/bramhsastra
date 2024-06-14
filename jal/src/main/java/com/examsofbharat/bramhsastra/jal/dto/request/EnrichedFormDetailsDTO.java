@@ -27,4 +27,7 @@ public class EnrichedFormDetailsDTO {
 
     @JsonProperty("application_content_manager")
     List<ApplicationContentManagerDTO> applicationContentManagerDTO;
+
+    @JsonProperty("application_eligibility")
+    List<ApplicationEligibilityDTO> applicationEligibilityDTOS;
 }

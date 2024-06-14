@@ -1,18 +1,22 @@
 package com.examsofbharat.bramhsastra.prithvi.facade;
 
+import com.examsofbharat.bramhsastra.jal.enums.FormTypeEnum;
+import com.examsofbharat.bramhsastra.prithvi.dao.AdmitContentManagerRepository;
+import com.examsofbharat.bramhsastra.prithvi.dao.ApplicationEligibilityRepository;
+import com.examsofbharat.bramhsastra.prithvi.dao.ApplicationNameDetailsRepository;
 import com.examsofbharat.bramhsastra.prithvi.entity.*;
 import com.examsofbharat.bramhsastra.prithvi.manager.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Component
 @Slf4j
 public class DBMgmtFacade {
-
     @Autowired
     UserDetailsManagerImp userDetailsManagerImp;
     @Autowired
@@ -23,6 +27,9 @@ public class DBMgmtFacade {
 
     @Autowired
     AdmitCardManagerImpl admitCardManager;
+
+    @Autowired
+    AdmitContentManagerImpl admitContentManagerImp;
 
     @Autowired
     ResultDetailsManagerImpl resultDetailsManager;
@@ -43,9 +50,25 @@ public class DBMgmtFacade {
     ApplicationVacancyDetailsManagerImpl applicationVacancyDetailsManager;
 
     @Autowired
-    ApplicationContentManagerManagerImpl applicationContentManagerManager;
+    ApplicationEligibilityManagerImpl applicationEligibilityManagerImp;
+
     @Autowired
-    private ApplicationAgeDetailsManagerImpl applicationAgeDetailsManagerImpl;
+    ApplicationContentManagerManagerImpl applicationContentManagerManager;
+
+    @Autowired
+    ApplicationAgeDetailsManagerImpl applicationAgeDetailsManagerImpl;
+
+    @Autowired
+    ApplicationNameDetailsManagerImpl applicationNameDetailsManagerImpl;
+
+    @Autowired
+    ResultContentManagerImpl resultContentManagerImpl;
+
+    @Autowired
+    LogoUrlManagerImpl logoUrlManager;
+
+    @Autowired
+    private ApplicationNameDetailsRepository applicationNameDetailsRepository;
 
     public UserDetails getUserDetails(String userId){
         Optional<UserDetails> userDetails = userDetailsManagerImp.findUserByUserId(userId);
@@ -84,12 +107,13 @@ public class DBMgmtFacade {
         return examMetaDataManagerImp.getExamMetaData();
     }
 
-    public List<AdmitCard> getAdmitCardList(int count, String dateType){
-        return admitCardManager.getTopXAdmitCard(count, dateType).get();
+
+    public List<AdmitCard> getLatestAdmitCardList(int page, int size, String dateType){
+        return admitCardManager.getLatestAdmitCards(page, size, dateType);
     }
 
-    public List<ResultDetails> getResultDetailList(int count, String dateType){
-        return resultDetailsManager.getTopXResult(count, dateType).get();
+    public List<ResultDetails> getResultDetailList(int page, int size, String dateType){
+        return resultDetailsManager.getLatestResultList(page, size, dateType);
     }
 
     public void saveResponseData(ResponseManagement responseManagement){
@@ -103,6 +127,10 @@ public class DBMgmtFacade {
 
     public ApplicationForm getApplicationForm(String appId){
         return applicationFormManager.getApplicationFormById(appId);
+    }
+
+    public List<ApplicationForm> fetchLatestApplicationsBasedOnType(int page, int size, String subType, FormTypeEnum formTypeEnum){
+        return applicationFormManager.getLatestFormBasedOnFormType(page,size,subType,formTypeEnum);
     }
 
     public ApplicationUrl getApplicationUrl(String appId){
@@ -123,6 +151,86 @@ public class DBMgmtFacade {
 
     public ApplicationAgeDetails getApplicationAgeDetails(String appId){
         return applicationAgeDetailsManagerImpl.getApplicationAgeDetailsById(appId);
+    }
+
+    public void saveApplicationForm(ApplicationForm applicationForm){
+        applicationFormManager.save(applicationForm);
+    }
+
+    public void saveApplicationUrl(ApplicationUrl applicationUrl){
+        applicationUrlManager.save(applicationUrl);
+    }
+
+    public void saveApplicationFeeDetail(ApplicationFeeDatails applicationFeeDetail){
+        applicationFeeDetailsManager.save(applicationFeeDetail);
+    }
+
+    public void saveApplicationVacancyDetail(List<ApplicationVacancyDetails> applicationVacancyDetail){
+        applicationVacancyDetailsManager.saveAll(applicationVacancyDetail);
+    }
+
+    public void saveEligibilityDetails(List<ApplicationEligibilityDetails> eligibilityDetails){
+        applicationEligibilityManagerImp.saveAll(eligibilityDetails);
+    }
+
+    public void saveApplicationAgeDetail(ApplicationAgeDetails applicationAgeDetail){
+        applicationAgeDetailsManagerImpl.save(applicationAgeDetail);
+    }
+
+    public void saveApplicationContent(List<ApplicationContentManager> applicationContentManager){
+        applicationContentManagerManager.saveAll(applicationContentManager);
+    }
+
+    public void saveApplicationName(ApplicationNameDetails applicationNameDetail){
+        applicationNameDetailsManagerImpl.save(applicationNameDetail);
+    }
+
+    public ExamMetaData getExamMetaData(String subCat){
+        return examMetaDataManagerImp.getExamMetaDataBySubCat(subCat);
+    }
+
+    public void saveExamMetaData(ExamMetaData examMetaData){
+        examMetaDataManagerImp.save(examMetaData);
+    }
+    public void saveAdmitCard(AdmitCard admitCard){
+        admitCardManager.save(admitCard);
+    }
+
+    public void saveAdmitContent(AdmitContentManager admitContentManager){
+        admitContentManagerImp.save(admitContentManager);
+    }
+
+    public void saveResultDetail(ResultDetails resultDetail){
+        resultDetailsManager.save(resultDetail);
+    }
+
+    public void saveResultContent(ResultContentManager resultContentManager){
+        resultContentManagerImpl.save(resultContentManager);
+    }
+
+    public List<ApplicationNameDetails> fetchAllAppNames(){
+        return applicationNameDetailsManagerImpl.fetchAllAppName();
+    }
+
+    public ApplicationNameDetails findNameByAppId(String appId){
+        return applicationNameDetailsManagerImpl.findNameByAppId(appId);
+    }
+
+    public List<ApplicationEligibilityDetails> fetchAllEligibility(String appId){
+        return applicationEligibilityManagerImp.findAllAppByAppId(appId);
+    }
+
+    public LogoUrlManager fetchLogoByName(String name){
+        return logoUrlManager.findLogoByName(name);
+    }
+
+    public List<LogoUrlManager> findAllLogo(){
+        List<LogoUrlManager> logpUrlList = new ArrayList<>();
+        Iterable<LogoUrlManager> logoList = logoUrlManager.findAll();
+
+        logoList.forEach(logpUrlList::add);
+
+        return logpUrlList;
     }
 
 }

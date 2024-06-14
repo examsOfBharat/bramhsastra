@@ -1,23 +1,26 @@
 package com.examsofbharat.bramhsastra.jal.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+
+import java.util.Date;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ApplicationVacancyDTO {
 
     String id;
-    double general;
-    double st;
-    double sc;
-    double obc;
-    double female;
-    @JsonProperty("ex_army")
-    double exArmy;
-    @JsonProperty("total_vacancy")
-    double totalVacancy;
+    String appIdRef;
+    String department;
+    int general;
+    int st;
+    int sc;
+    int obc;
+    int female;
+    int exArmy;
+    int totalVacancy;
     String information;
+    Date dateCreated;
+    Date dateModified;
 
 }

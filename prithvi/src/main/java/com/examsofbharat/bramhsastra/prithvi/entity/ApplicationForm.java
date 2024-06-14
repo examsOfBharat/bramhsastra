@@ -18,8 +18,8 @@ import java.util.Date;
 public class ApplicationForm {
 
     @Id
-    @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name ="system-uuid", strategy = "uuid")
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name ="uuid", strategy = "assigned")
     private String id;
 
     @Column(name = "min_qualification")
@@ -34,6 +34,9 @@ public class ApplicationForm {
     @Column(name = "province")
     private String province;
 
+    @Column(name = "state")
+    private String state;
+
     @Column(name = "grade")
     private String grade;
 
@@ -45,6 +48,9 @@ public class ApplicationForm {
 
     @Column(name = "result_flag")
     private int resultFlag;
+
+    @Column(name = "total_vacancy")
+    private int totalVacancy;
 
     @Column(name = "start_date")
     private Date startDate;

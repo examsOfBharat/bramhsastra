@@ -25,7 +25,10 @@ public enum FormSubTypeEnum {
     LAW("Job in Law"),
 
     STATE("State Govt Job"),
-    CENTRAL("Central Govt Job");
+    CENTRAL("Central Govt Job"),
+
+    ADMIT("Admit card"),
+    RESULT("Result job");
 
     private String val;
 

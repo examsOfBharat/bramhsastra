@@ -27,25 +27,25 @@ public class ApplicationAgeDetails {
     private String appIdRef;
 
     @Column(name = "min_age")
-    private Double minAge;
+    private Integer minAge;
 
     @Column(name = "general_age")
-    private Double generalAge;
+    private Integer generalAge;
 
     @Column(name = "st_age")
-    private Double stAge;
+    private Integer stAge;
 
     @Column(name = "sc_age")
-    private Double scAge;
+    private Integer scAge;
 
     @Column(name = "obc_age")
-    private Double obcAge;
+    private Integer obcAge;
 
     @Column(name = "female_age")
-    private Double femaleAge;
+    private Integer femaleAge;
 
     @Column(name = "ex_army")
-    private Double exArmy;
+    private Integer exArmy;
 
     @Column(name = "information")
     private String information;

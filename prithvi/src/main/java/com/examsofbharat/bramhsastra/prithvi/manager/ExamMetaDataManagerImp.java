@@ -21,4 +21,8 @@ public class ExamMetaDataManagerImp extends GenericManager<ExamMetaData, String>
     public List<ExamMetaData> getExamMetaData() {
         return examMetaDataRepository.findAll();
     }
+
+    public ExamMetaData getExamMetaDataBySubCat(String subCat) {
+        return examMetaDataRepository.findByExamSubCategory(subCat);
+    }
 }

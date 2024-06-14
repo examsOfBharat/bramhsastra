@@ -1,7 +1,6 @@
 package com.examsofbharat.bramhsastra.jal.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.Date;
@@ -11,18 +10,16 @@ import java.util.Date;
 public class ApplicationFormDTO {
 
     String id;
-    @JsonProperty("exam_name")
+    String appIdRef;
     String examName;
-    @JsonProperty("exam_date")
     Date startDate;
-    @JsonProperty("end_date")
     Date endDate;
-    @JsonProperty("min_age")
     int minAge;
-    @JsonProperty("min_qualification")
+    int totalVacancy;
     String minQualification;
-    String sector;
+    String sectors;
     String province;
+    String state;
     String grade;
     String gender;
     Date dateCreated;

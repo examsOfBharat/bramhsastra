@@ -30,25 +30,25 @@ public class ApplicationVacancyDetails {
     private String department;
 
     @Column(name = "general")
-    private String general;
+    private Integer general;
 
     @Column(name = "st")
-    private String st;
+    private Integer st;
 
     @Column(name = "sc")
-    private String sc;
+    private Integer sc;
 
     @Column(name = "obc")
-    private String obc;
+    private Integer obc;
 
     @Column(name = "female")
-    private String female;
+    private Integer female;
 
     @Column(name = "ex_army")
-    private String exArmy;
+    private Integer exArmy;
 
     @Column(name = "total_vacancy")
-    private String totalVacancy;
+    private Integer totalVacancy;
 
     @Column(name = "information")
     private String information;

@@ -18,18 +18,21 @@ import java.util.Date;
 public class ResultDetails {
 
     @Id
-    @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name ="system-uuid", strategy = "uuid")
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name ="uuid", strategy = "assigned")
     private String id;
 
-    @Column(name = "exam_id")
-    private String examId;
+    @Column(name = "app_id_ref")
+    private String appIdRef;
 
     @Column(name = "result_name")
     private String resultName;
 
     @Column(name = "result_date")
     private Date resultDate;
+
+    @Column(name = "result_url")
+    private String resultUrl;
 
     @Column(name = "date_created")
     private Date dateCreated;

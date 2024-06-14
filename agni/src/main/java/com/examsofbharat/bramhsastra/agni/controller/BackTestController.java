@@ -1,13 +1,9 @@
 package com.examsofbharat.bramhsastra.agni.controller;
 
 import com.examsofbharat.bramhsastra.akash.facade.CredFacade;
-import com.examsofbharat.bramhsastra.akash.service.ApplicationClientService;
-import com.examsofbharat.bramhsastra.akash.service.CredService;
-import com.examsofbharat.bramhsastra.akash.service.HomePageService;
-import com.examsofbharat.bramhsastra.jal.dto.request.ApplicationRequestDTO;
-import com.examsofbharat.bramhsastra.jal.dto.request.OwnerLandingRequestDTO;
-import com.examsofbharat.bramhsastra.jal.dto.request.LogInDTO;
-import com.examsofbharat.bramhsastra.jal.dto.request.RegisterDTO;
+import com.examsofbharat.bramhsastra.akash.service.*;
+import com.examsofbharat.bramhsastra.jal.dto.request.*;
+import com.examsofbharat.bramhsastra.prithvi.manager.ApplicationFormManagerImpl;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +23,18 @@ public class BackTestController {
     CredService credService;
 
     @Autowired
-    HomePageService homePageService;
+    ResponseManagementService responseManagementService;
 
     @Autowired
     ApplicationClientService applicationClientService;
+
+    @Autowired
+    ApplicationFormManagerImpl applicationFormManager;
+
+    @Autowired
+    FormAdminService formAdminService;
+    @Autowired
+    private SecondaryPageService secondaryPageService;
 
     @PostMapping("/register")
     public Response registerUser(@RequestBody RegisterDTO registerData){
@@ -63,22 +67,21 @@ public class BackTestController {
 
     @PostMapping("/update/landing/page")
     public Response updateLandingPage(){
-        log.info("Request reached for landing page");
-        return homePageService.buildLandingPageDto();
+        log.info("Request reached for update landing page");
+        return responseManagementService.buildLandingPageDto();
     }
 
     @PostMapping("/get/response")
     public Response getLandingResponse(@RequestParam String responseType){
         log.info("Request reached for home page responseType :: {}", responseType);
-        return homePageService.fetchHomeResponse(responseType);
+        return responseManagementService.fetchHomeResponse(responseType);
     }
 
-//    @PostMapping("/save/form/detail")
-//    public Response saveFormDetail(@RequestBody FormDetailsDTO formDetailsDTO){
-//        log.info("Save form detail request reached ::{}" ,formDetailsDTO.toString());
-//        return
-//
-//    }
+    @PostMapping("/save/form/detail")
+    public Response saveFormDetail(@RequestBody EnrichedFormDetailsDTO formDetailsDTO){
+        log.info("Save form detail request reached ::{}" ,formDetailsDTO.toString());
+        return formAdminService.saveForm(formDetailsDTO);
+    }
 
     @PostMapping("/get/form/details")
     public Response getFormDetails(@RequestBody ApplicationRequestDTO applicationRequestDTO){
@@ -86,6 +89,40 @@ public class BackTestController {
         return applicationClientService.buildAndGetApplication(applicationRequestDTO.getUserId());
     }
 
+    @PostMapping("/save/admit/card")
+    public Response saveAdmitCard(@RequestBody AdmitCardRequestDTO admitCardRequestDTO){
+        log.info("Save admit card detail request reached ::{}" ,admitCardRequestDTO.toString());
+        return formAdminService.saveAdmitCard(admitCardRequestDTO);
+    }
 
+    @PostMapping("/save/result")
+    public Response saveAdmitCard(@RequestBody ResultRequestDTO resultRequestDTO){
+        log.info("Save result detail request reached ::{}" ,resultRequestDTO.toString());
+        return formAdminService.buildAndSaveResultData(resultRequestDTO);
+    }
+
+    @PostMapping("/fetch/name")
+    public Response fetchName(){
+        log.info("Fetch name request reached ::");
+        return formAdminService.fetchAllAppName();
+    }
+
+    @PostMapping("/build/name")
+    public Response buildName(@RequestParam int val){
+        log.info("Build name request reached ::");
+        return formAdminService.saveMultipleName(val);
+    }
+
+    @PostMapping("/fetch/second/page")
+    public Response fetchSecondPage(@RequestParam String requestType){
+        log.info("Fetch second page request reached ::{}" ,requestType);
+        return secondaryPageService.fetchSecondPageData(requestType);
+    }
+
+    @GetMapping("fetch/by/min")
+    public Response fetchByMin(@RequestParam String min){
+        log.info("Min request reached");
+        return Response.ok(applicationFormManager.findByMinQual(min)).build();
+    }
 
 }

@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface ExamMetaDataRepository extends CrudRepository<ExamMetaData, String> {
     List<ExamMetaData> findAll();
+
+    ExamMetaData findByExamSubCategory(String examSubCategory);
 }

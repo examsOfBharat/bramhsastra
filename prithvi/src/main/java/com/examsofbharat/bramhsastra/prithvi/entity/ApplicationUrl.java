@@ -30,6 +30,18 @@ public class ApplicationUrl {
     @Column(name = "notification")
     private String notification;
 
+    @Column(name = "apply")
+    private String apply;
+
+    @Column(name = "register")
+    private String register;
+
+    @Column(name = "admit_card")
+    private String admitCard;
+
+    @Column(name = "result")
+    private String result;
+
     @Column(name = "others")
     private String others;
 

@@ -1,7 +1,8 @@
 package com.examsofbharat.bramhsastra.akash.utils;
 
-import com.examsofbharat.bramhsastra.akash.constants.AgniConstants;
+import com.examsofbharat.bramhsastra.akash.constants.AkashConstants;
 import com.examsofbharat.bramhsastra.akash.constants.SystemPropertyProperties;
+import com.examsofbharat.bramhsastra.prithvi.entity.LogoUrlManager;
 import com.examsofbharat.bramhsastra.prithvi.entity.SystemProperty;
 import com.examsofbharat.bramhsastra.prithvi.facade.DBMgmtFacade;
 import jakarta.annotation.PostConstruct;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -29,10 +31,13 @@ public class EobInitilizer {
     private static String approvedMailBody;
     private static String rejectedMailBody;
     private List<String> approverIdList = new ArrayList<>();
+    public static Map<String, String> logoMap = new HashMap<>();
 
     @PostConstruct
     public void init() {
+
         initSystemProperties();
+        initLogoUrl();
     }
 
     private void initSystemProperties() {
@@ -67,10 +72,16 @@ public class EobInitilizer {
 
         approverIdList = Optional.ofNullable(dbMgmtFacade.getSystemProperty(SystemPropertyProperties.ADMIN_APPROVER_ID))
                 .map(SystemProperty::getValue)
-                .map(ids -> ids.split(AgniConstants.COMMA_DELIMETER))
+                .map(ids -> ids.split(AkashConstants.COMMA_DELIMETER))
                 .map(Arrays::asList)
                 .orElse(new ArrayList<>());
 
+    }
+
+    public void initLogoUrl(){
+        List<LogoUrlManager> logoUrlList = dbMgmtFacade.findAllLogo();
+        logoMap = logoUrlList.stream()
+                .collect(Collectors.toMap(logo -> logo.getName().toLowerCase(), LogoUrlManager::getLogoUrl));
     }
 
 
@@ -87,5 +98,12 @@ public class EobInitilizer {
     public String getStatusMailSub(){ return statusMailSub;}
 
     public List<String> getApproverIdList() { return approverIdList; }
+
+    public static String getLogoByName(String name){
+        if(logoMap.containsKey(name.toLowerCase())){
+            return logoMap.get(name.toLowerCase());
+        }
+        return null;
+    }
 
 }
