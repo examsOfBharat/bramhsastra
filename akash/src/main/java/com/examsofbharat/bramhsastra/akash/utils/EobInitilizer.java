@@ -30,6 +30,9 @@ public class EobInitilizer {
     private static String pendingMailBody;
     private static String approvedMailBody;
     private static String rejectedMailBody;
+    private static String homeEngTitle;
+    private static String homeHindiTitle;
+    private static String homeSubtitle;
     private List<String> approverIdList = new ArrayList<>();
     public static Map<String, String> logoMap = new HashMap<>();
 
@@ -70,6 +73,16 @@ public class EobInitilizer {
         rejectedMailBody = Optional.ofNullable(dbMgmtFacade.getSystemProperty(SystemPropertyProperties.ADMIN_REJECTED_MAIL_BODY))
                 .map(SystemProperty::getValue).orElse(SystemPropertyProperties.DEFAULT_ADMIN_MAIL);
 
+        homeEngTitle = Optional.ofNullable(dbMgmtFacade.getSystemProperty(SystemPropertyProperties.HOME_PAGE_ENG_TITLE))
+                .map(SystemProperty::getValue).orElse(SystemPropertyProperties.DEFAULT_ADMIN_MAIL);
+
+
+        homeHindiTitle = Optional.ofNullable(dbMgmtFacade.getSystemProperty(SystemPropertyProperties.HOME_PAGE_HINDI_TITLE))
+                .map(SystemProperty::getValue).orElse(SystemPropertyProperties.DEFAULT_ADMIN_MAIL);
+
+        homeSubtitle = Optional.ofNullable(dbMgmtFacade.getSystemProperty(SystemPropertyProperties.HOME_PAGE_SUBTITLE))
+                .map(SystemProperty::getValue).orElse(SystemPropertyProperties.DEFAULT_ADMIN_MAIL);
+
         approverIdList = Optional.ofNullable(dbMgmtFacade.getSystemProperty(SystemPropertyProperties.ADMIN_APPROVER_ID))
                 .map(SystemProperty::getValue)
                 .map(ids -> ids.split(AkashConstants.COMMA_DELIMETER))
@@ -93,9 +106,12 @@ public class EobInitilizer {
 
     public String getApprovedMailBody() {return approvedMailBody;
     }
-    public  String getRejectedMailBody() { return rejectedMailBody; }
-    public  String getPendingMailBody() { return pendingMailBody; }
+    public String getRejectedMailBody() { return rejectedMailBody; }
+    public String getPendingMailBody() { return pendingMailBody; }
     public String getStatusMailSub(){ return statusMailSub;}
+    public String getHomeEngTitle(){ return homeEngTitle; }
+    public String getHomeHindiTitle(){ return homeHindiTitle; }
+    public String getHomeSubtitle(){ return homeSubtitle; }
 
     public List<String> getApproverIdList() { return approverIdList; }
 

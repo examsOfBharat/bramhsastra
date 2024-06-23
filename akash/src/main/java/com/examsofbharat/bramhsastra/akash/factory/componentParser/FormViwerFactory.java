@@ -1,9 +1,6 @@
 package com.examsofbharat.bramhsastra.akash.factory.componentParser;
 
-import com.examsofbharat.bramhsastra.akash.processors.ApplicationContentParser;
-import com.examsofbharat.bramhsastra.akash.processors.ApplicationIntroParser;
-import com.examsofbharat.bramhsastra.akash.processors.TimeAndFeeSummaryParser;
-import com.examsofbharat.bramhsastra.akash.processors.VacancyEligibilitySummaryParser;
+import com.examsofbharat.bramhsastra.akash.processors.*;
 import com.examsofbharat.bramhsastra.jal.enums.ComponentEnum;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +24,8 @@ public class FormViwerFactory {
 
     @Autowired
     VacancyEligibilitySummaryParser vacancyEligibilitySummaryParser;
+    @Autowired
+    private ImportantButtonDetailParser importantButtonDetailParser;
 
     @PostConstruct
     public void init(){
@@ -36,6 +35,7 @@ public class FormViwerFactory {
         contentParserHashMap.put(ComponentEnum.AGE_FEE_DETAILS, timeAndFeeSummaryParser);
         contentParserHashMap.put(ComponentEnum.VACANCY_ELIGIBILITY_DETAILS, vacancyEligibilitySummaryParser);
         contentParserHashMap.put(ComponentEnum.CONTENT_DETAILS, applicationContentParser);
+        contentParserHashMap.put(ComponentEnum.IMPORTANT_BUTTONS, importantButtonDetailParser);
     }
 
     public ContentParser get(ComponentEnum componentEnum){

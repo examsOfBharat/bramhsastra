@@ -1,5 +1,6 @@
 package com.examsofbharat.bramhsastra.agni.controller;
 
+import com.examsofbharat.bramhsastra.akash.facade.ClientFacade;
 import com.examsofbharat.bramhsastra.akash.facade.CredFacade;
 import com.examsofbharat.bramhsastra.akash.service.*;
 import com.examsofbharat.bramhsastra.jal.dto.request.*;
@@ -26,15 +27,20 @@ public class BackTestController {
     ResponseManagementService responseManagementService;
 
     @Autowired
-    ApplicationClientService applicationClientService;
-
-    @Autowired
     ApplicationFormManagerImpl applicationFormManager;
 
     @Autowired
     FormAdminService formAdminService;
+
     @Autowired
     private SecondaryPageService secondaryPageService;
+
+    @Autowired
+    ClientFacade clientFacade;
+
+    @Autowired
+    ClientService clientService;
+
 
     @PostMapping("/register")
     public Response registerUser(@RequestBody RegisterDTO registerData){
@@ -68,7 +74,7 @@ public class BackTestController {
     @PostMapping("/update/landing/page")
     public Response updateLandingPage(){
         log.info("Request reached for update landing page");
-        return responseManagementService.buildLandingPageDto();
+        return responseManagementService.buildAndUpdateClientHomePage();
     }
 
     @PostMapping("/get/response")
@@ -77,16 +83,12 @@ public class BackTestController {
         return responseManagementService.fetchHomeResponse(responseType);
     }
 
+    //save details from frontend
+
     @PostMapping("/save/form/detail")
     public Response saveFormDetail(@RequestBody EnrichedFormDetailsDTO formDetailsDTO){
         log.info("Save form detail request reached ::{}" ,formDetailsDTO.toString());
         return formAdminService.saveForm(formDetailsDTO);
-    }
-
-    @PostMapping("/get/form/details")
-    public Response getFormDetails(@RequestBody ApplicationRequestDTO applicationRequestDTO){
-        log.info("Request reached for form details userId :: {}", applicationRequestDTO.getUserId());
-        return applicationClientService.buildAndGetApplication(applicationRequestDTO.getUserId());
     }
 
     @PostMapping("/save/admit/card")
@@ -101,28 +103,72 @@ public class BackTestController {
         return formAdminService.buildAndSaveResultData(resultRequestDTO);
     }
 
+
+    @GetMapping("/get/form/details")
+    public Response getFormDetails(@RequestParam String appId){
+        log.info("Request reached for form details userId :: {}", appId);
+        return clientService.buildAndGetApplication(appId);
+    }
+
+    @GetMapping("/get/admit/details")
+    public Response getAdmitDetails(@RequestParam String appId){
+        log.info("Request reached for admit card userId :: {}", appId);
+        return clientFacade.buildAndGetAdmitCard(appId);
+    }
+
+    @GetMapping("/get/result/details")
+    public Response getResultDetails(@RequestParam String appId){
+        log.info("Request reached for result card userId :: {}", appId);
+        return clientFacade.buildAndGetResult(appId);
+    }
+
+    @GetMapping("/get/form/admit/details")
+    public Response fetchAdmitDetailsByAppId(@RequestParam String appId){
+        log.info("Request reached for admit by appId ::{}", appId);
+        return clientFacade.fetchAdmitByAppId(appId);
+    }
+
+
     @PostMapping("/fetch/name")
     public Response fetchName(){
         log.info("Fetch name request reached ::");
         return formAdminService.fetchAllAppName();
     }
 
-    @PostMapping("/build/name")
-    public Response buildName(@RequestParam int val){
-        log.info("Build name request reached ::");
-        return formAdminService.saveMultipleName(val);
-    }
 
-    @PostMapping("/fetch/second/page")
-    public Response fetchSecondPage(@RequestParam String requestType){
-        log.info("Fetch second page request reached ::{}" ,requestType);
-        return secondaryPageService.fetchSecondPageData(requestType);
-    }
+//    @PostMapping("/fetch/second/page")
+//    public Response fetchSecondPage(@RequestParam String requestType){
+//        log.info("Fetch second page request reached ::{}" ,requestType);
+//        return secondaryPageService.fetchSecondPageData(requestType);
+//    }
 
     @GetMapping("fetch/by/min")
     public Response fetchByMin(@RequestParam String min){
         log.info("Min request reached");
         return Response.ok(applicationFormManager.findByMinQual(min)).build();
+    }
+
+    @PostMapping("/check/eligibility")
+    public Response checkEligibility(@RequestBody EligibilityCheckRequestDTO eligibilityCheckRequestDTO){
+        log.info("Request for eligibility check reached ::{}", eligibilityCheckRequestDTO.toString());
+        return clientService.checkEligibility(eligibilityCheckRequestDTO);
+    }
+
+    @GetMapping("/fetch/page/list")
+    public Response fetchSecondaryPageData(@RequestParam String subType, @RequestParam int page, @RequestParam int size){
+        log.info("Request reached for 2nd page List: subtype::{} page::{} size::{}", subType, page, size);
+        return secondaryPageService.fetchSecondaryPageDataV2(subType, page,size);
+    }
+
+
+
+
+
+    @GetMapping("/update/home/count")
+    public Response testAPI(@RequestParam int totalVacancy){
+        log.info("Request reached for update home count :: {}", totalVacancy);
+        formAdminService.updateHomeCount(totalVacancy);
+        return Response.ok().build();
     }
 
 }

@@ -13,6 +13,6 @@ public class AdmitCardDTO {
     private String admitCardName;
     private Date examDate;
     private String downloadUrl;
-    private Date dateModified;
-    private Date dateCreated;
+    private String releaseDate;
+    private String examDateValue;
 }

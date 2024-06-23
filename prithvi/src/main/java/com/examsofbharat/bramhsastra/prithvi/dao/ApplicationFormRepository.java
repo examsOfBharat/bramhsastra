@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.Date;
 import java.util.Optional;
 
 public interface ApplicationFormRepository extends CrudRepository<ApplicationForm, String> {
@@ -22,5 +23,8 @@ public interface ApplicationFormRepository extends CrudRepository<ApplicationFor
     Page<ApplicationForm> findAllByGender(String province, Pageable pageable);
 
     ApplicationForm findByMinQualification(String minQualification);
+
+    Page<ApplicationForm> findAll(Pageable pageable);
+
 
 }

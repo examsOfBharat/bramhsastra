@@ -86,4 +86,40 @@ public class DateUtils {
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
     }
+
+    public static long compareDates(Date older, Date latest) {
+
+        LocalDate date1 = convertToLocalDate(older);
+        LocalDate date2 = convertToLocalDate(latest);
+
+        // Using LocalDate's compareTo method to compare dates
+        if (date1.isAfter(date2)) {
+            // Calculate days between date2 and date1
+            return ChronoUnit.DAYS.between(date2, date1);
+        } else {
+            // Return -1 (or any other indicator) if date1 is not later than date2
+            return -1;
+        }
+    }
+
+    public static Date addYears(Date date, int noOfYears){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(1, noOfYears);
+        return calendar.getTime();
+    }
+
+    public static Date addDays(Date date, int noOfDays){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(5, noOfDays);
+        return calendar.getTime();
+    }
+
+    public static Date addMonths(Date date, int noOfMonths){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(2, noOfMonths);
+        return calendar.getTime();
+    }
 }

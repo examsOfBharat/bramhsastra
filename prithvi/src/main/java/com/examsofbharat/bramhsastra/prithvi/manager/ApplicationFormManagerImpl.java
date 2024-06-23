@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -51,5 +52,23 @@ public class ApplicationFormManagerImpl extends GenericManager<ApplicationForm, 
 
     public ApplicationForm findByMinQual(String minQual){
         return applicationFormRepository.findByMinQualification(minQual);
+    }
+
+    public List<ApplicationForm> getLatestForm(int page, int size) {
+        // find latest application form present in data
+        // sorted by creation date
+        String dateType = "dateCreated";
+        Pageable pageable = PageRequest.of(page, size, Sort.by(dateType).descending());
+        Page<ApplicationForm> pageResult = applicationFormRepository.findAll(pageable);
+        return pageResult.getContent();
+    }
+
+    public List<ApplicationForm> getOldestForm(int page, int size) {
+        // find latest application form present in data
+        // sorted by creation date
+        String dateType = "endDate";
+        Pageable pageable = PageRequest.of(page, size, Sort.by(dateType).ascending());
+        Page<ApplicationForm> pageResult = applicationFormRepository.findAll(pageable);
+        return pageResult.getContent();
     }
 }

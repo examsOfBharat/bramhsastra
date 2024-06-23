@@ -22,6 +22,9 @@ public class ApplicationForm {
     @GenericGenerator(name ="uuid", strategy = "assigned")
     private String id;
 
+    @Column(name = "exam_name")
+    private String examName;
+
     @Column(name = "min_qualification")
     private String minQualification;
 
@@ -43,11 +46,11 @@ public class ApplicationForm {
     @Column(name = "gender")
     private String gender;
 
-    @Column(name = "admit_flag")
-    private int admitFlag;
+    @Column(name = "admit_id")
+    private String admitId;
 
-    @Column(name = "result_flag")
-    private int resultFlag;
+    @Column(name = "result_id")
+    private String resultId;
 
     @Column(name = "total_vacancy")
     private int totalVacancy;

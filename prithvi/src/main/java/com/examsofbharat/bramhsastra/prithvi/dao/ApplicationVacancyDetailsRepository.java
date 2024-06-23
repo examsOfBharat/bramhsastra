@@ -8,4 +8,8 @@ import java.util.List;
 public interface ApplicationVacancyDetailsRepository extends CrudRepository<ApplicationVacancyDetails, String> {
 
     List<ApplicationVacancyDetails> findAllByAppIdRefOrderByDateCreatedDesc(String Id);
+
+    ApplicationVacancyDetails findByAppIdRefOrderByDateCreatedDesc(String appId);
+
+
 }

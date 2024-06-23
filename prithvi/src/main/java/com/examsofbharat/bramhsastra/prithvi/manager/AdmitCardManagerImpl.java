@@ -31,4 +31,13 @@ public class AdmitCardManagerImpl extends GenericManager<AdmitCard, String> {
         Page<AdmitCard> pageResult = admitCardRepository.findAll(pageable);
         return pageResult.getContent();
     }
+
+    public AdmitCard fetchAdmitCardById(String admitId){
+        Optional<AdmitCard> admitCard = admitCardRepository.findById(admitId);
+        return admitCard.orElse(null);
+    }
+
+    public AdmitCard fetchAdmitByAppId(String appId){
+        return admitCardRepository.findByAppIdRef(appId);
+    }
 }

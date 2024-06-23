@@ -8,13 +8,18 @@ import lombok.Data;
 public class ApplicationFormIntroDTO {
     String title;
     String subtitle;
+    String appId;
     String type;
     String logoUrl;
     String lastDate;
     String lastDateColor;
+    String releaseDate;
     String minQualification;
     int vacancy;
     String postedOn;
     String postedOnColor;
+    String applyUrl;
+    String registerUrl;
+    String ageRange;
     UrlsDetailsDTO urlsDetailsDto;
 }

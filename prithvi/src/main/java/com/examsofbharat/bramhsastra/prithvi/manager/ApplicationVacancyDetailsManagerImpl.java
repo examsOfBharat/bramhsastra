@@ -23,4 +23,8 @@ public class ApplicationVacancyDetailsManagerImpl extends GenericManager<Applica
         return applicationVacancyDetailsRepository.findAllByAppIdRefOrderByDateCreatedDesc(id);
     }
 
+    public ApplicationVacancyDetails getVacancyByAppId(String appId){
+        return applicationVacancyDetailsRepository.findByAppIdRefOrderByDateCreatedDesc(appId);
+    }
+
 }

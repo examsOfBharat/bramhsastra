@@ -17,4 +17,8 @@ public class ResultContentManagerImpl extends GenericManager<ResultContentManage
         setCrudRepository(resultContentManagerRepository);
     }
 
+    public ResultContentManager fetchResultContentById(String resultId){
+        return resultContentManagerRepository.findByResultIdRef(resultId);
+    }
+
 }

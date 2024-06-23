@@ -12,6 +12,10 @@ public class SystemPropertyProperties {
     public static final String ADMIN_PENDING_MAIL_BODY = "user.pending.mail.body";
     public static final String ADMIN_REJECTED_MAIL_BODY = "user.rejected.mail.body";
     public static final String ADMIN_APPROVED_MAIL_BODY = "user.approved.mail.body";
+    public static final String HOME_PAGE_ENG_TITLE = "home.page.english.title";
+    public static final String HOME_PAGE_HINDI_TITLE = "home.page.hindi.title";
+    public static final String HOME_PAGE_SUBTITLE = "home.page.subtitle";
+
 
     public static final String DEFAULT_OTP_MAIL_SUB = "Verify Your Account - OTP for {}";
 

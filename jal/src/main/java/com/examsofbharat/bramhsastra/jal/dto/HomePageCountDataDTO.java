@@ -5,13 +5,7 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class VacancyResDetailsDTO {
-    int general;
-    int obc;
-    int sc;
-    int st;
-    int female;
-    int exArmy;
-    int totalVacancy;
-    String information;
+public class HomePageCountDataDTO {
+    private int totalForms;
+    private int totalVacancy;
 }

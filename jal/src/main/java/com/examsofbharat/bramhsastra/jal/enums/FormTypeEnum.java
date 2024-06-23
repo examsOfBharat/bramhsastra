@@ -1,13 +1,16 @@
 package com.examsofbharat.bramhsastra.jal.enums;
 
 public enum FormTypeEnum {
-    ADMIT("Recent Admit card 2024"),
-    RESULT("Recent Result 2024"),
+
+    LATEST_FORMS("All latest forms"),
+    OLDER_FORMS("Forms close to expiry"),
     QUALIFICATION_BASED("Application based on Qualification"),
     SECTOR_BASED("Based on Sector"),
     GRADE_BASED("Based on Grade"),
     FEMALE("Family"),
-    PROVINCIAL_BASED("Based on provincial");
+    PROVINCIAL_BASED("Based on Provincial/Region"),
+    ADMIT("Recent Admit card"),
+    RESULT("Recent Result");
 
     private String val;
 

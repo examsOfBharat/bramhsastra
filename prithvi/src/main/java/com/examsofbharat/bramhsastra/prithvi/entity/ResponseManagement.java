@@ -28,6 +28,9 @@ public class ResponseManagement {
     @Column(name = "response")
     private String response;
 
+    @Column(name = "related_forms")
+    private String relatedForm;
+
     @Column(name = "date_created")
     private Date dateCreated;
 

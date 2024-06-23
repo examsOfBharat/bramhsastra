@@ -11,6 +11,7 @@ import com.examsofbharat.bramhsastra.prithvi.entity.*;
 import com.examsofbharat.bramhsastra.prithvi.facade.DBMgmtFacade;
 import com.examsofbharat.bramhsastra.prithvi.manager.ApplicationNameDetailsManagerImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,7 +126,7 @@ public class FormAdminService {
         }
 
         //save application name and type
-        saveAppNameDetails(examId, applicationFormDTO.getExamName(),dateCreated, "APP");
+        saveAppNameDetails(examId, applicationFormDTO.getExamName(),dateCreated, "form");
 
         //save and update application meta-data
         saveOrUpdateApplicationMetaData(applicationFormDTO, applicationVacancyDTOList);
@@ -147,22 +148,36 @@ public class FormAdminService {
         categoryList.add(applicationFormDTO.getMinQualification());
         categoryList.add(applicationFormDTO.getSectors());
 
-        int totalVacancy = 0;
-
-        for(ApplicationVacancyDTO vacancyDTO :applicationVacancyDTOList){
-            totalVacancy += vacancyDTO.getTotalVacancy();
-        }
 
         for(String subCategory : categoryList){
             ExamMetaData examMetaData = dbMgmtFacade.getExamMetaData(subCategory);
-            examMetaData.setTotalVacancy(examMetaData.getTotalVacancy() + totalVacancy);
+            examMetaData.setTotalVacancy(examMetaData.getTotalVacancy() + applicationFormDTO.getTotalVacancy());
             examMetaData.setTotalForm(examMetaData.getTotalForm()+1);
             examMetaData.setDateModified(new Date());
             dbMgmtFacade.saveExamMetaData(examMetaData);
         }
 
+        //Update Home page data
+        updateHomeCount(applicationFormDTO.getTotalVacancy());
+
         //once we get new data, will update landing page response to reflect updated data
-        responseManagementService.buildLandingPageDto();
+        responseManagementService.buildAndUpdateClientHomePage();
+    }
+
+    public void updateHomeCount(int totalVacancy){
+        ResponseManagement responseManagement;
+        responseManagement = dbMgmtFacade.getResponseData("COUNT_UPDATES");
+        HomePageCountDataDTO homePageCountDataDTO;
+        if(Objects.nonNull(responseManagement)){
+            homePageCountDataDTO = new Gson().fromJson(responseManagement.getResponse(), HomePageCountDataDTO.class);
+            homePageCountDataDTO.setTotalForms(homePageCountDataDTO.getTotalForms() + 1);
+            homePageCountDataDTO.setTotalVacancy(homePageCountDataDTO.getTotalVacancy() + totalVacancy);
+            String response = new Gson().toJson(homePageCountDataDTO);
+            responseManagement.setResponse(response);
+            responseManagement.setDateModified(new Date());
+            dbMgmtFacade.saveResponseData(responseManagement);
+        }
+
     }
 
 
@@ -175,15 +190,6 @@ public class FormAdminService {
         applicationNameDetails.setAppName(appName);
         applicationNameDetails.setAppType(appType);
         dbMgmtFacade.saveApplicationName(applicationNameDetails);
-    }
-
-    private int getTotalVacancy(ApplicationVacancyDTO vacancyDTO){
-        return vacancyDTO.getSc()
-                + vacancyDTO.getSt()
-                + vacancyDTO.getObc()
-                + vacancyDTO.getFemale()
-                + vacancyDTO.getGeneral()
-                + vacancyDTO.getExArmy();
     }
 
     /**
@@ -207,9 +213,25 @@ public class FormAdminService {
 
         dbMgmtFacade.saveAdmitCard(admitCard);
 
+        //save admit card details
+        saveAppNameDetails(admitCardId, admitCard.getAdmitCardName(), new Date(), "admit");
+
+        //save admit card content details
         buildAndSaveAdmitContent(admitCardId, admitCardRequestDTO);
 
+        //update admitId in applicationForm
+        updateAdmitIdInApplication(admitCardRequestDTO.getAppIdRef(), admitCardId);
+
         return webUtils.buildSuccessResponse("SUCCESS");
+    }
+
+    //update admit card id in application form
+    private void updateAdmitIdInApplication(String appId, String admitId){
+        ApplicationForm applicationForm = dbMgmtFacade.getApplicationForm(appId);
+        if(Objects.nonNull(applicationForm)){
+            applicationForm.setAdmitId(admitId);
+            dbMgmtFacade.saveApplicationForm(applicationForm);
+        }
     }
 
     private void buildAndSaveAdmitContent(String admitIdRef, AdmitCardRequestDTO admitCardRequestDTO){
@@ -244,9 +266,23 @@ public class FormAdminService {
 
         dbMgmtFacade.saveResultDetail(resultDetails);
 
+        saveAppNameDetails(resultId, resultDetails.getResultName(), new Date(), "result");
+
         saveResultContent(resultRequestDTO, resultId);
 
+        //update admitId in applicationForm
+        updateResultIdInApplication(resultRequestDTO.getAppIdRef(), resultId);
+
         return webUtils.buildSuccessResponse("SUCCESS");
+    }
+
+    //update resultId in application form
+    private void updateResultIdInApplication(String appId, String resultId){
+        ApplicationForm applicationForm = dbMgmtFacade.getApplicationForm(appId);
+        if(Objects.nonNull(applicationForm)){
+            applicationForm.setResultId(resultId);
+            dbMgmtFacade.saveApplicationForm(applicationForm);
+        }
     }
 
     public void saveResultContent(ResultRequestDTO resultRequestDTO, String resultId){
@@ -273,25 +309,11 @@ public class FormAdminService {
             ApplicationNameDTO appNameDTO = new ApplicationNameDTO();
             appNameDTO.setAppName(appNameDetails.getAppName());
             appNameDTO.setAppIdRef(appNameDetails.getAppIdRef());
+            appNameDTO.setPageType(appNameDetails.getAppType());
             appNameDTOList.add(appNameDTO);
         }
 
         return Response.ok(appNameDTOList).build();
-    }
-
-    public Response saveMultipleName(int value){
-        List<ApplicationNameDetails> applicationNameDetails = new ArrayList<>();
-        for(int i=0; i<value; i++){
-            ApplicationNameDetails appNameDetails = new ApplicationNameDetails();
-            appNameDetails.setAppIdRef(UUID.randomUUID().toString());
-            appNameDetails.setAppName(UUID.randomUUID().toString());
-            appNameDetails.setDateCreated(new Date());
-            appNameDetails.setDateModified(new Date());
-            appNameDetails.setAppType("APP");
-            applicationNameDetails.add(appNameDetails);
-        }
-        applicationNameDetailsManager.saveAll(applicationNameDetails);
-        return Response.ok().build();
     }
 
 

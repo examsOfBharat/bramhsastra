@@ -2,16 +2,16 @@ package com.examsofbharat.bramhsastra.jal.enums;
 
 public enum FormSubTypeEnum {
 
-    TENTH("For 10Th pass"),
-    DIPLOMA("For diploma"),
-    TWELFTH("For 12th Pass"),
-    GRADUATE("For Graduate"),
-    ABOVE_GRADUATE("For above graduate"),
+    TENTH("Forms For 10th pass"),
+    DIPLOMA("Forms For Diploma"),
+    TWELFTH("Forms For 12th Pass"),
+    GRADUATE("Forms For Graduate"),
+    ABOVE_GRADUATE("Forms For above graduate"),
 
-    A_GRADE("Grade A Job"),
-    B_GRADE("Grade B Job"),
-    C_GRADE("Grade C Job"),
-    D_GRADE("Grade D Job"),
+    A_GRADE("Grade A Job Forms"),
+    B_GRADE("Grade B Job Forms"),
+    C_GRADE("Grade C Job Forms"),
+    D_GRADE("Grade D Job Forms"),
 
     BANKING("Banking Job"),
     RAILWAY("Railway Job"),

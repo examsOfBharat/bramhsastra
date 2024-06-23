@@ -1,5 +1,6 @@
 package com.examsofbharat.bramhsastra.jal.dto;
 
+import com.examsofbharat.bramhsastra.jal.dto.response.RelatedFormResponseDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -21,4 +22,10 @@ public class FormViewResponseDTO {
 
     @JsonProperty("form_content_data")
     List<ApplicationContentManagerDTO> applicationContentManagers;
+
+    @JsonProperty("related_form_list")
+    RelatedFormResponseDTO relatedFormResponseDTO;
+
+    @JsonProperty("important_button")
+    ImportantButtonDetailsDTO importantButtonDetailsDTO;
 }

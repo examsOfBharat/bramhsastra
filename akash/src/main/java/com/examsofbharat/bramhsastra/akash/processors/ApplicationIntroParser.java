@@ -22,14 +22,22 @@ public class ApplicationIntroParser extends BaseContentParser {
             EnrichedFormDetailsDTO enrichedFormDetailsDTO = componentRequestDTO.getEnrichedFormDetailsDTO();
 
             ApplicationFormIntroDTO applicationFormIntroDTO = new ApplicationFormIntroDTO();
+            applicationFormIntroDTO.setAppId(enrichedFormDetailsDTO.getApplicationFormDTO().getId());
+            applicationFormIntroDTO.setAgeRange(enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getMinAge()+
+             "-" + enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getMaxAge() + " years");
             applicationFormIntroDTO.setLastDate(DateUtils.getFormatedDate1(
                     enrichedFormDetailsDTO.getApplicationFormDTO().getEndDate()));
             applicationFormIntroDTO.setLastDateColor(FormUtil.getLastXDaysDateColor(
                     enrichedFormDetailsDTO.getApplicationFormDTO().getEndDate()));
-            applicationFormIntroDTO.setTitle(componentRequestDTO.getApplicationNameDTO().getAppName());
+            applicationFormIntroDTO.setTitle(componentRequestDTO.getEnrichedFormDetailsDTO().
+                    getApplicationFormDTO().getExamName());
+
             applicationFormIntroDTO.setType(enrichedFormDetailsDTO.getApplicationFormDTO().getState());
             applicationFormIntroDTO.setMinQualification(enrichedFormDetailsDTO.getApplicationFormDTO().getMinQualification());
-            applicationFormIntroDTO.setLogoUrl(FormUtil.getLogoByName(componentRequestDTO.getApplicationNameDTO().getAppName()));
+            applicationFormIntroDTO.setLogoUrl(FormUtil.getLogoByName(componentRequestDTO.getEnrichedFormDetailsDTO().
+                    getApplicationFormDTO().getExamName()));
+            applicationFormIntroDTO.setReleaseDate(DateUtils.getFormatedDate1(
+                    enrichedFormDetailsDTO.getApplicationFormDTO().getDateCreated()));
 
             long daysCount = DateUtils.getNoOfDaysFromToday(enrichedFormDetailsDTO.getApplicationFormDTO().getDateCreated());
             List<String> postedList = FormUtil.getPostedDetail(daysCount);
@@ -40,12 +48,15 @@ public class ApplicationIntroParser extends BaseContentParser {
             applicationFormIntroDTO.setSubtitle("Government of Bharat");
 
             applicationFormIntroDTO.setVacancy(enrichedFormDetailsDTO.getApplicationFormDTO().getTotalVacancy());
+            applicationFormIntroDTO.setApplyUrl(componentRequestDTO.getEnrichedFormDetailsDTO().getApplicationUrlsDTO().getApply());
+            applicationFormIntroDTO.setRegisterUrl(componentRequestDTO.getEnrichedFormDetailsDTO().getApplicationUrlsDTO().getRegister());
 
             formViewResponseDTO.setApplicationFormIntroDTO(applicationFormIntroDTO);
 
         }catch (Exception e){
             log.error("Exception occurred while parsing formIntro formName::{}",
-                    componentRequestDTO.getApplicationNameDTO().getAppName());
+                    componentRequestDTO.getEnrichedFormDetailsDTO().
+                            getApplicationFormDTO().getExamName());
         }
     }
 }

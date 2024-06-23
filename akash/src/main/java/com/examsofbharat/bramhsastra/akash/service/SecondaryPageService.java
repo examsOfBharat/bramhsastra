@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
+import static com.examsofbharat.bramhsastra.jal.constants.ErrorConstants.DATA_NOT_FOUND;
+
 @Service
 @Slf4j
 public class SecondaryPageService {
@@ -26,40 +28,53 @@ public class SecondaryPageService {
 
     @Autowired
     WebUtils webUtils;
+
     @Autowired
     private ApplicationDbUtil applicationDbUtil;
 
 
-    public Response fetchSecondaryPageData(SecondaryPageRequestDTO secondaryPageRequestDTO){
-        if(!FormValidator.isValidSecondaryRequest(secondaryPageRequestDTO)){
+    public Response fetchSecondaryPageDataV2(String subType, int pageNo, int size){
+        if( StringUtil.isEmpty(subType)
+                || pageNo < 0 || size <= 0){
             return webUtils.invalidRequest();
         }
 
-        return webUtils.buildSuccessResponse("SUCCESS");
+        if(pageNo == 0){
+            ResponseManagement responseManagement = dbMgmtFacade.getResponseData(subType);
+            if(Objects.nonNull(responseManagement) && StringUtil.notEmpty(responseManagement.getResponse())){
+                return Response.ok(responseManagement.getResponse()).build();
+            }
+        }
+
+        String response = applicationDbUtil.fetchResponseBasedOnSubType(subType, pageNo,size, null);
+        if(StringUtil.isEmpty(response)){
+            return webUtils.buildErrorMessage(WebConstants.ERROR, DATA_NOT_FOUND);
+        }
+        return Response.ok(response).build();
     }
 
     // Fetch initial 2nd page data.
     // Retry if initial page is not available in response data.
     // Data not found on re-try, return not found
-    public Response fetchSecondPageData(String requestType){
-        if(StringUtil.isEmpty(requestType)){
-            return webUtils.invalidRequest();
-        }
-
-        try {
-            ResponseManagement responseManagement = dbMgmtFacade.getResponseData(requestType);
-            String response = null;
-            if (Objects.nonNull(responseManagement)) {
-                response = applicationDbUtil.fetchResponseBasedOnSubType(FormSubTypeEnum.valueOf(requestType));
-            }
-
-            if (StringUtil.isEmpty(response)) {
-                return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.DATA_NOT_FOUND);
-            }
-            return Response.ok(response).build();
-        }catch (Exception e){
-            log.error("Exception occurred while fetching 2nd page requestType::{}",requestType, e);
-        }
-        return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.DATA_NOT_FOUND);
-    }
+//    public Response fetchSecondPageData(String requestType){
+//        if(StringUtil.isEmpty(requestType)){
+//            return webUtils.invalidRequest();
+//        }
+//
+//        try {
+//            ResponseManagement responseManagement = dbMgmtFacade.getResponseData(requestType);
+//            String response = null;
+//            if (Objects.nonNull(responseManagement)) {
+//                response = applicationDbUtil.fetchResponseBasedOnSubType(FormSubTypeEnum.valueOf(requestType), 0,10);
+//            }
+//
+//            if (StringUtil.isEmpty(response)) {
+//                return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.DATA_NOT_FOUND);
+//            }
+//            return Response.ok(response).build();
+//        }catch (Exception e){
+//            log.error("Exception occurred while fetching 2nd page requestType::{}",requestType, e);
+//        }
+//        return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.DATA_NOT_FOUND);
+//    }
 }

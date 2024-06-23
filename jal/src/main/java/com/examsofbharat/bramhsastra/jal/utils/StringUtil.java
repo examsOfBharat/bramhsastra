@@ -6,4 +6,8 @@ public class StringUtil {
         if(str == null) return true;
         return "".equals(str.trim());
     }
+
+    public static boolean notEmpty(String str) {
+        return str != null && !"".equals(str.trim());
+    }
 }

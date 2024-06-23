@@ -13,6 +13,7 @@ import com.examsofbharat.bramhsastra.jal.dto.request.EligibilityCheckRequestDTO;
 import com.examsofbharat.bramhsastra.jal.dto.request.EnrichedFormDetailsDTO;
 import com.examsofbharat.bramhsastra.jal.dto.response.AdmitCardResponseDTO;
 import com.examsofbharat.bramhsastra.jal.dto.response.RelatedFormResponseDTO;
+import com.examsofbharat.bramhsastra.jal.dto.response.ResultResponseDTO;
 import com.examsofbharat.bramhsastra.jal.enums.ComponentEnum;
 import com.examsofbharat.bramhsastra.jal.utils.StringUtil;
 import com.examsofbharat.bramhsastra.prithvi.entity.*;
@@ -22,7 +23,6 @@ import com.google.gson.Gson;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -36,11 +36,9 @@ import java.util.concurrent.Future;
 
 import static com.examsofbharat.bramhsastra.jal.constants.ErrorConstants.DATA_NOT_FOUND;
 
-@Component
-@Service
 @Slf4j
-public class ApplicationClientService {
-
+@Service
+public class ClientService {
     @Autowired
     DBMgmtFacade dbMgmtFacade;
 
@@ -89,6 +87,28 @@ public class ApplicationClientService {
             formViewResponseDTO.setRelatedFormResponseDTO(relatedFormResponseDTO);
         }
 
+    }
+
+    private void setTopAdmitCardList(AdmitCardResponseDTO admitCardResponseDTO){
+
+        ResponseManagement responseManagement = dbMgmtFacade.getResponseData("ADMIT");
+
+        if(Objects.nonNull(responseManagement) && StringUtil.notEmpty(responseManagement.getRelatedForm())){
+            RelatedFormResponseDTO relatedFormResponseDTO = new Gson().fromJson(responseManagement.getRelatedForm(),
+                    RelatedFormResponseDTO.class);
+            admitCardResponseDTO.setRelatedFormResponseDTO(relatedFormResponseDTO);
+        }
+    }
+
+    private void setTopResultList(ResultResponseDTO resultResponseDTO){
+
+        ResponseManagement responseManagement = dbMgmtFacade.getResponseData("RESULT");
+
+        if(Objects.nonNull(responseManagement) && StringUtil.notEmpty(responseManagement.getRelatedForm())){
+            RelatedFormResponseDTO relatedFormResponseDTO = new Gson().fromJson(responseManagement.getRelatedForm(),
+                    RelatedFormResponseDTO.class);
+            resultResponseDTO.setRelatedFormResponseDTO(relatedFormResponseDTO);
+        }
     }
 
     public Response checkEligibility(EligibilityCheckRequestDTO eligibilityCheckRequestDTO){
@@ -196,7 +216,9 @@ public class ApplicationClientService {
         //max-dob- candidates dob should not be later than this date
         //min-dob- candidates dob should not be earlier than this (please consider age relaxation
         //In this case based on category
-        if(Objects.isNull(ageDetails)){
+        if(Objects.isNull(ageDetails) ||
+                Objects.isNull(ageDetails.getMaxNormalDob()) ||
+                Objects.isNull(ageDetails.getMinNormalDob())){
             return Response.ok(FormUtil.eligibilitySorryResponse()).build();
         }
 
@@ -214,7 +236,7 @@ public class ApplicationClientService {
     private Response getEligibilityWithMaxDate(Date dob, Date maxDate){
         long daysCount = DateUtils.compareDates(dob, maxDate);
         if(daysCount < 1){
-           return Response.ok(FormUtil.eligibilitySuccessResponse()).build();
+            return Response.ok(FormUtil.eligibilitySuccessResponse()).build();
         }
 
         LocalDate startDate = LocalDate.of(1, 1, 1);
@@ -227,6 +249,7 @@ public class ApplicationClientService {
 
     private Response getEligibilityWithMinDate(Date dob, Date minDate, ApplicationAgeDetails ageDetails,
                                                String category){
+
         minDate = FormUtil.getAgeAfterRelaxed(minDate, ageDetails, category);
         long daysCount = DateUtils.compareDates(minDate, dob);
 
@@ -245,24 +268,61 @@ public class ApplicationClientService {
 
 
     public void buildAdmitCardResponse(AdmitCardResponseDTO admitCardResponseDTO,
-                                                       String admitId){
+                                       String admitId){
 
         AdmitCard admitCard = dbMgmtFacade.fetchAdmitById(admitId);
         if(Objects.nonNull(admitCard)){
             admitCardResponseDTO.setAdmitCardIntroDTO(buildAdmitIntro(admitCard));
         }
 
+        setTopAdmitCardList(admitCardResponseDTO);
+        populateAdmitContent(admitCardResponseDTO, admitId);
+
+    }
+
+    public void buildResultResponse(ResultResponseDTO resultResponseDTO,
+                                    String resultId){
+
+        ResultDetails resultDetails = dbMgmtFacade.fetchResultById(resultId);
+        if(Objects.nonNull(resultDetails)){
+            resultResponseDTO.setResultIntroDTO(buildResultIntro(resultDetails));
+        }
+
+        setTopResultList(resultResponseDTO);
+        populateResultContent(resultResponseDTO, resultId);
+
+    }
+
+    public void buildAdmitCardResponseByAppId(AdmitCardResponseDTO admitCardResponseDTO, String appId){
+        AdmitCard admitCard = dbMgmtFacade.fetchAdmitByAppId(appId);
+
+        if(Objects.nonNull(admitCard)){
+            admitCardResponseDTO.setAdmitCardIntroDTO(buildAdmitIntro(admitCard));
+        }
+
+        populateAdmitContent(admitCardResponseDTO, admitCard.getId());
+    }
+
+    private void populateAdmitContent(AdmitCardResponseDTO admitCardResponseDTO, String admitId){
         AdmitContentManager admitContentManager = dbMgmtFacade.fetchAdmitContent(admitId);
         if(Objects.nonNull(admitContentManager)){
             AdmitContentManagerDTO admitContentManagerDTO = objectMapper.convertValue(admitContentManager, AdmitContentManagerDTO.class);
             admitCardResponseDTO.setAdmitContentManagerDTO(admitContentManagerDTO);
         }
+    }
 
+    private void populateResultContent(ResultResponseDTO resultResponseDTO, String resultId){
+        ResultContentManager resultContentManager = dbMgmtFacade.fetchResultContentById(resultId);
+        if(Objects.nonNull(resultContentManager)){
+            ResultContentManagerDTO resultContentManagerDTO = objectMapper.convertValue(resultContentManager, ResultContentManagerDTO.class);
+            resultResponseDTO.setResultContentManagerDTO(resultContentManagerDTO);
+        }
     }
 
     private AdmitCardIntroDTO buildAdmitIntro(AdmitCard admitCard){
         AdmitCardIntroDTO admitCardIntroDTO = objectMapper.convertValue(admitCard, AdmitCardIntroDTO.class);
 
+        admitCardIntroDTO.setAppIdRef(admitCard.getAppIdRef());
         admitCardIntroDTO.setReleaseDate(DateUtils.getFormatedDate1(admitCard.getDateCreated()));
         admitCardIntroDTO.setExamDateValue(DateUtils.getFormatedDate1(admitCard.getExamDate()));
         admitCardIntroDTO.setSubtitle("Government of India");
@@ -276,6 +336,24 @@ public class ApplicationClientService {
         admitCardIntroDTO.setLogoUrl(FormUtil.getLogoByName(admitCard.getAdmitCardName()));
 
         return admitCardIntroDTO;
+    }
+
+    private ResultIntroDTO buildResultIntro(ResultDetails resultDetails){
+        ResultIntroDTO resultIntroDTO = objectMapper.convertValue(resultDetails, ResultIntroDTO.class);
+
+        resultIntroDTO.setAppIdRef(resultDetails.getAppIdRef());
+        resultIntroDTO.setResultDate(DateUtils.getFormatedDate1(resultDetails.getDateCreated()));
+        resultIntroDTO.setSubtitle("Government of India");
+
+        long daysCount = DateUtils.getNoOfDaysFromToday(resultDetails.getDateCreated());
+        List<String> postedList = FormUtil.getPostedDetail(daysCount);
+
+        resultIntroDTO.setPostedOn(postedList.get(0));
+        resultIntroDTO.setPostedOnColor(postedList.get(1));
+
+        resultIntroDTO.setLogoUrl(FormUtil.getLogoByName(resultDetails.getResultName()));
+
+        return resultIntroDTO;
     }
 
 }

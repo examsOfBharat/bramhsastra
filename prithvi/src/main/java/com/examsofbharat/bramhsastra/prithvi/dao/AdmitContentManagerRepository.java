@@ -5,4 +5,5 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface AdmitContentManagerRepository extends CrudRepository<AdmitContentManager, String> {
 
+    AdmitContentManager findByAdmitIdRef(String admitIdRef);
 }

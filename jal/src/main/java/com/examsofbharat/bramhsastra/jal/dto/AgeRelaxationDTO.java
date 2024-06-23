@@ -8,12 +8,12 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AgeRelaxationDTO {
     String title;
-    int generalAge;
-    int obcAge;
-    int stAge;
-    int scAge;
-    int femaleAge;
-    int exArmy;
+    String generalAge;
+    String obcAge;
+    String stAge;
+    String scAge;
+    String femaleAge;
+    String exArmy;
     String information;
     String cardColor;
 }

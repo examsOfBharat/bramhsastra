@@ -8,4 +8,5 @@ import lombok.Data;
 public class ApplicationNameDTO {
     String appIdRef;
     String appName;
+    String pageType;
 }

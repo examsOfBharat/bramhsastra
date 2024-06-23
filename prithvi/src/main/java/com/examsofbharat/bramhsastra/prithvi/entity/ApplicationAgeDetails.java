@@ -29,6 +29,9 @@ public class ApplicationAgeDetails {
     @Column(name = "min_age")
     private Integer minAge;
 
+    @Column(name = "max_age")
+    private Integer maxAge;
+
     @Column(name = "general_age")
     private Integer generalAge;
 
@@ -49,6 +52,12 @@ public class ApplicationAgeDetails {
 
     @Column(name = "information")
     private String information;
+
+    @Column(name = "max_normal_dob")
+    private Date maxNormalDob;
+
+    @Column(name = "min_normal_dob")
+    private Date minNormalDob;
 
     @Column(name = "date_created")
     private Date dateCreated;

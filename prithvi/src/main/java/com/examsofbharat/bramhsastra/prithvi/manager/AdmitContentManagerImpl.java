@@ -17,4 +17,8 @@ public class AdmitContentManagerImpl extends GenericManager<AdmitContentManager,
         setCrudRepository(admitContentManagerRepository);
     }
 
+    public AdmitContentManager fetchAdmitCardContent(String admitIdRef){
+        return admitContentManagerRepository.findByAdmitIdRef(admitIdRef);
+    }
+
 }

@@ -9,6 +9,7 @@ import lombok.Data;
 public class AppTimeLineAndFeeDTO {
     String heading;
     int sortIndex;
+
     @JsonProperty("importants_dates")
     ImportantDatesDTO importantDatesDto;
 
@@ -17,4 +18,7 @@ public class AppTimeLineAndFeeDTO {
 
     @JsonProperty("age_relaxation")
     AgeRelaxationDTO ageRelaxationDTO;
+
+    @JsonProperty("extra_information")
+    AgeAndFeeInformation ageAndFeeInformation;
 }

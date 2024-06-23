@@ -13,6 +13,7 @@ public class ApplicationAgeDetailsDTO {
     String id;
     String appIdRef;
     int minAge;
+    int maxAge;
     int generalAge;
     int stAge;
     int scAge;
@@ -20,6 +21,8 @@ public class ApplicationAgeDetailsDTO {
     int femaleAge;
     int exArmy;
     String information;
+    private Date maxNormalDob;
+    private Date minNormalDob;
     Date dateCreated;
     Date dateModified;
 }

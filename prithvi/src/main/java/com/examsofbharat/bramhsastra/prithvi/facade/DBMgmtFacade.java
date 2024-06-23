@@ -141,6 +141,10 @@ public class DBMgmtFacade {
         return applicationVacancyDetailsManager.getAllVacancyById(appId);
     }
 
+    public ApplicationVacancyDetails getVacancyByAppId(String appId){
+        return applicationVacancyDetailsManager.getVacancyByAppId(appId);
+    }
+
     public List<ApplicationContentManager> getApplicationContentDetails(String appId){
         return applicationContentManagerManager.getAllContentById(appId);
     }
@@ -208,6 +212,15 @@ public class DBMgmtFacade {
         resultContentManagerImpl.save(resultContentManager);
     }
 
+    public ResultDetails fetchResultById(String resultId){
+        Optional<ResultDetails> resultDetails = resultDetailsManager.findById(resultId);
+        return resultDetails.orElse(null);
+    }
+
+    public ResultContentManager fetchResultContentById(String resultId){
+        return resultContentManagerImpl.fetchResultContentById(resultId);
+    }
+
     public List<ApplicationNameDetails> fetchAllAppNames(){
         return applicationNameDetailsManagerImpl.fetchAllAppName();
     }
@@ -231,6 +244,26 @@ public class DBMgmtFacade {
         logoList.forEach(logpUrlList::add);
 
         return logpUrlList;
+    }
+
+    public AdmitCard fetchAdmitById(String admitId){
+        return admitCardManager.fetchAdmitCardById(admitId);
+    }
+
+    public AdmitCard fetchAdmitByAppId(String appId){
+        return admitCardManager.fetchAdmitByAppId(appId);
+    }
+
+    public AdmitContentManager fetchAdmitContent(String admitId){
+        return admitContentManagerImp.fetchAdmitCardContent(admitId);
+    }
+
+    public List<ApplicationForm> fetchAllLatestApp(int page, int size){
+        return applicationFormManager.getLatestForm(page, size);
+    }
+
+    public List<ApplicationForm> fetchAllOldestApp(int page, int size){
+        return applicationFormManager.getOldestForm(page, size);
     }
 
 }

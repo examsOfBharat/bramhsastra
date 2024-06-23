@@ -1,10 +1,12 @@
 package com.examsofbharat.bramhsastra.akash.validator;
 
+import com.examsofbharat.bramhsastra.jal.dto.request.EligibilityCheckRequestDTO;
 import com.examsofbharat.bramhsastra.jal.dto.request.EnrichedFormDetailsDTO;
 import com.examsofbharat.bramhsastra.jal.dto.request.SecondaryPageRequestDTO;
 import com.examsofbharat.bramhsastra.jal.utils.StringUtil;
 import org.hibernate.engine.internal.AbstractEntityEntry;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.Objects;
 
@@ -24,5 +26,11 @@ public class FormValidator {
                 && Objects.nonNull(secondaryPageRequestDTO.getPage())
                 && Objects.nonNull(secondaryPageRequestDTO.getSize())
                 && !StringUtil.isEmpty(secondaryPageRequestDTO.getRequestType());
+    }
+
+    public static boolean isValidEligibilityRequest(EligibilityCheckRequestDTO eligibilityCheckRequestDTO){
+        return Objects.nonNull(eligibilityCheckRequestDTO)
+                && StringUtil.notEmpty(eligibilityCheckRequestDTO.getAppId())
+                && Objects.nonNull(eligibilityCheckRequestDTO.getDob());
     }
 }

@@ -2,6 +2,7 @@ package com.examsofbharat.bramhsastra.prithvi.manager;
 
 import com.examsofbharat.bramhsastra.prithvi.dao.ResultDetailsRepository;
 import com.examsofbharat.bramhsastra.prithvi.entity.AdmitCard;
+import com.examsofbharat.bramhsastra.prithvi.entity.ResultContentManager;
 import com.examsofbharat.bramhsastra.prithvi.entity.ResultDetails;
 import com.examsofbharat.bramhsastra.prithvi.sql.GenericManager;
 import org.springframework.beans.factory.annotation.Autowired;
