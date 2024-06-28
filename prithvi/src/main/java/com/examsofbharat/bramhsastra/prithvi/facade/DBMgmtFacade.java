@@ -41,6 +41,9 @@ public class DBMgmtFacade {
     ApplicationFormManagerImpl applicationFormManager;
 
     @Autowired
+    AdminResponseManagerImpl adminResponseManagerImpl;
+
+    @Autowired
     ApplicationUrlManagerImpl applicationUrlManager;
 
     @Autowired
@@ -264,6 +267,18 @@ public class DBMgmtFacade {
 
     public List<ApplicationForm> fetchAllOldestApp(int page, int size){
         return applicationFormManager.getOldestForm(page, size);
+    }
+
+    public AdminResponseManager findAdminResById(String resId){
+        return adminResponseManagerImpl.findAdminResById(resId);
+    }
+
+    public void saveAdminResponse(AdminResponseManager adminResponseManager){
+        adminResponseManagerImpl.save(adminResponseManager);
+    }
+
+    public List<AdminResponseManager> fetchAdminDataByStatus(String status){
+        return adminResponseManagerImpl.fetchAdminDataByStatus(status);
     }
 
 }

@@ -2,15 +2,15 @@ package com.examsofbharat.bramhsastra.jal.enums;
 
 public enum FormTypeEnum {
 
-    LATEST_FORMS("All latest forms"),
-    OLDER_FORMS("Forms close to expiry"),
-    QUALIFICATION_BASED("Application based on Qualification"),
-    SECTOR_BASED("Based on Sector"),
-    GRADE_BASED("Based on Grade"),
+    LATEST_FORMS("ALL LATEST FORMS"),
+    OLDER_FORMS("FORM EXPIRING SOON(ALERT)"),
+    QUALIFICATION_BASED("FORMS BASED ON QUALIFICATION"),
+    SECTOR_BASED("FORMS BASED ON SECTOR"),
+    GRADE_BASED("FORMS BASED ON GRADE"),
     FEMALE("Family"),
-    PROVINCIAL_BASED("Based on Provincial/Region"),
-    ADMIT("Recent Admit card"),
-    RESULT("Recent Result");
+    PROVINCIAL_BASED("FORMS BASED ON PROVINCIAL/REGION"),
+    ADMIT("ALL RECENT ADMIT CARD"),
+    RESULT("ALL RECENT RESULT");
 
     private String val;
 

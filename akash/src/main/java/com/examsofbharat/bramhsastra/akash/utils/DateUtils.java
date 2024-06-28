@@ -45,6 +45,20 @@ public class DateUtils {
         return now.after(xDaysLater);
     }
 
+    public static boolean isDateIsAfterXDaysNow(int day, Date date){
+        // Get the current time
+        Date now = new Date();
+
+        // Add 5 days to the timestamp
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(now);
+        calendar.add(Calendar.DATE, day);
+        Date xDaysLater = calendar.getTime();
+
+        // Compare the times
+        return date.after(xDaysLater);
+    }
+
     public static String getFormatedDate1(Date date){
         try {
             if(date == null) return null;
@@ -121,5 +135,17 @@ public class DateUtils {
         calendar.setTime(date);
         calendar.add(2, noOfMonths);
         return calendar.getTime();
+    }
+
+    //eg: fileName: form, formType: pdf then full name will be form_dd_MM_yyyy.pdf
+    public static String getDateFileName(String fileName, String fileType){
+        // Get today's date
+        LocalDate today = LocalDate.now();
+
+        // Format the date as yyyyMMdd
+        String formattedDate = today.format(DateTimeFormatter.ofPattern("dd_MM_yyyy"));
+
+        // Construct the filename
+        return fileName + "_" + formattedDate + "." + fileType; // Example: file_28_06_2024.txt
     }
 }

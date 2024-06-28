@@ -10,6 +10,10 @@ import java.util.List;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EnrichedFormDetailsDTO {
+
+    @JsonProperty("admin_user_details")
+    AdminUserDetailsDTO adminUserDetailsDTO;
+
     @JsonProperty("application_form")
     ApplicationFormDTO applicationFormDTO;
 

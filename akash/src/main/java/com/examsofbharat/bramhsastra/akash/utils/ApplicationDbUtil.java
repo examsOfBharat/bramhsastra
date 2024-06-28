@@ -2,6 +2,7 @@ package com.examsofbharat.bramhsastra.akash.utils;
 
 import com.examsofbharat.bramhsastra.jal.dto.RelatedFormDTO;
 import com.examsofbharat.bramhsastra.jal.dto.response.SecondaryPageDataDTO;
+import com.examsofbharat.bramhsastra.jal.dto.response.WrapperSecondaryPageDataDTO;
 import com.examsofbharat.bramhsastra.jal.enums.FormSubTypeEnum;
 import com.examsofbharat.bramhsastra.jal.enums.FormTypeEnum;
 import com.examsofbharat.bramhsastra.prithvi.entity.AdmitCard;
@@ -23,18 +24,24 @@ public class ApplicationDbUtil {
     DBMgmtFacade dbMgmtFacade;
 
     public String fetchResponseBasedOnSubType(String formSubTypeEnum, int page, int size, List<RelatedFormDTO> relatedForms) {
+        WrapperSecondaryPageDataDTO wrapperSecondaryPageDataDTO = new WrapperSecondaryPageDataDTO();
+        wrapperSecondaryPageDataDTO.setTitle(FormUtil.getSecondPageTitle(formSubTypeEnum));
+
         if(formSubTypeEnum.equals(FormSubTypeEnum.ADMIT.name())){
             List<SecondaryPageDataDTO> admitCardList = getAdmitCardsList(page, size, formSubTypeEnum, relatedForms);
-            return (new Gson()).toJson(admitCardList);
+            wrapperSecondaryPageDataDTO.setFormList(admitCardList);
+            return (new Gson()).toJson(wrapperSecondaryPageDataDTO);
         }
 
         if(formSubTypeEnum.equals(FormSubTypeEnum.RESULT.name())){
             List<SecondaryPageDataDTO> resultDetailsDTOList = getResultsList(page, size, formSubTypeEnum, relatedForms);
-            return  (new Gson()).toJson(resultDetailsDTOList);
+            wrapperSecondaryPageDataDTO.setFormList(resultDetailsDTOList);
+            return  (new Gson()).toJson(wrapperSecondaryPageDataDTO);
         }
 
         List<SecondaryPageDataDTO> applicationFormDTOList = getApplicationsList(page,size, formSubTypeEnum, relatedForms);
-        return  (new Gson()).toJson(applicationFormDTOList);
+        wrapperSecondaryPageDataDTO.setFormList(applicationFormDTOList);
+        return  (new Gson()).toJson(wrapperSecondaryPageDataDTO);
     }
 
 
@@ -50,7 +57,7 @@ public class ApplicationDbUtil {
         } else if (subType.equals(FormTypeEnum.OLDER_FORMS.name())) {
             applicationsList = dbMgmtFacade.fetchAllOldestApp(page, size);
         }else {
-            FormTypeEnum formTypeEnum = FormUtil.getFormType(FormSubTypeEnum.valueOf(subType));
+            FormTypeEnum formTypeEnum = FormUtil.getFormType(subType);
             applicationsList = dbMgmtFacade.fetchLatestApplicationsBasedOnType(page, size, subType, formTypeEnum);
         }
 

@@ -27,7 +27,7 @@ public class ApplicationIntroParser extends BaseContentParser {
              "-" + enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getMaxAge() + " years");
             applicationFormIntroDTO.setLastDate(DateUtils.getFormatedDate1(
                     enrichedFormDetailsDTO.getApplicationFormDTO().getEndDate()));
-            applicationFormIntroDTO.setLastDateColor(FormUtil.getLastXDaysDateColor(
+            applicationFormIntroDTO.setLastDateColor(FormUtil.getExpiryDateColor(
                     enrichedFormDetailsDTO.getApplicationFormDTO().getEndDate()));
             applicationFormIntroDTO.setTitle(componentRequestDTO.getEnrichedFormDetailsDTO().
                     getApplicationFormDTO().getExamName());

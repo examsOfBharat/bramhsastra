@@ -23,15 +23,18 @@ import static com.examsofbharat.bramhsastra.jal.enums.FormTypeEnum.*;
 @Component
 public class FormUtil {
 
-    public final static Map<FormSubTypeEnum, FormTypeEnum> formSubTypeMap = new HashMap<>();
+    public final static Map<String, FormTypeEnum> formSubTypeMap = new HashMap<>();
     public static final List<String> relatedFormType = new ArrayList<>();
     public static List<String> cardColor = new ArrayList<>();
+    public static List<String> stateList = new ArrayList<>();
+    public static Map<String, String> secondPageTitleMap =  new HashMap<>();
 
     @PostConstruct
     public void init() {
         initFormTypeMap();
         initVacancyColor();
         initRelatedFormType();
+        initSecondPageTitle();
     }
 
     public static String getLastXDaysDateColor(Date date){
@@ -40,6 +43,15 @@ public class FormUtil {
         if(flag)
             return RED_COLOR;
         return GREEN_COLOR;
+    }
+
+    public static String getExpiryDateColor(Date date){
+        if(date == null) return null;
+
+        boolean flag = DateUtils.isDateIsAfterXDaysNow(5, date);
+        if(flag)
+            return GREEN_COLOR;
+        return RED_COLOR;
     }
 
     public static String getFormShowDateColor(Date showDate){
@@ -55,34 +67,68 @@ public class FormUtil {
     }
 
     public void initFormTypeMap(){
-        formSubTypeMap.put(ADMIT, FormTypeEnum.ADMIT);
-        formSubTypeMap.put(RESULT, FormTypeEnum.RESULT);
+        formSubTypeMap.put(ADMIT.name(), FormTypeEnum.ADMIT);
+        formSubTypeMap.put(RESULT.name(), FormTypeEnum.RESULT);
 
-        formSubTypeMap.put(TENTH, QUALIFICATION_BASED);
-        formSubTypeMap.put(TWELFTH, QUALIFICATION_BASED);
-        formSubTypeMap.put(DIPLOMA, QUALIFICATION_BASED);
-        formSubTypeMap.put(GRADUATE, QUALIFICATION_BASED);
-        formSubTypeMap.put(ABOVE_GRADUATE, QUALIFICATION_BASED);
-
-
-        formSubTypeMap.put(BANKING, SECTOR_BASED);
-        formSubTypeMap.put(PSU_JOB, SECTOR_BASED);
-        formSubTypeMap.put(AGRICULTURE, SECTOR_BASED);
-        formSubTypeMap.put(DEFENSE_SERVICE, SECTOR_BASED);
-        formSubTypeMap.put(STATE_POLICE, SECTOR_BASED);
-        formSubTypeMap.put(CIVIL_SERVICES, SECTOR_BASED);
-        formSubTypeMap.put(MANAGEMENT,SECTOR_BASED);
-        formSubTypeMap.put(RAILWAY, SECTOR_BASED);
-        formSubTypeMap.put(SSC_CENTRAL, SECTOR_BASED);
-        formSubTypeMap.put(LAW, SECTOR_BASED);
+        formSubTypeMap.put(TENTH.name(), QUALIFICATION_BASED);
+        formSubTypeMap.put(TWELFTH.name(), QUALIFICATION_BASED);
+        formSubTypeMap.put(DIPLOMA.name(), QUALIFICATION_BASED);
+        formSubTypeMap.put(GRADUATE.name(), QUALIFICATION_BASED);
+        formSubTypeMap.put(ABOVE_GRADUATE.name(), QUALIFICATION_BASED);
 
 
-        formSubTypeMap.put(A_GRADE, GRADE_BASED);
-        formSubTypeMap.put(B_GRADE, GRADE_BASED);
-        formSubTypeMap.put(C_GRADE, GRADE_BASED);
-        formSubTypeMap.put(D_GRADE, GRADE_BASED);
+        formSubTypeMap.put(BANKING.name(), SECTOR_BASED);
+        formSubTypeMap.put(PSU_JOB.name(), SECTOR_BASED);
+        formSubTypeMap.put(AGRICULTURE.name(), SECTOR_BASED);
+        formSubTypeMap.put(DEFENSE_SERVICE.name(), SECTOR_BASED);
+        formSubTypeMap.put(STATE_POLICE.name(), SECTOR_BASED);
+        formSubTypeMap.put(CIVIL_SERVICES.name(), SECTOR_BASED);
+        formSubTypeMap.put(MANAGEMENT.name(),SECTOR_BASED);
+        formSubTypeMap.put(RAILWAY.name(), SECTOR_BASED);
+        formSubTypeMap.put(SSC_CENTRAL.name(), SECTOR_BASED);
+        formSubTypeMap.put(LAW.name(), SECTOR_BASED);
 
-        formSubTypeMap.put(CENTRAL, PROVINCIAL_BASED);
+
+        formSubTypeMap.put(A_GRADE.name(), GRADE_BASED);
+        formSubTypeMap.put(B_GRADE.name(), GRADE_BASED);
+        formSubTypeMap.put(C_GRADE.name(), GRADE_BASED);
+        formSubTypeMap.put(D_GRADE.name(), GRADE_BASED);
+
+        //for central
+        formSubTypeMap.put(CENTRAL.name(), PROVINCIAL_BASED);
+
+        //for state
+        formSubTypeMap.put("AP",PROVINCIAL_BASED);
+        formSubTypeMap.put("ARP",PROVINCIAL_BASED);
+        formSubTypeMap.put("ASSAM",PROVINCIAL_BASED);
+        formSubTypeMap.put("BIHAR",PROVINCIAL_BASED);
+        formSubTypeMap.put("CHHATTISGARH",PROVINCIAL_BASED);
+        formSubTypeMap.put("GOA",PROVINCIAL_BASED);
+        formSubTypeMap.put("GUJARAT",PROVINCIAL_BASED);
+        formSubTypeMap.put("HARYANA",PROVINCIAL_BASED);
+        formSubTypeMap.put("HP",PROVINCIAL_BASED);
+        formSubTypeMap.put("J&K",PROVINCIAL_BASED);
+        formSubTypeMap.put("JHARKHAND",PROVINCIAL_BASED);
+        formSubTypeMap.put("KARNATAKA", PROVINCIAL_BASED);
+        formSubTypeMap.put("KERALA",PROVINCIAL_BASED);
+        formSubTypeMap.put("MP",PROVINCIAL_BASED);
+        formSubTypeMap.put("MAHARASHTRA",PROVINCIAL_BASED);
+        formSubTypeMap.put("MANIPUR",PROVINCIAL_BASED);
+        formSubTypeMap.put("MEGHALAYA",PROVINCIAL_BASED);
+        formSubTypeMap.put("MIZORAM",PROVINCIAL_BASED);
+        formSubTypeMap.put("NAGALAND",PROVINCIAL_BASED);
+        formSubTypeMap.put("ODISHA",PROVINCIAL_BASED);
+        formSubTypeMap.put("PUNJAB",PROVINCIAL_BASED);
+        formSubTypeMap.put("RAJASTHAN",PROVINCIAL_BASED);
+        formSubTypeMap.put("SIKKIM",PROVINCIAL_BASED);
+        formSubTypeMap.put("TN",PROVINCIAL_BASED);
+        formSubTypeMap.put("TELANGANA",PROVINCIAL_BASED);
+        formSubTypeMap.put("TRIPURA",PROVINCIAL_BASED);
+        formSubTypeMap.put("UP",PROVINCIAL_BASED);
+        formSubTypeMap.put("UTTARAKHAND",PROVINCIAL_BASED);
+        formSubTypeMap.put("WB",PROVINCIAL_BASED);
+
+
 
         log.info(formSubTypeMap.toString());
     }
@@ -107,9 +153,78 @@ public class FormUtil {
         relatedFormType.add(MANAGEMENT.name());
         relatedFormType.add(RAILWAY.name());
     }
+    public void initSecondPageTitle(){
+        secondPageTitleMap.put(ADMIT.name(), "All Admit card details");
+        secondPageTitleMap.put(RESULT.name(), "All Result Details");
 
-    public static FormTypeEnum getFormType(FormSubTypeEnum subType){
+        secondPageTitleMap.put(TENTH.name(), "10TH Level Forms");
+        secondPageTitleMap.put(TWELFTH.name(), "12TH Level Forms");
+        secondPageTitleMap.put(DIPLOMA.name(), "Diploma Level Forms");
+        secondPageTitleMap.put(GRADUATE.name(), "Graduate Level Forms");
+        secondPageTitleMap.put(ABOVE_GRADUATE.name(), "Above Graduate Level Forms");
+
+
+        secondPageTitleMap.put(BANKING.name(), "Banking Forms");
+        secondPageTitleMap.put(PSU_JOB.name(), "PSU Forms");
+        secondPageTitleMap.put(AGRICULTURE.name(), "Agriculture Forms");
+        secondPageTitleMap.put(DEFENSE_SERVICE.name(), "Defence Job Forms");
+        secondPageTitleMap.put(STATE_POLICE.name(), "State police Forms");
+        secondPageTitleMap.put(CIVIL_SERVICES.name(), "Civil services Forms");
+        secondPageTitleMap.put(MANAGEMENT.name(),"Management Forms");
+        secondPageTitleMap.put(RAILWAY.name(), "Railway Forms");
+        secondPageTitleMap.put(SSC_CENTRAL.name(), "SSC Forms");
+        secondPageTitleMap.put(LAW.name(), "Law Forms");
+
+
+        secondPageTitleMap.put(A_GRADE.name(), "Grade-A forms");
+        secondPageTitleMap.put(B_GRADE.name(), "Grade-B forms");
+        secondPageTitleMap.put(C_GRADE.name(), "Grade-C forms");
+        secondPageTitleMap.put(D_GRADE.name(), "Grade-D forms");
+
+//for central
+        secondPageTitleMap.put(CENTRAL.name(), "Central Govt. Forms");
+
+//for state
+        secondPageTitleMap.put("AP","Andhra Pradesh State Forms");
+        secondPageTitleMap.put("ARP","Arunachal Pradesh State Forms");
+        secondPageTitleMap.put("ASSAM","Assam State Forms");
+        secondPageTitleMap.put("BIHAR","Bihar State Forms");
+        secondPageTitleMap.put("CHHATTISGARH","Chhatisgarh State Forms");
+        secondPageTitleMap.put("GOA","Goa State Forms");
+        secondPageTitleMap.put("GUJARAT","Gujrat State Forms");
+        secondPageTitleMap.put("HARYANA","Haryana State Forms");
+        secondPageTitleMap.put("HP","Himachal Pradesh State Forms");
+        secondPageTitleMap.put("J&K","J&K  State Forms");
+        secondPageTitleMap.put("JHARKHAND","Jharkhand State Forms");
+        secondPageTitleMap.put("KARNATAKA", "Karnataka State Forms");
+        secondPageTitleMap.put("KERALA","Kerala State Forms");
+        secondPageTitleMap.put("MP","Madhya Pradesh State Forms");
+        secondPageTitleMap.put("MAHARASHTRA","Maharashtra State Forms");
+        secondPageTitleMap.put("MANIPUR","Manipur State Forms");
+        secondPageTitleMap.put("MEGHALAYA","Meghalaya State Forms");
+        secondPageTitleMap.put("MIZORAM","Mizoram State Forms");
+        secondPageTitleMap.put("NAGALAND","Nagaland State Forms");
+        secondPageTitleMap.put("ODISHA","Odisha State Forms");
+        secondPageTitleMap.put("PUNJAB","Punjab State Forms");
+        secondPageTitleMap.put("RAJASTHAN","Rajsthan State Forms");
+        secondPageTitleMap.put("SIKKIM","Sikkim State Forms");
+        secondPageTitleMap.put("TN","Tamil Nadu State Forms");
+        secondPageTitleMap.put("TELANGANA","Telangana State Forms");
+        secondPageTitleMap.put("TRIPURA","Tripura State Forms");
+        secondPageTitleMap.put("UP","Uttar Pradesh State Forms");
+        secondPageTitleMap.put("UTTARAKHAND","Uttarakhand State Forms");
+        secondPageTitleMap.put("WB","West Bengal State Forms");
+
+        secondPageTitleMap.put("LATEST_FORMS", "All Latest Forms");
+        secondPageTitleMap.put("OLDER_FORMS", "All Forms whose last date is close");
+    }
+
+    public static FormTypeEnum getFormType(String subType){
         return formSubTypeMap.get(subType);
+    }
+
+    public static String getSecondPageTitle(String subType){
+        return secondPageTitleMap.get(subType);
     }
 
     public static List<String> getRelatedFormType(){ return relatedFormType; }
@@ -209,6 +324,125 @@ public class FormUtil {
             relaxedYrs = getRelaxedYear(ageDetails, category);
         }
         return DateUtils.addYears(normalDob, -relaxedYrs);
+    }
+
+    public static String buildEmailHtml(String recipientName, String submitterName, String formName) {
+
+        String approveLink = "https://examsofbharat-admin.vercel.app/login";
+        String rejectLink = "https://examsofbharat-admin.vercel.app/login";
+
+        String htmlTemplate = "<!DOCTYPE html>\n" +
+                "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "    <title>Email Template</title>\n" +
+                "    <style>\n" +
+                "        body {\n" +
+                "            font-family: 'Arial', sans-serif;\n" +
+                "            line-height: 1.6;\n" +
+                "            background-color: #f2f2f2;\n" +
+                "            margin: 0;\n" +
+                "            padding: 0;\n" +
+                "        }\n" +
+                "        .container {\n" +
+                "            max-width: 600px;\n" +
+                "            margin: 20px auto;\n" +
+                "            padding: 20px;\n" +
+                "            background-color: #ffffff;\n" +
+                "            border: 1px solid #e0e0e0;\n" +
+                "            border-radius: 5px;\n" +
+                "            box-shadow: 0 0 10px rgba(0,0,0,0.1);\n" +
+                "        }\n" +
+                "        .header {\n" +
+                "            background-color: #007bff;\n" +
+                "            color: #ffffff;\n" +
+                "            text-align: center;\n" +
+                "            padding: 10px 0;\n" +
+                "            border-radius: 5px 5px 0 0;\n" +
+                "            margin-bottom: 20px;\n" +
+                "        }\n" +
+                "        .header h2 {\n" +
+                "            margin: 0;\n" +
+                "            font-size: 24px;\n" +
+                "        }\n" +
+                "        .content {\n" +
+                "            padding-bottom: 20px;\n" +
+                "        }\n" +
+                "        .button {\n" +
+                "            align-items: center;\n" +
+                "            appearance: none;\n" +
+                "            background-image: radial-gradient(100% 100% at 100% 0, #5adaff 0, #5468ff 100%);\n" +
+                "            border: 0;\n" +
+                "            border-radius: 6px;\n" +
+                "            box-shadow: rgba(45, 35, 66, .4) 0 2px 4px, rgba(45, 35, 66, .3) 0 7px 13px -3px, rgba(58, 65, 111, .5) 0 -3px 0 inset;\n" +
+                "            box-sizing: border-box;\n" +
+                "            color: #fff;\n" +
+                "            cursor: pointer;\n" +
+                "            display: flex;\n" +
+                "            font-family: \"JetBrains Mono\", monospace;\n" +
+                "            height: 48px;\n" +
+                "            justify-content: center;\n" +
+                "            line-height: 1;\n" +
+                "            list-style: none;\n" +
+                "            overflow: hidden;\n" +
+                "            padding-left: 16px;\n" +
+                "            padding-right: 16px;\n" +
+                "            position: relative;\n" +
+                "            text-align: left;\n" +
+                "            text-decoration: none;\n" +
+                "            transition: box-shadow .15s, transform .15s;\n" +
+                "            user-select: none;\n" +
+                "            -webkit-user-select: none;\n" +
+                "            touch-action: manipulation;\n" +
+                "            white-space: nowrap;\n" +
+                "            will-change: box-shadow, transform;\n" +
+                "            font-size: 18px;\n" +
+                "        }\n" +
+                "        .button:focus {\n" +
+                "            box-shadow: #3c4fe0 0 0 0 1.5px inset, rgba(45, 35, 66, .4) 0 2px 4px, rgba(45, 35, 66, .3) 0 7px 13px -3px, #3c4fe0 0 -3px 0 inset;\n" +
+                "        }\n" +
+                "        .button:hover {\n" +
+                "            box-shadow: rgba(45, 35, 66, .4) 0 4px 8px, rgba(45, 35, 66, .3) 0 7px 13px -3px, #3c4fe0 0 -3px 0 inset;\n" +
+                "            transform: translateY(-2px);\n" +
+                "        }\n" +
+                "        .button:active {\n" +
+                "            box-shadow: #3c4fe0 0 3px 7px inset;\n" +
+                "            transform: translateY(2px);\n" +
+                "        }\n" +
+                "        .footer {\n" +
+                "            text-align: center;\n" +
+                "            margin-top: 20px;\n" +
+                "            color: #777777;\n" +
+                "            font-size: 12px;\n" +
+                "        }\n" +
+                "        .buttons{\n" +
+                "            display: flex ;\n" +
+                "            justify-content: center;\n" +
+                "            column-gap: 10px;\n" +
+                "        }\n" +
+                "    </style>\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "    <div class=\"container\">\n" +
+                "        <div class=\"header\">\n" +
+                "            <h2>Email Title</h2>\n" +
+                "        </div>\n" +
+                "        <div class=\"content\">\n" +
+                "            <p>Hey " + recipientName + "</p>\n" +
+                "            <p>" + submitterName + " has submitted form <strong>" + formName + "</strong>. A PDF file has been attached for your review.</p>\n" +
+                "            <div class=\"buttons\">\n" +
+                "                <a href=\"" + approveLink + "\" class=\"button\">Click to Approve</a>\n" +
+                "                <a href=\"" + rejectLink + "\" class=\"button reject\">Click to Reject</a>\n" +
+                "            </div>\n" +
+                "        </div>\n" +
+                "        <div class=\"footer\">\n" +
+                "            <p>This email was sent via Your Company. Please do not reply to this email.</p>\n" +
+                "        </div>\n" +
+                "    </div>\n" +
+                "</body>\n" +
+                "</html>";
+
+        return htmlTemplate;
     }
 
 }

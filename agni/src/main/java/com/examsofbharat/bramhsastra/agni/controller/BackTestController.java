@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileNotFoundException;
+
 
 @Slf4j
 @RestController
@@ -77,7 +79,7 @@ public class BackTestController {
         return responseManagementService.buildAndUpdateClientHomePage();
     }
 
-    @PostMapping("/get/response")
+    @GetMapping("/get/response")
     public Response getLandingResponse(@RequestParam String responseType){
         log.info("Request reached for home page responseType :: {}", responseType);
         return responseManagementService.fetchHomeResponse(responseType);
@@ -88,19 +90,25 @@ public class BackTestController {
     @PostMapping("/save/form/detail")
     public Response saveFormDetail(@RequestBody EnrichedFormDetailsDTO formDetailsDTO){
         log.info("Save form detail request reached ::{}" ,formDetailsDTO.toString());
-        return formAdminService.saveForm(formDetailsDTO);
+        return formAdminService.processAndSaveAdminFormResponse(formDetailsDTO);
+    }
+
+    @PostMapping("/save/test/form/detail")
+    public Response saveTestFormDetail(@RequestBody EnrichedFormDetailsDTO formDetailsDTO) throws FileNotFoundException, IllegalAccessException {
+        log.info("Save form detail request reached ::{}" ,formDetailsDTO.toString());
+        return formAdminService.saveFormPDF(formDetailsDTO);
     }
 
     @PostMapping("/save/admit/card")
-    public Response saveAdmitCard(@RequestBody AdmitCardRequestDTO admitCardRequestDTO){
+    public Response saveAdmitCard(@RequestBody WrapperAdmitCardRequestDTO admitCardRequestDTO){
         log.info("Save admit card detail request reached ::{}" ,admitCardRequestDTO.toString());
-        return formAdminService.saveAdmitCard(admitCardRequestDTO);
+        return formAdminService.processAndSaveAdminAdmitResponse(admitCardRequestDTO);
     }
 
     @PostMapping("/save/result")
-    public Response saveAdmitCard(@RequestBody ResultRequestDTO resultRequestDTO){
-        log.info("Save result detail request reached ::{}" ,resultRequestDTO.toString());
-        return formAdminService.buildAndSaveResultData(resultRequestDTO);
+    public Response saveAdmitCard(@RequestBody WrapperResultRequestDTO wrapperResultRequestDTO){
+        log.info("Save result detail request reached ::{}" ,wrapperResultRequestDTO.toString());
+        return formAdminService.processAndSaveAdminResultResponse(wrapperResultRequestDTO);
     }
 
 
@@ -169,6 +177,20 @@ public class BackTestController {
         log.info("Request reached for update home count :: {}", totalVacancy);
         formAdminService.updateHomeCount(totalVacancy);
         return Response.ok().build();
+    }
+
+
+    //Admin response data fetch API
+    @GetMapping("/fetch/admin/submitted/detail")
+    public Response fetchAdminSubmission(@RequestParam String status){
+        log.info("Admin submission fetch call reached status::{}", status);
+        return formAdminService.fetchAdminResponseData(status);
+    }
+
+    @PostMapping("/update/approver/response")
+    public Response updateApproverResponse(@RequestBody ApproverRequestDTO approverRequestDTO){
+        log.info("Reached approver request {}",approverRequestDTO.toString());
+        return formAdminService.updateApproverResponse(approverRequestDTO);
     }
 
 }

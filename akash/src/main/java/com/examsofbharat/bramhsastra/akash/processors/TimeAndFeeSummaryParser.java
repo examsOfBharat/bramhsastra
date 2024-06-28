@@ -42,9 +42,11 @@ public class TimeAndFeeSummaryParser extends BaseContentParser {
 
         AgeRelaxationDTO ageRelaxationDTO =  mapper.convertValue(
                 enrichedFormDetailsDTO.getApplicationAgeDetailsDTO(), AgeRelaxationDTO.class);
+
+        int minAge = enrichedFormDetailsDTO.getApplicationFormDTO().getMinAge();
         ageRelaxationDTO.setTitle(AkashConstants.AGE_RELAXATION_TITLE);
         ageRelaxationDTO.setCardColor(FormUtil.fetchCardColor(0));
-        addYearSymbolInAge(ageRelaxationDTO);
+        addYearSymbolInAge(ageRelaxationDTO, minAge);
         ageRelaxationDTO.setInformation("Above age is based on relaxation");
 
         return ageRelaxationDTO;
@@ -89,13 +91,13 @@ public class TimeAndFeeSummaryParser extends BaseContentParser {
                 ? RUPEE_SYMBOL + appFeeDetailsDTO.getExArmy() : null);
     }
 
-    private void addYearSymbolInAge(AgeRelaxationDTO ageRelaxationDTO) {
-        ageRelaxationDTO.setScAge(ageRelaxationDTO.getScAge() != null ? ageRelaxationDTO.getScAge() + YEAR_SYMBOL : null);
-        ageRelaxationDTO.setStAge(ageRelaxationDTO.getStAge() != null ? ageRelaxationDTO.getStAge() + YEAR_SYMBOL : null);
-        ageRelaxationDTO.setFemaleAge(ageRelaxationDTO.getFemaleAge() != null ? ageRelaxationDTO.getFemaleAge() + YEAR_SYMBOL : null);
-        ageRelaxationDTO.setGeneralAge(ageRelaxationDTO.getGeneralAge() != null ? ageRelaxationDTO.getGeneralAge() + YEAR_SYMBOL : null);
-        ageRelaxationDTO.setObcAge(ageRelaxationDTO.getObcAge() != null ? ageRelaxationDTO.getObcAge() + YEAR_SYMBOL : null);
-        ageRelaxationDTO.setExArmy(ageRelaxationDTO.getExArmy() != null ? ageRelaxationDTO.getExArmy() + YEAR_SYMBOL : null);
+    private void addYearSymbolInAge(AgeRelaxationDTO ageRelaxationDTO, int minAge) {
+        ageRelaxationDTO.setScAge(ageRelaxationDTO.getScAge() != null ? minAge + Integer.parseInt(ageRelaxationDTO.getScAge()) + YEAR_SYMBOL : null);
+        ageRelaxationDTO.setStAge(ageRelaxationDTO.getStAge() != null ? minAge + Integer.parseInt(ageRelaxationDTO.getStAge()) + YEAR_SYMBOL : null);
+        ageRelaxationDTO.setFemaleAge(ageRelaxationDTO.getFemaleAge() != null ? minAge + Integer.parseInt(ageRelaxationDTO.getFemaleAge()) + YEAR_SYMBOL : null);
+        ageRelaxationDTO.setGeneralAge(ageRelaxationDTO.getGeneralAge() != null ? minAge + Integer.parseInt(ageRelaxationDTO.getGeneralAge()) + YEAR_SYMBOL : null);
+        ageRelaxationDTO.setObcAge(ageRelaxationDTO.getObcAge() != null ? minAge + Integer.parseInt(ageRelaxationDTO.getObcAge()) + YEAR_SYMBOL : null);
+        ageRelaxationDTO.setExArmy(ageRelaxationDTO.getExArmy() != null ? minAge + Integer.parseInt(ageRelaxationDTO.getExArmy()) + YEAR_SYMBOL : null);
     }
 
     public AgeAndFeeInformation buildInformation(EnrichedFormDetailsDTO enrichedFormDetailsDTO){

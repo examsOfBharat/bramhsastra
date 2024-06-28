@@ -186,8 +186,8 @@ public class ResponseManagementService {
             landingSubSectionDTO.setKey(OLDER_FORMS.name());
             landingSubSectionDTO.setTitle(applicationForm.getExamName());
             landingSubSectionDTO.setCardColor(FormUtil.fetchCardColor(i%4));
-            landingSubSectionDTO.setShowDate(DateUtils.getFormatedDate1(applicationForm.getStartDate()));
-            landingSubSectionDTO.setShowDateColor(FormUtil.getLastXDaysDateColor(applicationForm.getStartDate()));
+            landingSubSectionDTO.setShowDate(DateUtils.getFormatedDate1(applicationForm.getEndDate()));
+            landingSubSectionDTO.setShowDateColor(AkashConstants.RED_COLOR);
             landingSubSectionDTO.setTotalVacancy(applicationForm.getTotalVacancy());
             i++;
 
