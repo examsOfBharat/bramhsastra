@@ -7,6 +7,7 @@ import com.examsofbharat.bramhsastra.jal.constants.WebConstants;
 import com.examsofbharat.bramhsastra.jal.dto.*;
 import com.examsofbharat.bramhsastra.jal.dto.request.*;
 import com.examsofbharat.bramhsastra.jal.dto.response.AdminResponseDataDTO;
+import com.examsofbharat.bramhsastra.jal.enums.FormSubTypeEnum;
 import com.examsofbharat.bramhsastra.jal.enums.StatusEnum;
 import com.examsofbharat.bramhsastra.prithvi.entity.*;
 import com.examsofbharat.bramhsastra.prithvi.facade.DBMgmtFacade;
@@ -170,6 +171,9 @@ public class FormAdminService {
         ApplicationFormDTO applicationFormDTO = enrichedFormDetailsDTO.getApplicationFormDTO();
         applicationFormDTO.setId(examId);
         applicationFormDTO.setDateCreated(dateCreated);
+        if(applicationFormDTO.getProvince().equalsIgnoreCase(FormSubTypeEnum.CENTRAL.name())){
+            applicationFormDTO.setState(FormSubTypeEnum.CENTRAL.name());
+        }
         applicationFormDTO.setDateModified(dateCreated);
         dbMgmtFacade.saveApplicationForm(mapper.convertValue(applicationFormDTO, ApplicationForm.class));
 
@@ -331,6 +335,8 @@ public class FormAdminService {
 
         //update admitId in applicationForm
         updateAdmitIdInApplication(admitCardRequestDTO.getAppIdRef(), admitCardId);
+
+        responseManagementService.buildAndUpdateClientHomePage();
 
         return webUtils.buildSuccessResponse("SUCCESS");
     }

@@ -65,13 +65,15 @@ public class ApplicationDbUtil {
 
         List<SecondaryPageDataDTO> applicationsListDTO = new ArrayList<>();
         int color = 0;
+        int color2 = 0;
         for(ApplicationForm application : applicationsList) {
             //at the time of 0th page we will populate related form and keep in response-management
-            if(relatedForms != null && FormUtil.getRelatedFormType().contains(subType)){
+            if(relatedForms != null && FormUtil.getSectorFormTypeList().contains(subType)){
                 relatedForms.add(buildRelatedForm(application, color));
                 color++;
             }
-            applicationsListDTO.add(buildFormSecondaryPage(application, subType));
+            applicationsListDTO.add(buildFormSecondaryPage(application, subType, color2));
+            color2++;
         }
         return applicationsListDTO;
     }
@@ -88,7 +90,7 @@ public class ApplicationDbUtil {
                 relatedForms.add(buildRelatedAdmit(admitCard, color));
                 color++;
             }
-            admitCardDTOList.add(buildAdmitSecondaryPage(admitCard, subType));
+            admitCardDTOList.add(buildAdmitSecondaryPage(admitCard, subType, color));
         }
         return admitCardDTOList;
     }
@@ -111,7 +113,7 @@ public class ApplicationDbUtil {
     }
 
 
-    public SecondaryPageDataDTO buildAdmitSecondaryPage(AdmitCard admitCard, String subType){
+    public SecondaryPageDataDTO buildAdmitSecondaryPage(AdmitCard admitCard, String subType, int i){
         SecondaryPageDataDTO secondaryPageDataDTO = new SecondaryPageDataDTO();
 
         secondaryPageDataDTO.setId(admitCard.getId());
@@ -123,6 +125,7 @@ public class ApplicationDbUtil {
         secondaryPageDataDTO.setReleaseDate(DateUtils.getFormatedDate1(admitCard.getDateCreated()));
         secondaryPageDataDTO.setReleaseDateColor(FormUtil.getLastXDaysDateColor(admitCard.getDateCreated()));
         secondaryPageDataDTO.setSubType(subType);
+        secondaryPageDataDTO.setCardColor(FormUtil.fetchCardColor(i%4));
 
         return secondaryPageDataDTO;
     }
@@ -142,7 +145,7 @@ public class ApplicationDbUtil {
         return secondaryPageDataDTO;
     }
 
-    public SecondaryPageDataDTO buildFormSecondaryPage(ApplicationForm applicationForm, String subType){
+    public SecondaryPageDataDTO buildFormSecondaryPage(ApplicationForm applicationForm, String subType, int i){
 
         SecondaryPageDataDTO secondaryPageDataDTO = new SecondaryPageDataDTO();
 
@@ -150,12 +153,15 @@ public class ApplicationDbUtil {
         secondaryPageDataDTO.setPageType("form");
         secondaryPageDataDTO.setTitle(applicationForm.getExamName());
 
-        secondaryPageDataDTO.setReleaseDate(DateUtils.getFormatedDate1(applicationForm.getDateCreated()));
-        secondaryPageDataDTO.setReleaseDateColor(FormUtil.getLastXDaysDateColor(applicationForm.getDateCreated()));
+        secondaryPageDataDTO.setReleaseDate(DateUtils.getFormatedDate1(applicationForm.getStartDate()));
+        secondaryPageDataDTO.setReleaseDateColor(FormUtil.getLastXDaysDateColor(applicationForm.getStartDate()));
 
         secondaryPageDataDTO.setTotalVacancy(applicationForm.getTotalVacancy());
 
         secondaryPageDataDTO.setSubType(subType);
+        secondaryPageDataDTO.setCardColor(FormUtil.fetchCardColor(i%4));
+        secondaryPageDataDTO.setLastDate(DateUtils.getFormatedDate1(applicationForm.getEndDate()));
+        secondaryPageDataDTO.setLastDateColor(FormUtil.getExpiryDateColor(applicationForm.getEndDate()));
 
         return secondaryPageDataDTO;
     }

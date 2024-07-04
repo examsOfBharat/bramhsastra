@@ -2,7 +2,6 @@ package com.examsofbharat.bramhsastra.akash.utils;
 
 import com.examsofbharat.bramhsastra.akash.constants.AkashConstants;
 import com.examsofbharat.bramhsastra.jal.dto.response.EligibilityCheckResponseDTO;
-import com.examsofbharat.bramhsastra.jal.enums.FormSubTypeEnum;
 import com.examsofbharat.bramhsastra.jal.enums.FormTypeEnum;
 import com.examsofbharat.bramhsastra.jal.utils.StringUtil;
 import com.examsofbharat.bramhsastra.prithvi.entity.ApplicationAgeDetails;
@@ -24,7 +23,8 @@ import static com.examsofbharat.bramhsastra.jal.enums.FormTypeEnum.*;
 public class FormUtil {
 
     public final static Map<String, FormTypeEnum> formSubTypeMap = new HashMap<>();
-    public static final List<String> relatedFormType = new ArrayList<>();
+    public static final List<String> sectorFormTypeList = new ArrayList<>();
+    public static final List<String> gradeTypeList = new ArrayList<>();
     public static List<String> cardColor = new ArrayList<>();
     public static List<String> stateList = new ArrayList<>();
     public static Map<String, String> secondPageTitleMap =  new HashMap<>();
@@ -35,6 +35,7 @@ public class FormUtil {
         initVacancyColor();
         initRelatedFormType();
         initSecondPageTitle();
+        initGradeList();
     }
 
     public static String getLastXDaysDateColor(Date date){
@@ -141,18 +142,26 @@ public class FormUtil {
     }
 
     public void initRelatedFormType(){
-        relatedFormType.add(BANKING.name());
-        relatedFormType.add(LAW.name());
-        relatedFormType.add(SSC_CENTRAL.name());
-        relatedFormType.add(CIVIL_SERVICES.name());
-        relatedFormType.add(DEFENSE_SERVICE.name());
-        relatedFormType.add(STATE_POLICE.name());
-        relatedFormType.add(MANAGEMENT.name());
-        relatedFormType.add(PSU_JOB.name());
-        relatedFormType.add(AGRICULTURE.name());
-        relatedFormType.add(MANAGEMENT.name());
-        relatedFormType.add(RAILWAY.name());
+        sectorFormTypeList.add(BANKING.name());
+        sectorFormTypeList.add(LAW.name());
+        sectorFormTypeList.add(SSC_CENTRAL.name());
+        sectorFormTypeList.add(CIVIL_SERVICES.name());
+        sectorFormTypeList.add(DEFENSE_SERVICE.name());
+        sectorFormTypeList.add(STATE_POLICE.name());
+        sectorFormTypeList.add(MANAGEMENT.name());
+        sectorFormTypeList.add(PSU_JOB.name());
+        sectorFormTypeList.add(AGRICULTURE.name());
+        sectorFormTypeList.add(MANAGEMENT.name());
+        sectorFormTypeList.add(RAILWAY.name());
     }
+
+    public void initGradeList(){
+        gradeTypeList.add(A_GRADE.name());
+        gradeTypeList.add(B_GRADE.name());
+        gradeTypeList.add(C_GRADE.name());
+        gradeTypeList.add(D_GRADE.name());
+    }
+
     public void initSecondPageTitle(){
         secondPageTitleMap.put(ADMIT.name(), "All Admit card details");
         secondPageTitleMap.put(RESULT.name(), "All Result Details");
@@ -227,7 +236,7 @@ public class FormUtil {
         return secondPageTitleMap.get(subType);
     }
 
-    public static List<String> getRelatedFormType(){ return relatedFormType; }
+    public static List<String> getSectorFormTypeList(){ return sectorFormTypeList; }
 
     public static List<String> getPostedDetail(long daysCount){
         List<String> postDataList = new ArrayList<>();

@@ -26,5 +26,10 @@ public interface ApplicationFormRepository extends CrudRepository<ApplicationFor
 
     Page<ApplicationForm> findAll(Pageable pageable);
 
+    Page<ApplicationForm> findByEndDateAfter(Pageable pageable, Date endDate);
+
+    Page<ApplicationForm> findByEndDateBetween(Date startDate, Date endDate, Pageable pageable);
+
+
 
 }

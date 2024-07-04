@@ -17,7 +17,7 @@ public class LandingSubSectionDTO {
     private String showDateColor;
     private String examDate;
     private String examDateColor;
-    private double totalApplication;
+    private double totalApplication = -1.0;
     private String applicationColor;
     private double totalVacancy;
     private String vacancyColor;

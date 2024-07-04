@@ -7,10 +7,9 @@ import com.examsofbharat.bramhsastra.akash.utils.FormUtil;
 import com.examsofbharat.bramhsastra.jal.dto.*;
 import com.examsofbharat.bramhsastra.jal.dto.request.ComponentRequestDTO;
 import com.examsofbharat.bramhsastra.jal.dto.request.EnrichedFormDetailsDTO;
+import com.examsofbharat.bramhsastra.jal.utils.StringUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import static com.examsofbharat.bramhsastra.akash.constants.AkashConstants.*;
@@ -43,10 +42,10 @@ public class TimeAndFeeSummaryParser extends BaseContentParser {
         AgeRelaxationDTO ageRelaxationDTO =  mapper.convertValue(
                 enrichedFormDetailsDTO.getApplicationAgeDetailsDTO(), AgeRelaxationDTO.class);
 
-        int minAge = enrichedFormDetailsDTO.getApplicationFormDTO().getMinAge();
+        int maxAge = enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getMaxAge();
         ageRelaxationDTO.setTitle(AkashConstants.AGE_RELAXATION_TITLE);
         ageRelaxationDTO.setCardColor(FormUtil.fetchCardColor(0));
-        addYearSymbolInAge(ageRelaxationDTO, minAge);
+        addYearSymbolInAge(ageRelaxationDTO, maxAge);
         ageRelaxationDTO.setInformation("Above age is based on relaxation");
 
         return ageRelaxationDTO;
@@ -77,27 +76,27 @@ public class TimeAndFeeSummaryParser extends BaseContentParser {
     }
 
     private void addRupeeSymbolInFee(AppFeeDetailsDTO appFeeDetailsDTO) {
-        appFeeDetailsDTO.setSc(appFeeDetailsDTO.getSc() != null && feeChecker(appFeeDetailsDTO.getSc())
+        appFeeDetailsDTO.setSc(isValidValue(appFeeDetailsDTO.getSc())
                 ? RUPEE_SYMBOL + appFeeDetailsDTO.getSc() : null);
-        appFeeDetailsDTO.setSt(appFeeDetailsDTO.getSt() != null && feeChecker(appFeeDetailsDTO.getSt())
+        appFeeDetailsDTO.setSt(isValidValue(appFeeDetailsDTO.getSt())
                 ? RUPEE_SYMBOL + appFeeDetailsDTO.getSt() : null);
-        appFeeDetailsDTO.setFemale(appFeeDetailsDTO.getFemale() != null && feeChecker(appFeeDetailsDTO.getFemale())
+        appFeeDetailsDTO.setFemale(isValidValue(appFeeDetailsDTO.getFemale())
                 ? RUPEE_SYMBOL + appFeeDetailsDTO.getFemale() : null);
-        appFeeDetailsDTO.setGeneral(appFeeDetailsDTO.getGeneral() != null && feeChecker(appFeeDetailsDTO.getGeneral())
+        appFeeDetailsDTO.setGeneral(isValidValue(appFeeDetailsDTO.getGeneral())
                 ? RUPEE_SYMBOL + appFeeDetailsDTO.getGeneral() : null);
-        appFeeDetailsDTO.setObc(appFeeDetailsDTO.getObc() != null && feeChecker(appFeeDetailsDTO.getObc())
+        appFeeDetailsDTO.setObc(isValidValue(appFeeDetailsDTO.getObc())
                 ? RUPEE_SYMBOL + appFeeDetailsDTO.getObc() : null);
-        appFeeDetailsDTO.setExArmy(appFeeDetailsDTO.getExArmy() != null && feeChecker(appFeeDetailsDTO.getExArmy())
+        appFeeDetailsDTO.setExArmy(isValidValue(appFeeDetailsDTO.getExArmy())
                 ? RUPEE_SYMBOL + appFeeDetailsDTO.getExArmy() : null);
     }
 
-    private void addYearSymbolInAge(AgeRelaxationDTO ageRelaxationDTO, int minAge) {
-        ageRelaxationDTO.setScAge(ageRelaxationDTO.getScAge() != null ? minAge + Integer.parseInt(ageRelaxationDTO.getScAge()) + YEAR_SYMBOL : null);
-        ageRelaxationDTO.setStAge(ageRelaxationDTO.getStAge() != null ? minAge + Integer.parseInt(ageRelaxationDTO.getStAge()) + YEAR_SYMBOL : null);
-        ageRelaxationDTO.setFemaleAge(ageRelaxationDTO.getFemaleAge() != null ? minAge + Integer.parseInt(ageRelaxationDTO.getFemaleAge()) + YEAR_SYMBOL : null);
-        ageRelaxationDTO.setGeneralAge(ageRelaxationDTO.getGeneralAge() != null ? minAge + Integer.parseInt(ageRelaxationDTO.getGeneralAge()) + YEAR_SYMBOL : null);
-        ageRelaxationDTO.setObcAge(ageRelaxationDTO.getObcAge() != null ? minAge + Integer.parseInt(ageRelaxationDTO.getObcAge()) + YEAR_SYMBOL : null);
-        ageRelaxationDTO.setExArmy(ageRelaxationDTO.getExArmy() != null ? minAge + Integer.parseInt(ageRelaxationDTO.getExArmy()) + YEAR_SYMBOL : null);
+    private void addYearSymbolInAge(AgeRelaxationDTO ageRelaxationDTO, int maxAge) {
+        ageRelaxationDTO.setScAge(isValidValue(ageRelaxationDTO.getScAge()) ? maxAge + Integer.parseInt(ageRelaxationDTO.getScAge()) + YEAR_SYMBOL : null);
+        ageRelaxationDTO.setStAge(isValidValue(ageRelaxationDTO.getStAge()) ? maxAge + Integer.parseInt(ageRelaxationDTO.getStAge()) + YEAR_SYMBOL : null);
+        ageRelaxationDTO.setFemaleAge(isValidValue(ageRelaxationDTO.getFemaleAge()) ? maxAge + Integer.parseInt(ageRelaxationDTO.getFemaleAge()) + YEAR_SYMBOL : null);
+        ageRelaxationDTO.setGeneralAge(isValidValue(ageRelaxationDTO.getGeneralAge()) ? maxAge + Integer.parseInt(ageRelaxationDTO.getGeneralAge()) + YEAR_SYMBOL : null);
+        ageRelaxationDTO.setObcAge(isValidValue(ageRelaxationDTO.getObcAge()) ? maxAge + Integer.parseInt(ageRelaxationDTO.getObcAge()) + YEAR_SYMBOL : null);
+        ageRelaxationDTO.setExArmy(isValidValue(ageRelaxationDTO.getExArmy()) ? maxAge + Integer.parseInt(ageRelaxationDTO.getExArmy()) + YEAR_SYMBOL : null);
     }
 
     public AgeAndFeeInformation buildInformation(EnrichedFormDetailsDTO enrichedFormDetailsDTO){
@@ -109,8 +108,12 @@ public class TimeAndFeeSummaryParser extends BaseContentParser {
         return ageAndFeeInformation;
     }
 
-    public boolean feeChecker(String fee){
+    public boolean isValidValue(String fee){
+        if(StringUtil.isEmpty(fee))
+            return false;
         fee = fee.trim();
-        return !fee.equalsIgnoreCase("-1");
+        if(fee.equalsIgnoreCase("-1") || fee.equalsIgnoreCase("-1.0"))
+            return false;
+        return true;
     }
 }

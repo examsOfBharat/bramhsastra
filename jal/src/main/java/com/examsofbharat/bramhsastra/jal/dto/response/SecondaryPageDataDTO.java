@@ -14,6 +14,8 @@ public class SecondaryPageDataDTO {
     private String appIdRef;
     private String releaseDate;
     private String releaseDateColor;
+    private String lastDate;
+    private String lastDateColor;
     private String examDate;
     private String examDateColor;
     private double totalApplication;

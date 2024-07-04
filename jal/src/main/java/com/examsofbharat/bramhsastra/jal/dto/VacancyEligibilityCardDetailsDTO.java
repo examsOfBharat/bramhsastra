@@ -13,4 +13,7 @@ public class VacancyEligibilityCardDetailsDTO {
     int sortIndex;
     @JsonProperty("vacancy_eligibility_data_list")
     List<VacancyEligibilityDataDTO> vacancyEligibilityDataList;
+
+    @JsonProperty("extra_info")
+    VacancyEligibilityAdditionalInfo vacancyEligibilityAdditionalInfo;
 }

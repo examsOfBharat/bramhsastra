@@ -24,8 +24,8 @@ public enum FormSubTypeEnum {
     AGRICULTURE("Agricultural Job"),
     LAW("Job in Law"),
 
-    STATE("State Govt Job"),
-    CENTRAL("Central Govt Job"),
+    STATE("State Government Job"),
+    CENTRAL("Central Government Job"),
 
     ADMIT("Admit card"),
     RESULT("Result job");

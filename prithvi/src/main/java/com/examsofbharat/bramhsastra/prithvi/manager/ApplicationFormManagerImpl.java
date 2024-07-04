@@ -5,6 +5,7 @@ import com.examsofbharat.bramhsastra.prithvi.dao.ApplicationFormRepository;
 import com.examsofbharat.bramhsastra.prithvi.entity.AdmitCard;
 import com.examsofbharat.bramhsastra.prithvi.entity.ApplicationForm;
 import com.examsofbharat.bramhsastra.prithvi.sql.GenericManager;
+import com.examsofbharat.bramhsastra.prithvi.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -57,7 +59,7 @@ public class ApplicationFormManagerImpl extends GenericManager<ApplicationForm, 
     public List<ApplicationForm> getLatestForm(int page, int size) {
         // find latest application form present in data
         // sorted by creation date
-        String dateType = "dateCreated";
+        String dateType = "startDate";
         Pageable pageable = PageRequest.of(page, size, Sort.by(dateType).descending());
         Page<ApplicationForm> pageResult = applicationFormRepository.findAll(pageable);
         return pageResult.getContent();
@@ -67,8 +69,10 @@ public class ApplicationFormManagerImpl extends GenericManager<ApplicationForm, 
         // find latest application form present in data
         // sorted by creation date
         String dateType = "endDate";
-        Pageable pageable = PageRequest.of(page, size, Sort.by(dateType).ascending());
-        Page<ApplicationForm> pageResult = applicationFormRepository.findAll(pageable);
+        Date startDate = DateUtils.getEndOfDay(new Date());
+        Date dateCriteria = DateUtils.addDays(new Date(), -5);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(dateType).descending());
+        Page<ApplicationForm> pageResult = applicationFormRepository.findByEndDateBetween(dateCriteria, startDate, pageable);
         return pageResult.getContent();
     }
 }
