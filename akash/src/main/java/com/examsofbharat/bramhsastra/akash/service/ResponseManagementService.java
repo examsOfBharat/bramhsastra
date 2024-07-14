@@ -25,8 +25,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.examsofbharat.bramhsastra.jal.enums.FormTypeEnum.LATEST_FORMS;
-import static com.examsofbharat.bramhsastra.jal.enums.FormTypeEnum.OLDER_FORMS;
+import static com.examsofbharat.bramhsastra.jal.enums.FormTypeEnum.*;
 
 @Service
 @Slf4j
@@ -40,6 +39,7 @@ public class ResponseManagementService {
 
     @Autowired
     ApplicationDbUtil applicationDbUtil;
+
     @Autowired
     private EobInitilizer eobInitilizer;
 
@@ -57,7 +57,6 @@ public class ResponseManagementService {
         formLandingPageDTO.setSubPrimeSectionDTO(subPrimeSectionDTO);
         formLandingPageDTO.setPrimeSectionDTO(primeSectionDTO);
 
-        List<LandingSectionDTO> landingSectionDTOS = new ArrayList<>();
         //TODO shortIndex should be configurable (please try to configure from db)
         
         int sortIndex = 1;
@@ -66,14 +65,9 @@ public class ResponseManagementService {
                     .filter(examMetaData -> examMetaData.getExamCategory().equalsIgnoreCase(formType.name()))
                     .collect(Collectors.toList());
 
-            landingSectionDTOS.add(buildAndParse(examList, formType, sortIndex, formLandingPageDTO));
+           buildAndParse(examList, formType, sortIndex, formLandingPageDTO);
             sortIndex++;
         }
-
-        if(CollectionUtils.isEmpty(landingSectionDTOS)){
-            return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.USER_NOT_FOUND);
-        }
-
 //        formLandingPageDTO.setLandingSectionDTOS(landingSectionDTOS);
 
         //update home page title and subtitle
@@ -126,7 +120,7 @@ public class ResponseManagementService {
         return Response.ok(response).build();
     }
 
-    public LandingSectionDTO buildAndParse(List<ExamMetaData> examMetaDataList,
+    public void buildAndParse(List<ExamMetaData> examMetaDataList,
                                            FormTypeEnum formTypeEnum,
                                            int sortIndex,
                                            FormLandingPageDTO formLandingPageDTO) {
@@ -138,67 +132,104 @@ public class ResponseManagementService {
 
         LandingSectionDTO landingSectionDTO = buildSections(sortIndex, formTypeEnum, viewAll);
 
-        if (formTypeEnum.equals(FormTypeEnum.LATEST_FORMS)) {
-            buildAllLatestForms(landingSectionDTO);
-            formLandingPageDTO.getSuperPrimeSectionDTO().getLandingSectionDTOS().add(landingSectionDTO);
-            return landingSectionDTO;
-        } else if (formTypeEnum.equals(OLDER_FORMS)) {
-            buildAllOlderForms(landingSectionDTO);
-            formLandingPageDTO.getSuperPrimeSectionDTO().getLandingSectionDTOS().add(landingSectionDTO);
-            return landingSectionDTO;
-        }else if (formTypeEnum.equals(FormTypeEnum.ADMIT)) {
-            buildAdmitSubSections(landingSectionDTO);
-            HomeAdmitCardSection homeAdmitCardSection = new HomeAdmitCardSection();
-            homeAdmitCardSection.getLandingSectionDTOS().add(landingSectionDTO);
-            formLandingPageDTO.getSubPrimeSectionDTO().setHomeAdmitCardSection(homeAdmitCardSection);
-            return landingSectionDTO;
-        } else if (formTypeEnum.equals(FormTypeEnum.RESULT)) {
-            buildResultSubSection(landingSectionDTO);
-            HomeResultDetailsDTO homeResultDetailsDTO = new HomeResultDetailsDTO();
-            homeResultDetailsDTO.getLandingSectionDTOS().add(landingSectionDTO);
-            formLandingPageDTO.getSubPrimeSectionDTO().setHomeResultDetailsDTO(homeResultDetailsDTO);
-            return landingSectionDTO;
+        switch (formTypeEnum){
+            case OLDER_FORMS -> buildHomeOlderData(landingSectionDTO, formLandingPageDTO);
+            case LATEST_FORMS -> buildHomeLatestData(landingSectionDTO, formLandingPageDTO);
+            case ADMIT -> buildHomeAdmitDetails(landingSectionDTO, formLandingPageDTO);
+            case RESULT -> buildHomeResultDetails(landingSectionDTO, formLandingPageDTO);
+            case ANS_KEY -> buildHomeAnsKeyDetails(formLandingPageDTO);
+            case GRADE_BASED -> buildHomeGradeSection(formLandingPageDTO, landingSectionDTO, examMetaDataList);
+            case PROVINCIAL_BASED -> buildHomeProvince(formLandingPageDTO, landingSectionDTO, examMetaDataList);
+            default ->  buildOtherFormDetails(formLandingPageDTO,landingSectionDTO, examMetaDataList);
         }
+    }
 
+
+    private void buildSubSection(List<ExamMetaData> examMetaDataList, LandingSectionDTO landingSectionDTO) {
         List<LandingSubSectionDTO> landingSubSectionDTOList = new ArrayList<>();
         int i = 0;
         for (ExamMetaData examMetaData : examMetaDataList) {
-                buildFormSubSections(landingSubSectionDTOList, examMetaData, i);
-                i++;
+            buildFormSubSections(landingSubSectionDTOList, examMetaData, i);
+            i++;
         }
         landingSectionDTO.setSubSections(landingSubSectionDTOList);
-        if(formTypeEnum.equals(FormTypeEnum.GRADE_BASED)){
-            buildHomeGradeSection(formLandingPageDTO, landingSectionDTO);
-            return landingSectionDTO;
-        }
+    }
 
-        if(formTypeEnum.equals(FormTypeEnum.PROVINCIAL_BASED)){
-            buildHomeProvince(formLandingPageDTO, landingSectionDTO);
-            return landingSectionDTO;
-        }
+    private void buildHomeAdmitDetails(LandingSectionDTO landingSectionDTO,
+                                                    FormLandingPageDTO formLandingPageDTO){
+        buildAdmitSubSections(landingSectionDTO);
+        HomeAdmitCardSection homeAdmitCardSection = new HomeAdmitCardSection();
+        homeAdmitCardSection.setLastUpdate(DateUtils.getFormatedDate1(new Date()));
+        homeAdmitCardSection.setUpdateDateColor(FormUtil.getLastXDaysDateColor(new Date()));
+        homeAdmitCardSection.setLastAdmitReleaseCount("4");
+        homeAdmitCardSection.setCardColor(FormUtil.fetchSecCardColor(0));
+        homeAdmitCardSection.setLastReleaseCountTitle("Admit card released in last 2 days : ");
+        homeAdmitCardSection.setTitle(FormTypeEnum.ADMIT.getVal());
+        homeAdmitCardSection.setType("ADMIT");
+        homeAdmitCardSection.getLandingSectionDTOS().add(landingSectionDTO);
+        formLandingPageDTO.getSubPrimeSectionDTO().setHomeAdmitCardSection(homeAdmitCardSection);
+    }
 
-        formLandingPageDTO.getPrimeSectionDTO().getLandingSectionDTOS().add(landingSectionDTO);
-        return landingSectionDTO;
+    private void buildHomeResultDetails(LandingSectionDTO landingSectionDTO,
+                                                     FormLandingPageDTO formLandingPageDTO){
+        buildResultSubSection(landingSectionDTO);
+        HomeResultDetailsDTO homeResultDetailsDTO = new HomeResultDetailsDTO();
+        homeResultDetailsDTO.setLastUpdate(DateUtils.getFormatedDate1(new Date()));
+        homeResultDetailsDTO.setLastResultReleaseCount("4");
+        homeResultDetailsDTO.setUpdateDateColor(FormUtil.getLastXDaysDateColor(new Date()));
+        homeResultDetailsDTO.setCardColor(FormUtil.fetchSecCardColor(2));
+        homeResultDetailsDTO.setLastReleaseCountTitle("Result released in last 2 days : ");
+        homeResultDetailsDTO.setTitle(FormTypeEnum.RESULT.getVal());
+        homeResultDetailsDTO.setType("RESULT");
+        homeResultDetailsDTO.getLandingSectionDTOS().add(landingSectionDTO);
+        formLandingPageDTO.getSubPrimeSectionDTO().setHomeResultDetailsDTO(homeResultDetailsDTO);
+    }
+
+    private void buildHomeLatestData(LandingSectionDTO landingSectionDTO,
+                                                  FormLandingPageDTO formLandingPageDTO){
+        buildAllLatestForms(landingSectionDTO);
+        formLandingPageDTO.getSuperPrimeSectionDTO().getLandingSectionDTOS().add(landingSectionDTO);
+    }
+
+    private void buildHomeOlderData(LandingSectionDTO landingSectionDTO,
+                                                 FormLandingPageDTO formLandingPageDTO){
+        buildAllOlderForms(landingSectionDTO);
+        formLandingPageDTO.getSuperPrimeSectionDTO().getLandingSectionDTOS().add(landingSectionDTO);
     }
 
     private void buildHomeProvince(FormLandingPageDTO formLandingPageDTO,
-                                 LandingSectionDTO landingSectionDTO){
+                                 LandingSectionDTO landingSectionDTO,
+                                   List<ExamMetaData> examMetaDataList){
+
+        buildSubSection(examMetaDataList, landingSectionDTO);
         HomeProvinceSectionDTO homeProvinceSectionDTO = new HomeProvinceSectionDTO();
 
         homeProvinceSectionDTO.getLandingSectionDTOS().add(landingSectionDTO);
-        homeProvinceSectionDTO.setSubtitle("Hey! Now you can check form based on different province");
+        homeProvinceSectionDTO.setSubtitle("Hey! Now you can check form based on different region(Stage/central)");
 
         formLandingPageDTO.setHomeProvinceSectionDTO(homeProvinceSectionDTO);
     }
 
+    private void buildOtherFormDetails(FormLandingPageDTO formLandingPageDTO,
+                                       LandingSectionDTO landingSectionDTO,
+                                       List<ExamMetaData> examMetaDataList){
+
+        buildSubSection(examMetaDataList, landingSectionDTO);
+        formLandingPageDTO.getPrimeSectionDTO().getLandingSectionDTOS().add(landingSectionDTO);
+
+    }
+
     private void buildHomeGradeSection(FormLandingPageDTO formLandingPageDTO,
-                                       LandingSectionDTO landingSectionDTO){
+                                       LandingSectionDTO landingSectionDTO,
+                                       List<ExamMetaData> examMetaDataList){
+
+        buildSubSection(examMetaDataList, landingSectionDTO);
 
         HomeGradeSectionDTO homeGradeSectionDTO = new HomeGradeSectionDTO();
 
         homeGradeSectionDTO.getLandingSectionDTOS().add(landingSectionDTO);
         homeGradeSectionDTO.setSubtitle("Hey! Good News, now check your forms by JOB GRADE");
-        homeGradeSectionDTO.setImgUrl("https://res.cloudinary.com/djfi8sqip/image/upload/v1720000518/grade_bg_12_iyx5hw.jpg");
+        homeGradeSectionDTO.setImgUrl(EobInitilizer.getHomeBgUrl());
 
         formLandingPageDTO.setHomeGradeSectionDTO(homeGradeSectionDTO);
     }
@@ -293,6 +324,22 @@ public class ResponseManagementService {
             i++;
         }
         landingSectionDTO.setSubSections(landingSubSectionDTOS);
+    }
+
+    private void buildHomeAnsKeyDetails(FormLandingPageDTO formLandingPageDTO){
+        HomeAnsKeySectionDTO homeAnsKeySectionDTO = new HomeAnsKeySectionDTO();
+        homeAnsKeySectionDTO.setTitle(FormTypeEnum.ANS_KEY.getVal());
+        homeAnsKeySectionDTO.setAnsKeyType(ANS_KEY.name());
+        homeAnsKeySectionDTO.setSubTitle("Click view all to check all answer key");
+
+        List<String> ansNameList = new ArrayList<>();
+
+        List<ApplicationForm> latestAnsKey = dbMgmtFacade.getFormWithAnsKey(0,5);
+
+        latestAnsKey.forEach(applicationForm -> ansNameList.add(applicationForm.getExamName()));
+        homeAnsKeySectionDTO.setResultNameList(ansNameList);
+
+        formLandingPageDTO.setHomeAnsKeySectionDTO(homeAnsKeySectionDTO);
     }
 
     //build tox x result list to send to home page

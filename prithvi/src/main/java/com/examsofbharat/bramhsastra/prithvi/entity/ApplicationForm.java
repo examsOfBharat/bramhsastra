@@ -66,4 +66,10 @@ public class ApplicationForm {
 
     @Column(name = "date_modified")
     private Date dateModified;
+
+    @Column(name = "answer_key_url")
+    private String answerKeyUrl;
+
+    @Column(name = "answer_date")
+    private Date answerDate;
 }

@@ -24,6 +24,8 @@ public class ApplicationFormDTO {
     String gender;
     String admitId;
     String resultId;
+    String answerKeyUrl;
+    String answerDate;
     Date dateCreated;
     Date dateModified;
 }

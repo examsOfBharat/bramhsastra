@@ -24,4 +24,5 @@ public class SecondaryPageDataDTO {
     private String vacancyColor;
     private String extraField;
     private String pageType;
+    private String status;
 }

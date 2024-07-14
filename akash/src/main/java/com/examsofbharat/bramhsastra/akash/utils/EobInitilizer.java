@@ -33,8 +33,10 @@ public class EobInitilizer {
     private static String homeEngTitle;
     private static String homeHindiTitle;
     private static String homeSubtitle;
+    private static String homeBgImageUrl;
     private List<String> approverIdList = new ArrayList<>();
     public static Map<String, String> logoMap = new HashMap<>();
+    public static List<String> homePageComponent = new ArrayList<>();
 
     @PostConstruct
     public void init() {
@@ -83,7 +85,16 @@ public class EobInitilizer {
         homeSubtitle = Optional.ofNullable(dbMgmtFacade.getSystemProperty(SystemPropertyProperties.HOME_PAGE_SUBTITLE))
                 .map(SystemProperty::getValue).orElse(SystemPropertyProperties.DEFAULT_ADMIN_MAIL);
 
+        homeBgImageUrl = Optional.ofNullable(dbMgmtFacade.getSystemProperty(SystemPropertyProperties.HOME_PAGE_BG1_URL))
+                .map(SystemProperty::getValue).orElse(SystemPropertyProperties.DEFAULT_IMG_URL);
+
         approverIdList = Optional.ofNullable(dbMgmtFacade.getSystemProperty(SystemPropertyProperties.ADMIN_APPROVER_ID))
+                .map(SystemProperty::getValue)
+                .map(ids -> ids.split(AkashConstants.COMMA_DELIMETER))
+                .map(Arrays::asList)
+                .orElse(new ArrayList<>());
+
+        homePageComponent = Optional.ofNullable(dbMgmtFacade.getSystemProperty(SystemPropertyProperties.HOME_PAGE_COMPONENT))
                 .map(SystemProperty::getValue)
                 .map(ids -> ids.split(AkashConstants.COMMA_DELIMETER))
                 .map(Arrays::asList)
@@ -121,5 +132,14 @@ public class EobInitilizer {
         }
         return null;
     }
+
+    public static List<String> getHomeComponent(){
+        return homePageComponent;
+    }
+
+    public static String getHomeBgUrl(){
+        return homeBgImageUrl;
+    }
+
 
 }

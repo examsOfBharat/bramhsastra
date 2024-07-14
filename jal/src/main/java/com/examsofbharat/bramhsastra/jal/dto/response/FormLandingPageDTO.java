@@ -31,7 +31,8 @@ public class FormLandingPageDTO {
     @JsonProperty("province_section")
     HomeProvinceSectionDTO homeProvinceSectionDTO;
 
-
+    @JsonProperty("ans_key_section")
+    HomeAnsKeySectionDTO homeAnsKeySectionDTO;
 
 
 }

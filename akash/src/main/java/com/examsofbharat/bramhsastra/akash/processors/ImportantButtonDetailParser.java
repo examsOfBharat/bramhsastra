@@ -48,6 +48,12 @@ public class ImportantButtonDetailParser extends BaseContentParser {
                             getNotification()
             );
 
+            importantButtonDetailsDTO.setSyllabusUrl(
+                    componentRequestDTO.getEnrichedFormDetailsDTO().getApplicationUrlsDTO().getSyllabus());
+
+            importantButtonDetailsDTO.setAnsKeyUrl(
+                    componentRequestDTO.getEnrichedFormDetailsDTO().getApplicationUrlsDTO().getAnsKey());
+
             formViewResponseDTO.setImportantButtonDetailsDTO(importantButtonDetailsDTO);
 
         }catch (Exception e){

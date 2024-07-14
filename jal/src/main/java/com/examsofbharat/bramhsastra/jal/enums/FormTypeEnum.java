@@ -10,7 +10,8 @@ public enum FormTypeEnum {
     FEMALE("Family"),
     PROVINCIAL_BASED("FORMS BASED ON PROVINCIAL/REGION"),
     ADMIT("ALL RECENT ADMIT CARD"),
-    RESULT("ALL RECENT RESULT");
+    RESULT("ALL RECENT RESULT"),
+    ANS_KEY("RECENT ANSWER KEY");
 
     private String val;
 

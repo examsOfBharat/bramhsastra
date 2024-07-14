@@ -38,6 +38,10 @@ public class TimeAndFeeSummaryParser extends BaseContentParser {
     }
 
     private AgeRelaxationDTO buildAgeRelaxation(EnrichedFormDetailsDTO enrichedFormDetailsDTO){
+        //if max-age is not available then remove the whole card (this cases can be seen in case of mains exams)
+        if(enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getMaxAge() <=0){
+            return null;
+        }
 
         AgeRelaxationDTO ageRelaxationDTO =  mapper.convertValue(
                 enrichedFormDetailsDTO.getApplicationAgeDetailsDTO(), AgeRelaxationDTO.class);

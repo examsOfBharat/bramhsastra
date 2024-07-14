@@ -53,28 +53,4 @@ public class SecondaryPageService {
         return Response.ok(response).build();
     }
 
-    // Fetch initial 2nd page data.
-    // Retry if initial page is not available in response data.
-    // Data not found on re-try, return not found
-//    public Response fetchSecondPageData(String requestType){
-//        if(StringUtil.isEmpty(requestType)){
-//            return webUtils.invalidRequest();
-//        }
-//
-//        try {
-//            ResponseManagement responseManagement = dbMgmtFacade.getResponseData(requestType);
-//            String response = null;
-//            if (Objects.nonNull(responseManagement)) {
-//                response = applicationDbUtil.fetchResponseBasedOnSubType(FormSubTypeEnum.valueOf(requestType), 0,10);
-//            }
-//
-//            if (StringUtil.isEmpty(response)) {
-//                return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.DATA_NOT_FOUND);
-//            }
-//            return Response.ok(response).build();
-//        }catch (Exception e){
-//            log.error("Exception occurred while fetching 2nd page requestType::{}",requestType, e);
-//        }
-//        return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.DATA_NOT_FOUND);
-//    }
 }

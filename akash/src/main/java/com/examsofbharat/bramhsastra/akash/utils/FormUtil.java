@@ -2,6 +2,7 @@ package com.examsofbharat.bramhsastra.akash.utils;
 
 import com.examsofbharat.bramhsastra.akash.constants.AkashConstants;
 import com.examsofbharat.bramhsastra.jal.dto.response.EligibilityCheckResponseDTO;
+import com.examsofbharat.bramhsastra.jal.enums.FormSubTypeEnum;
 import com.examsofbharat.bramhsastra.jal.enums.FormTypeEnum;
 import com.examsofbharat.bramhsastra.jal.utils.StringUtil;
 import com.examsofbharat.bramhsastra.prithvi.entity.ApplicationAgeDetails;
@@ -17,6 +18,7 @@ import static com.examsofbharat.bramhsastra.jal.enums.FormSubTypeEnum.*;
 import static com.examsofbharat.bramhsastra.jal.enums.FormSubTypeEnum.ADMIT;
 import static com.examsofbharat.bramhsastra.jal.enums.FormSubTypeEnum.RESULT;
 import static com.examsofbharat.bramhsastra.jal.enums.FormTypeEnum.*;
+import static com.examsofbharat.bramhsastra.jal.enums.FormTypeEnum.ANS_KEY;
 
 @Slf4j
 @Component
@@ -26,16 +28,28 @@ public class FormUtil {
     public static final List<String> sectorFormTypeList = new ArrayList<>();
     public static final List<String> gradeTypeList = new ArrayList<>();
     public static List<String> cardColor = new ArrayList<>();
+    public static List<String> cardSecColor = new ArrayList<>();
     public static List<String> stateList = new ArrayList<>();
     public static Map<String, String> secondPageTitleMap =  new HashMap<>();
+    public static Map<String, String> qualificationName = new HashMap<>();
 
     @PostConstruct
     public void init() {
         initFormTypeMap();
         initVacancyColor();
+        initSecColor();
         initRelatedFormType();
         initSecondPageTitle();
         initGradeList();
+        initQualificationName();
+    }
+
+    public void initQualificationName(){
+        qualificationName.put(TENTH.name(), "10TH");
+        qualificationName.put(TWELFTH.name(), "12TH");
+        qualificationName.put(GRADUATE.name(), "Graduate");
+        qualificationName.put(DIPLOMA.name(), "Diploma");
+        qualificationName.put(ABOVE_GRADUATE.name(), "PG or above Graduate");
     }
 
     public static String getLastXDaysDateColor(Date date){
@@ -70,6 +84,7 @@ public class FormUtil {
     public void initFormTypeMap(){
         formSubTypeMap.put(ADMIT.name(), FormTypeEnum.ADMIT);
         formSubTypeMap.put(RESULT.name(), FormTypeEnum.RESULT);
+        formSubTypeMap.put(FormSubTypeEnum.ANS_KEY.name(), ANS_KEY);
 
         formSubTypeMap.put(TENTH.name(), QUALIFICATION_BASED);
         formSubTypeMap.put(TWELFTH.name(), QUALIFICATION_BASED);
@@ -88,6 +103,7 @@ public class FormUtil {
         formSubTypeMap.put(RAILWAY.name(), SECTOR_BASED);
         formSubTypeMap.put(SSC_CENTRAL.name(), SECTOR_BASED);
         formSubTypeMap.put(LAW.name(), SECTOR_BASED);
+        formSubTypeMap.put(PCS.name(), SECTOR_BASED);
 
 
         formSubTypeMap.put(A_GRADE.name(), GRADE_BASED);
@@ -129,16 +145,21 @@ public class FormUtil {
         formSubTypeMap.put("UTTARAKHAND",PROVINCIAL_BASED);
         formSubTypeMap.put("WB",PROVINCIAL_BASED);
 
-
-
         log.info(formSubTypeMap.toString());
     }
 
     public void initVacancyColor(){
         cardColor.add("#fef9ec");
-        cardColor.add("#e8f1fb");
-        cardColor.add("#f4f2f7");
-        cardColor.add("#e6f4ec");
+        cardColor.add("#e9f1fb");
+        cardColor.add("#f5f2f8");
+        cardColor.add("#e7f4ed");
+    }
+
+    public void initSecColor(){
+        cardSecColor.add("#BBDFCD");
+        cardSecColor.add("#FEE9B5");
+        cardSecColor.add("#D5E3F8");
+        cardSecColor.add("#E8E1EE");
     }
 
     public void initRelatedFormType(){
@@ -226,6 +247,7 @@ public class FormUtil {
 
         secondPageTitleMap.put("LATEST_FORMS", "All Latest Forms");
         secondPageTitleMap.put("OLDER_FORMS", "All Forms whose last date is close");
+        secondPageTitleMap.put("ANS_KEY", "All Answer Keys");
     }
 
     public static FormTypeEnum getFormType(String subType){
@@ -270,6 +292,8 @@ public class FormUtil {
     public static  String fetchCardColor(int val){
         return cardColor.get(val);
     }
+
+    public static String fetchSecCardColor(int val){return cardSecColor.get(val);}
 
     public static EligibilityCheckResponseDTO eligibilitySorryResponse(){
         EligibilityCheckResponseDTO eligibilityCheckResponseDTO = new EligibilityCheckResponseDTO();

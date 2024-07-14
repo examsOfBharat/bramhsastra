@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UrlsDetailsDTO {
-    String applyUrl;
-    String registerUrl;
-    String others;
+    private String applyUrl;
+    private String registerUrl;
+    private String others;
 }

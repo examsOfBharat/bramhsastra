@@ -16,10 +16,9 @@ public class ApplicationUrlsDTO {
     String notification;
     String apply;
     String register;
-    String admitCard;
-    String result;
+    String syllabus;
+    String ansKey;
     String others;
     Date dateCreated;
     Date dateModified;
-
 }

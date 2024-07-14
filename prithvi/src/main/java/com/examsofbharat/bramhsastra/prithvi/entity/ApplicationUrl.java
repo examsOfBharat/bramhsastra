@@ -36,11 +36,11 @@ public class ApplicationUrl {
     @Column(name = "register")
     private String register;
 
-    @Column(name = "admit_card")
-    private String admitCard;
+    @Column(name = "syllabus")
+    private String syllabus;
 
-    @Column(name = "result")
-    private String result;
+    @Column(name = "ans_key")
+    private String ansKey;
 
     @Column(name = "others")
     private String others;

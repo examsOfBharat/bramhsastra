@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Component
@@ -23,8 +24,20 @@ public class ApplicationIntroParser extends BaseContentParser {
 
             ApplicationFormIntroDTO applicationFormIntroDTO = new ApplicationFormIntroDTO();
             applicationFormIntroDTO.setAppId(enrichedFormDetailsDTO.getApplicationFormDTO().getId());
-            applicationFormIntroDTO.setAgeRange(enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getMinAge()+
-             "-" + enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getMaxAge() + " years");
+
+            if (enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getMinAge() > 0 &&
+                    enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getMaxAge() > 0) {
+                applicationFormIntroDTO.setAgeRange(enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getMinAge() +
+                        "-" + enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getMaxAge() + " years");
+            }
+
+            if(Objects.isNull(enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getMaxNormalDob()) &&
+                    Objects.isNull(enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getMinNormalDob())){
+                applicationFormIntroDTO.setCheckEligibility(false);
+            }else{
+                applicationFormIntroDTO.setCheckEligibility(true);
+            }
+
             applicationFormIntroDTO.setLastDate(DateUtils.getFormatedDate1(
                     enrichedFormDetailsDTO.getApplicationFormDTO().getEndDate()));
             applicationFormIntroDTO.setLastDateColor(FormUtil.getExpiryDateColor(
@@ -33,7 +46,7 @@ public class ApplicationIntroParser extends BaseContentParser {
                     getApplicationFormDTO().getExamName());
 
             applicationFormIntroDTO.setType(enrichedFormDetailsDTO.getApplicationFormDTO().getState());
-            applicationFormIntroDTO.setMinQualification(enrichedFormDetailsDTO.getApplicationFormDTO().getMinQualification());
+            applicationFormIntroDTO.setMinQualification(FormUtil.qualificationName.get(enrichedFormDetailsDTO.getApplicationFormDTO().getMinQualification()));
             applicationFormIntroDTO.setLogoUrl(FormUtil.getLogoByName(componentRequestDTO.getEnrichedFormDetailsDTO().
                     getApplicationFormDTO().getExamName()));
             applicationFormIntroDTO.setReleaseDate(DateUtils.getFormatedDate1(
@@ -45,7 +58,11 @@ public class ApplicationIntroParser extends BaseContentParser {
             applicationFormIntroDTO.setPostedOn(postedList.get(0));
             applicationFormIntroDTO.setPostedOnColor(postedList.get(1));
 
-            applicationFormIntroDTO.setSubtitle("Government of Bharat");
+            if(enrichedFormDetailsDTO.getApplicationFormDTO().getState().equalsIgnoreCase("CENTRAL")) {
+                applicationFormIntroDTO.setSubtitle("Government of Bharat");
+            }else{
+                applicationFormIntroDTO.setSubtitle("Government of " + enrichedFormDetailsDTO.getApplicationFormDTO().getState());
+            }
 
             applicationFormIntroDTO.setVacancy(enrichedFormDetailsDTO.getApplicationFormDTO().getTotalVacancy());
             applicationFormIntroDTO.setApplyUrl(componentRequestDTO.getEnrichedFormDetailsDTO().getApplicationUrlsDTO().getApply());

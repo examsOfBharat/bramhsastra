@@ -69,10 +69,20 @@ public class ApplicationFormManagerImpl extends GenericManager<ApplicationForm, 
         // find latest application form present in data
         // sorted by creation date
         String dateType = "endDate";
-        Date startDate = DateUtils.getEndOfDay(new Date());
-        Date dateCriteria = DateUtils.addDays(new Date(), -5);
+        Date startDate = DateUtils.getStartOfDay(new Date());
+        Date endDate = DateUtils.addDays(new Date(), 5);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(dateType).ascending());
+        Page<ApplicationForm> pageResult = applicationFormRepository.findByEndDateBetween(startDate, endDate, pageable);
+        return pageResult.getContent();
+    }
+
+    public List<ApplicationForm> getFormWithAnsKey(int page, int size){
+        String dateType = "answerDate";
+        Date endDate = DateUtils.getEndOfDay(new Date());
+        Date startDate = DateUtils.addDays(new Date(), -5);
+
         Pageable pageable = PageRequest.of(page, size, Sort.by(dateType).descending());
-        Page<ApplicationForm> pageResult = applicationFormRepository.findByEndDateBetween(dateCriteria, startDate, pageable);
+        Page<ApplicationForm> pageResult = applicationFormRepository.findByAnswerDateAfter(startDate, pageable);
         return pageResult.getContent();
     }
 }

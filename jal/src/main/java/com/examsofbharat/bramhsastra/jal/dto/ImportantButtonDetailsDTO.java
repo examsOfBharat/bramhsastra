@@ -10,6 +10,8 @@ public class ImportantButtonDetailsDTO {
     private String notificationUrl;
     private String admitCardId;
     private String resultId;
+    private String syllabusUrl;
+    private String ansKeyUrl;
     private String other1;
     private String other2;
 

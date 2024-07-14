@@ -5,6 +5,7 @@ import com.examsofbharat.bramhsastra.jal.dto.response.SecondaryPageDataDTO;
 import com.examsofbharat.bramhsastra.jal.dto.response.WrapperSecondaryPageDataDTO;
 import com.examsofbharat.bramhsastra.jal.enums.FormSubTypeEnum;
 import com.examsofbharat.bramhsastra.jal.enums.FormTypeEnum;
+import com.examsofbharat.bramhsastra.jal.utils.StringUtil;
 import com.examsofbharat.bramhsastra.prithvi.entity.AdmitCard;
 import com.examsofbharat.bramhsastra.prithvi.entity.ApplicationForm;
 import com.examsofbharat.bramhsastra.prithvi.entity.ResultDetails;
@@ -37,6 +38,12 @@ public class ApplicationDbUtil {
             List<SecondaryPageDataDTO> resultDetailsDTOList = getResultsList(page, size, formSubTypeEnum, relatedForms);
             wrapperSecondaryPageDataDTO.setFormList(resultDetailsDTOList);
             return  (new Gson()).toJson(wrapperSecondaryPageDataDTO);
+        }
+
+        if(formSubTypeEnum.equals(FormSubTypeEnum.ANS_KEY.name())){
+            List<SecondaryPageDataDTO> ansKeyDataList = getAnsKeyList(page, size, formSubTypeEnum);
+            wrapperSecondaryPageDataDTO.setFormList(ansKeyDataList);
+            return (new Gson()).toJson(wrapperSecondaryPageDataDTO);
         }
 
         List<SecondaryPageDataDTO> applicationFormDTOList = getApplicationsList(page,size, formSubTypeEnum, relatedForms);
@@ -112,6 +119,18 @@ public class ApplicationDbUtil {
         return resultDetailsDTOList;
     }
 
+    //return result list based on page number and record count
+    public List<SecondaryPageDataDTO> getAnsKeyList(int page, int size, String subType) {
+        List<ApplicationForm> ansKeyList = dbMgmtFacade.getFormWithAnsKey(page, size);
+
+        List<SecondaryPageDataDTO> resultDetailsDTOList = new ArrayList<>();
+        int color = 0;
+        for(ApplicationForm applicationForm : ansKeyList) {
+            resultDetailsDTOList.add(buildAnsKeySecondaryPage(applicationForm, subType, color));
+        }
+        return resultDetailsDTOList;
+    }
+
 
     public SecondaryPageDataDTO buildAdmitSecondaryPage(AdmitCard admitCard, String subType, int i){
         SecondaryPageDataDTO secondaryPageDataDTO = new SecondaryPageDataDTO();
@@ -145,6 +164,21 @@ public class ApplicationDbUtil {
         return secondaryPageDataDTO;
     }
 
+    public SecondaryPageDataDTO buildAnsKeySecondaryPage(ApplicationForm applicationForm, String subType, int i){
+
+        SecondaryPageDataDTO secondaryPageDataDTO = new SecondaryPageDataDTO();
+
+        secondaryPageDataDTO.setPageType("answer");
+        secondaryPageDataDTO.setCardColor(FormUtil.fetchCardColor(i%4));
+        secondaryPageDataDTO.setExtraField(applicationForm.getAnswerKeyUrl());
+        secondaryPageDataDTO.setTitle(applicationForm.getExamName());
+        secondaryPageDataDTO.setReleaseDate(DateUtils.getFormatedDate1(applicationForm.getAnswerDate()));
+        secondaryPageDataDTO.setReleaseDateColor(FormUtil.getLastXDaysDateColor(applicationForm.getAnswerDate()));
+        secondaryPageDataDTO.setSubType(subType);
+
+        return secondaryPageDataDTO;
+    }
+
     public SecondaryPageDataDTO buildFormSecondaryPage(ApplicationForm applicationForm, String subType, int i){
 
         SecondaryPageDataDTO secondaryPageDataDTO = new SecondaryPageDataDTO();
@@ -157,6 +191,14 @@ public class ApplicationDbUtil {
         secondaryPageDataDTO.setReleaseDateColor(FormUtil.getLastXDaysDateColor(applicationForm.getStartDate()));
 
         secondaryPageDataDTO.setTotalVacancy(applicationForm.getTotalVacancy());
+
+        if(StringUtil.notEmpty(applicationForm.getResultId())){
+            secondaryPageDataDTO.setStatus("Result out");
+        } else if (StringUtil.notEmpty(applicationForm.getAnswerKeyUrl())) {
+            secondaryPageDataDTO.setStatus("Answer key out");
+        } else if(StringUtil.notEmpty(applicationForm.getAdmitId())){
+            secondaryPageDataDTO.setStatus("Admit card released");
+        }
 
         secondaryPageDataDTO.setSubType(subType);
         secondaryPageDataDTO.setCardColor(FormUtil.fetchCardColor(i%4));
@@ -173,7 +215,7 @@ public class ApplicationDbUtil {
         relatedFormDTO.setName(applicationForm.getExamName());
         relatedFormDTO.setPageType("form");
         relatedFormDTO.setReleaseDate(DateUtils.getFormatedDate1(applicationForm.getDateCreated()));
-        relatedFormDTO.setCardColor(FormUtil.fetchCardColor(color%4));
+        relatedFormDTO.setCardColor(FormUtil.fetchSecCardColor(color%4));
 
         return relatedFormDTO;
     }
@@ -185,7 +227,7 @@ public class ApplicationDbUtil {
         relatedFormDTO.setPageType("admit");
         relatedFormDTO.setName(admitCard.getAdmitCardName());
         relatedFormDTO.setReleaseDate(DateUtils.getFormatedDate1(admitCard.getDateCreated()));
-        relatedFormDTO.setCardColor(FormUtil.fetchCardColor(color%4));
+        relatedFormDTO.setCardColor(FormUtil.fetchSecCardColor(color%4));
 
         return relatedFormDTO;
     }
@@ -197,7 +239,7 @@ public class ApplicationDbUtil {
         relatedFormDTO.setPageType("result");
         relatedFormDTO.setName(resultDetails.getResultName());
         relatedFormDTO.setReleaseDate(DateUtils.getFormatedDate1(resultDetails.getDateCreated()));
-        relatedFormDTO.setCardColor(FormUtil.fetchCardColor(color%4));
+        relatedFormDTO.setCardColor(FormUtil.fetchSecCardColor(color%4));
 
         return relatedFormDTO;
     }

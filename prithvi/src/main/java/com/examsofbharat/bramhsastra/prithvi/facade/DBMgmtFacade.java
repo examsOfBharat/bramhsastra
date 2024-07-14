@@ -269,6 +269,10 @@ public class DBMgmtFacade {
         return applicationFormManager.getOldestForm(page, size);
     }
 
+    public List<ApplicationForm> getFormWithAnsKey(int page, int size){
+        return applicationFormManager.getFormWithAnsKey(page, size);
+    }
+
     public AdminResponseManager findAdminResById(String resId){
         return adminResponseManagerImpl.findAdminResById(resId);
     }

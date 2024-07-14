@@ -23,12 +23,14 @@ public enum FormSubTypeEnum {
     STATE_POLICE("State police job"),
     AGRICULTURE("Agricultural Job"),
     LAW("Job in Law"),
+    PCS("State PCS Job"),
 
     STATE("State Government Job"),
     CENTRAL("Central Government Job"),
 
     ADMIT("Admit card"),
-    RESULT("Result job");
+    RESULT("Result job"),
+    ANS_KEY("Answer key");
 
     private String val;
 
