@@ -22,6 +22,7 @@ public class EobInitilizer {
 
     Integer otpExpiryTime = 5;
     Integer otpMaxAttempts = 3;
+    Integer secPageItemCount = 10;
 
     private static String otpSub;
     private static String siginBody;
@@ -50,6 +51,11 @@ public class EobInitilizer {
         otpExpiryTime = Integer.parseInt(
                 dbMgmtFacade.getSystemProperty(SystemPropertyProperties.OTP_EXPIRY_TIME_LIMIT).
                         getValue());
+
+        secPageItemCount = Integer.parseInt(
+                dbMgmtFacade.getSystemProperty(SystemPropertyProperties.SEC_PAGE_ITEM_COUNT).
+                        getValue());
+
         otpMaxAttempts = Integer.parseInt(
                 dbMgmtFacade.getSystemProperty(SystemPropertyProperties.OTP_MAX_ATTEMPTS).
                         getValue());
@@ -140,6 +146,8 @@ public class EobInitilizer {
     public static String getHomeBgUrl(){
         return homeBgImageUrl;
     }
+
+    public int getSecPageItemCount(){ return secPageItemCount; }
 
 
 }

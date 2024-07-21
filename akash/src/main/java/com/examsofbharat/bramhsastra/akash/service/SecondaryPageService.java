@@ -1,6 +1,8 @@
 package com.examsofbharat.bramhsastra.akash.service;
 
 import com.examsofbharat.bramhsastra.akash.utils.ApplicationDbUtil;
+import com.examsofbharat.bramhsastra.akash.utils.EobInitilizer;
+import com.examsofbharat.bramhsastra.akash.utils.FormUtil;
 import com.examsofbharat.bramhsastra.akash.utils.WebUtils;
 import com.examsofbharat.bramhsastra.akash.validator.FormValidator;
 import com.examsofbharat.bramhsastra.jal.constants.ErrorConstants;
@@ -30,20 +32,38 @@ public class SecondaryPageService {
     WebUtils webUtils;
 
     @Autowired
+    EobInitilizer eobInitilizer;
+
+    @Autowired
     private ApplicationDbUtil applicationDbUtil;
 
 
     public Response fetchSecondaryPageDataV2(String subType, int pageNo, int size){
+        size = eobInitilizer.getSecPageItemCount();
+
         if( StringUtil.isEmpty(subType)
                 || pageNo < 0 || size <= 0){
             return webUtils.invalidRequest();
         }
 
-        if(pageNo == 0){
+        String responseData = null;
+        if(pageNo < 3){
+            responseData = FormUtil.cacheData.get(pageNo + "_" + subType);
+            if(StringUtil.notEmpty(responseData)){
+                log.info("Delivering second page from cache ");
+                return Response.ok(responseData).build();
+            }
+        }
+
+        if(StringUtil.isEmpty(responseData) && pageNo == 0){
             ResponseManagement responseManagement = dbMgmtFacade.getResponseData(subType);
             if(Objects.nonNull(responseManagement) && StringUtil.notEmpty(responseManagement.getResponse())){
-                return Response.ok(responseManagement.getResponse()).build();
+                responseData = responseManagement.getResponse();
             }
+        }
+
+        if(StringUtil.notEmpty(responseData)){
+            return Response.ok(responseData).build();
         }
 
         String response = applicationDbUtil.fetchResponseBasedOnSubType(subType, pageNo,size, null);
@@ -52,5 +72,7 @@ public class SecondaryPageService {
         }
         return Response.ok(response).build();
     }
+
+
 
 }

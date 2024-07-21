@@ -50,7 +50,7 @@ public class ApplicationIntroParser extends BaseContentParser {
             applicationFormIntroDTO.setLogoUrl(FormUtil.getLogoByName(componentRequestDTO.getEnrichedFormDetailsDTO().
                     getApplicationFormDTO().getExamName()));
             applicationFormIntroDTO.setReleaseDate(DateUtils.getFormatedDate1(
-                    enrichedFormDetailsDTO.getApplicationFormDTO().getDateCreated()));
+                    enrichedFormDetailsDTO.getApplicationFormDTO().getStartDate()));
 
             long daysCount = DateUtils.getNoOfDaysFromToday(enrichedFormDetailsDTO.getApplicationFormDTO().getDateCreated());
             List<String> postedList = FormUtil.getPostedDetail(daysCount);

@@ -7,5 +7,5 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class HomePageCountDataDTO {
     private int totalForms;
-    private int totalVacancy;
+    private String totalVacancy;
 }

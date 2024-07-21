@@ -342,10 +342,10 @@ public class ClientService {
         ResultIntroDTO resultIntroDTO = objectMapper.convertValue(resultDetails, ResultIntroDTO.class);
 
         resultIntroDTO.setAppIdRef(resultDetails.getAppIdRef());
-        resultIntroDTO.setResultDate(DateUtils.getFormatedDate1(resultDetails.getDateCreated()));
+        resultIntroDTO.setResultDate(DateUtils.getFormatedDate1(resultDetails.getResultDate()));
         resultIntroDTO.setSubtitle("Government of India");
 
-        long daysCount = DateUtils.getNoOfDaysFromToday(resultDetails.getDateCreated());
+        long daysCount = DateUtils.getNoOfDaysFromToday(resultDetails.getResultDate());
         List<String> postedList = FormUtil.getPostedDetail(daysCount);
 
         resultIntroDTO.setPostedOn(postedList.get(0));

@@ -6,10 +6,12 @@ import com.examsofbharat.bramhsastra.jal.enums.FormSubTypeEnum;
 import com.examsofbharat.bramhsastra.jal.enums.FormTypeEnum;
 import com.examsofbharat.bramhsastra.jal.utils.StringUtil;
 import com.examsofbharat.bramhsastra.prithvi.entity.ApplicationAgeDetails;
+import com.ibm.icu.text.NumberFormat;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.text.Format;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -29,9 +31,10 @@ public class FormUtil {
     public static final List<String> gradeTypeList = new ArrayList<>();
     public static List<String> cardColor = new ArrayList<>();
     public static List<String> cardSecColor = new ArrayList<>();
-    public static List<String> stateList = new ArrayList<>();
     public static Map<String, String> secondPageTitleMap =  new HashMap<>();
     public static Map<String, String> qualificationName = new HashMap<>();
+
+    public static Map<String,String> cacheData = new HashMap<>();
 
     @PostConstruct
     public void init() {
@@ -154,6 +157,15 @@ public class FormUtil {
         cardColor.add("#f5f2f8");
         cardColor.add("#e7f4ed");
     }
+//
+//    public void initVacancyColor(){
+//        cardColor.add("#000000");
+//        cardColor.add("#000000");
+//        cardColor.add("#000000");
+//        cardColor.add("#000000");
+//    }
+
+
 
     public void initSecColor(){
         cardSecColor.add("#BBDFCD");
@@ -174,6 +186,7 @@ public class FormUtil {
         sectorFormTypeList.add(AGRICULTURE.name());
         sectorFormTypeList.add(MANAGEMENT.name());
         sectorFormTypeList.add(RAILWAY.name());
+        sectorFormTypeList.add(PCS.name());
     }
 
     public void initGradeList(){
@@ -204,6 +217,7 @@ public class FormUtil {
         secondPageTitleMap.put(RAILWAY.name(), "Railway Forms");
         secondPageTitleMap.put(SSC_CENTRAL.name(), "SSC Forms");
         secondPageTitleMap.put(LAW.name(), "Law Forms");
+        secondPageTitleMap.put(PCS.name(), "Forms Under PCS");
 
 
         secondPageTitleMap.put(A_GRADE.name(), "Grade-A forms");
@@ -358,6 +372,31 @@ public class FormUtil {
         }
         return DateUtils.addYears(normalDob, -relaxedYrs);
     }
+
+    public static String formatIntoIndianNumSystem(int amount){
+        try{
+            Format format = NumberFormat.getCurrencyInstance(new Locale("en","in"));
+            String formatValue = format.format(amount);
+            return processStrValue(formatValue).replaceAll("₹","");
+        }catch (Exception e){
+            log.error("Exception occurred while formating value into indian system");
+        }
+        return String.valueOf(amount);
+    }
+
+    private static String processStrValue(String val){
+        String[] splitVal = val.split("\\.");
+        if(splitVal.length > 1 && Integer.parseInt(splitVal[1]) > 0)
+            return val;
+        return splitVal[0];
+    }
+
+//    public static void main(String[] args) {
+//        int value = 123456;
+//        System.out.println(FormUtil.formatIntoIndianNumSystem(value));
+//    }
+
+
 
     public static String buildEmailHtml(String recipientName, String submitterName, String formName) {
 

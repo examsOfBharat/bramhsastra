@@ -299,7 +299,11 @@ public class FormAdminService {
         if(Objects.nonNull(responseManagement)){
             homePageCountDataDTO = new Gson().fromJson(responseManagement.getResponse(), HomePageCountDataDTO.class);
             homePageCountDataDTO.setTotalForms(homePageCountDataDTO.getTotalForms() + 1);
-            homePageCountDataDTO.setTotalVacancy(homePageCountDataDTO.getTotalVacancy() + totalVacancy);
+            homePageCountDataDTO.setTotalVacancy(
+                    String.valueOf(
+                            Integer.parseInt(homePageCountDataDTO.getTotalVacancy()
+                            ) + totalVacancy));
+
             String response = new Gson().toJson(homePageCountDataDTO);
             responseManagement.setResponse(response);
             responseManagement.setDateModified(new Date());

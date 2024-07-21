@@ -10,9 +10,11 @@ import com.examsofbharat.bramhsastra.jal.dto.RelatedFormDTO;
 import com.examsofbharat.bramhsastra.jal.dto.response.*;
 import com.examsofbharat.bramhsastra.jal.enums.FormSubTypeEnum;
 import com.examsofbharat.bramhsastra.jal.enums.FormTypeEnum;
+import com.examsofbharat.bramhsastra.jal.utils.StringUtil;
 import com.examsofbharat.bramhsastra.prithvi.entity.*;
 import com.examsofbharat.bramhsastra.prithvi.facade.DBMgmtFacade;
 import com.google.gson.Gson;
+import jakarta.annotation.PostConstruct;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +47,13 @@ public class ResponseManagementService {
 
     private static final Gson gson = new Gson();
 
+//    @PostConstruct
+//    public void init(){
+//        log.info("Updating home page and secondary on demand page!");
+//        buildAndUpdateClientHomePage();
+//    }
+
+
     public Response buildAndUpdateClientHomePage() {
         List<ExamMetaData> examMetaDataList = dbMgmtFacade.getExamMetaData();
 
@@ -68,7 +77,6 @@ public class ResponseManagementService {
            buildAndParse(examList, formType, sortIndex, formLandingPageDTO);
             sortIndex++;
         }
-//        formLandingPageDTO.setLandingSectionDTOS(landingSectionDTOS);
 
         //update home page title and subtitle
         updateHomeTitle(formLandingPageDTO);
@@ -77,6 +85,8 @@ public class ResponseManagementService {
         updateHeaderCountDate(formLandingPageDTO);
 
         String response = gson.toJson(formLandingPageDTO);
+        //push data to cache
+        FormUtil.cacheData.put("HOME_PAGE", response);
         pushResponseToDb("HOME_PAGE", response, null);
 
         buildAndSaveResponseToDb();
@@ -95,29 +105,38 @@ public class ResponseManagementService {
         HomePageCountDataDTO homePageCountDataDTO;
         if(Objects.nonNull(responseManagement)){
             homePageCountDataDTO = gson.fromJson(responseManagement.getResponse(), HomePageCountDataDTO.class);
+            homePageCountDataDTO.setTotalVacancy(homePageCountDataDTO.getTotalVacancy());
+
             formLandingPageDTO.setHomePageCountDataDTO(homePageCountDataDTO);
         }
     }
 
     public Response fetchHomeResponse(String responseType){
-        ResponseManagement responseManagement = dbMgmtFacade.getResponseData(responseType);
-        if(Objects.isNull(responseManagement)){
+
+        String response = null;
+        response = FormUtil.cacheData.get("HOME_PAGE");
+        if(StringUtil.isEmpty(response)){
+            log.info("Home page not found in cache, calling DB");
+            ResponseManagement responseManagement = dbMgmtFacade.getResponseData(responseType);
+            response = responseManagement.getResponse();
+        }
+        if(StringUtil.isEmpty(response)){
             return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.DATA_NOT_FOUND);
         }
 
-        FormLandingPageDTO response = null;
+        FormLandingPageDTO responseData = null;
         try {
-            response = gson.fromJson(responseManagement.getResponse(), FormLandingPageDTO.class);
+            responseData = gson.fromJson(response, FormLandingPageDTO.class);
         }catch (Exception e){
              log.error("Exception occurred while parsing homeResponse responseType :: {}", responseType);
             return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.DATA_NOT_FOUND);
         }
 
-        if(Objects.isNull(response)){
+        if(Objects.isNull(responseData)){
             return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.DATA_NOT_FOUND);
         }
 
-        return Response.ok(response).build();
+        return Response.ok(responseData).build();
     }
 
     public void buildAndParse(List<ExamMetaData> examMetaDataList,
@@ -247,7 +266,7 @@ public class ResponseManagementService {
             landingSubSectionDTO.setCardColor(FormUtil.fetchCardColor(i%4));
             landingSubSectionDTO.setShowDate(DateUtils.getFormatedDate1(applicationForm.getStartDate()));
             landingSubSectionDTO.setShowDateColor(FormUtil.getLastXDaysDateColor(applicationForm.getStartDate()));
-            landingSubSectionDTO.setTotalVacancy(applicationForm.getTotalVacancy());
+            landingSubSectionDTO.setTotalVacancy(FormUtil.formatIntoIndianNumSystem(applicationForm.getTotalVacancy()));
             i++;
 
             landingSubSectionDTOS.add(landingSubSectionDTO);
@@ -267,7 +286,7 @@ public class ResponseManagementService {
             landingSubSectionDTO.setCardColor(FormUtil.fetchCardColor(i%4));
             landingSubSectionDTO.setShowDate(DateUtils.getFormatedDate1(applicationForm.getEndDate()));
             landingSubSectionDTO.setShowDateColor(AkashConstants.RED_COLOR);
-            landingSubSectionDTO.setTotalVacancy(applicationForm.getTotalVacancy());
+            landingSubSectionDTO.setTotalVacancy(FormUtil.formatIntoIndianNumSystem(applicationForm.getTotalVacancy()));
             i++;
 
             landingSubSectionDTOS.add(landingSubSectionDTO);
@@ -297,7 +316,7 @@ public class ResponseManagementService {
         landingSubSectionDTO.setShowDate(DateUtils.getFormatedDate1(examMetaData.getDateModified()));
         landingSubSectionDTO.setShowDateColor(FormUtil.getFormShowDateColor(examMetaData.getDateModified()));
         landingSubSectionDTO.setTotalApplication(examMetaData.getTotalForm());
-        landingSubSectionDTO.setTotalVacancy(examMetaData.getTotalVacancy());
+        landingSubSectionDTO.setTotalVacancy(FormUtil.formatIntoIndianNumSystem(examMetaData.getTotalVacancy()));
 
         landingSubSectionDTOS.add(landingSubSectionDTO);
     }
@@ -306,11 +325,10 @@ public class ResponseManagementService {
     public void buildAdmitSubSections(LandingSectionDTO landingSectionDTO) {
 
         List<LandingSubSectionDTO> landingSubSectionDTOS = new ArrayList<>();
-        List<AdmitCard> admitCardList = dbMgmtFacade.getLatestAdmitCardList(0,6, AkashConstants.DATE_CREATED);
+        List<AdmitCard> admitCardList = dbMgmtFacade.getLatestAdmitCardList(0,6, AkashConstants.DATE_MODIFIED);
         int i = 0;
         for (AdmitCard admitCard : admitCardList) {
             LandingSubSectionDTO landingSubSectionDTO = new LandingSubSectionDTO();
-//            landingSubSectionDTO.setCardColor(FormUtil.fetchCardColor(i%4));
             landingSubSectionDTO.setCardColor("#e0f7fa");
             landingSubSectionDTO.setKey("ADMIT");
             landingSubSectionDTO.setTitle(admitCard.getAdmitCardName());
@@ -347,13 +365,12 @@ public class ResponseManagementService {
 
         List<LandingSubSectionDTO> landingSubSectionDTOS = new ArrayList<>();
         //fetch result list
-        List<ResultDetails> resultDetailsList = dbMgmtFacade.getResultDetailList(0,6, AkashConstants.DATE_CREATED);
+        List<ResultDetails> resultDetailsList = dbMgmtFacade.getResultDetailList(0,6, AkashConstants.DATE_MODIFIED);
 
         int i = 0;
         for (ResultDetails resultDetails : resultDetailsList) {
             LandingSubSectionDTO landingSubSectionDTO = new LandingSubSectionDTO();
 
-//            landingSubSectionDTO.setCardColor(FormUtil.fetchCardColor(i%4));
             landingSubSectionDTO.setCardColor("#e8f5e9");
             landingSubSectionDTO.setKey("RESULT");
             landingSubSectionDTO.setTitle(resultDetails.getResultName());
@@ -393,22 +410,26 @@ public class ResponseManagementService {
     //build secondary page response based on type and subType
     public void buildAndSaveResponseToDb(){
 
+        int size = eobInitilizer.getSecPageItemCount();
         for(FormSubTypeEnum formSubTypeEnum : FormSubTypeEnum.values()){
             if(formSubTypeEnum.equals(FormSubTypeEnum.STATE)){
                 //will think latter based on response because to save each state it will have huge data in response table
                 continue;
             }
             List<RelatedFormDTO> relatedForms = new ArrayList<>();
-            String responseRes = applicationDbUtil.fetchResponseBasedOnSubType(formSubTypeEnum.name(), 0, 10, relatedForms);
+            String responseRes = applicationDbUtil.fetchResponseBasedOnSubType(formSubTypeEnum.name(), 0, size, relatedForms);
+            FormUtil.cacheData.put(0 + "_" + formSubTypeEnum.name() , responseRes);
             buildRelatedFormAndSaveResponse(responseRes, relatedForms, formSubTypeEnum.name());
         }
 
         List<RelatedFormDTO> relatedForms = new ArrayList<>();
-        String responseRes = applicationDbUtil.fetchResponseBasedOnSubType(LATEST_FORMS.name(), 0, 10, relatedForms);
+        String responseRes = applicationDbUtil.fetchResponseBasedOnSubType(LATEST_FORMS.name(), 0, size, relatedForms);
+        FormUtil.cacheData.put(0 + "_" + LATEST_FORMS.name() , responseRes);
         buildRelatedFormAndSaveResponse(responseRes, relatedForms, LATEST_FORMS.name());
 
         List<RelatedFormDTO> relatedForms2 = new ArrayList<>();
-        String responseRes2 = applicationDbUtil.fetchResponseBasedOnSubType(OLDER_FORMS.name(), 0, 10, relatedForms);
+        String responseRes2 = applicationDbUtil.fetchResponseBasedOnSubType(OLDER_FORMS.name(), 0, size, relatedForms);
+        FormUtil.cacheData.put(0 + "_" + OLDER_FORMS.name() , responseRes2);
         buildRelatedFormAndSaveResponse(responseRes2, relatedForms2, OLDER_FORMS.name());
 
     }

@@ -7,6 +7,7 @@ AkashConstants {
     public static final String SIGN_IN = "signIn";
     public static final String SIGN_UP = "signUp";
     public static final String DATE_CREATED = "dateCreated";
+    public static final String DATE_MODIFIED = "dateModified";
     public static final String X_DAYS = "+ days";
     public static final String AGE_RELAXATION_TITLE ="Max/Last Age";
     public static final String FEE_TITLE = "Application Fees";

@@ -109,12 +109,14 @@ public class ApplicationDbUtil {
 
         List<SecondaryPageDataDTO> resultDetailsDTOList = new ArrayList<>();
         int color = 0;
+        int color1 = 0;
         for(ResultDetails resultDetails : resultDetailsList) {
             if(relatedForms != null){
                 relatedForms.add(buildRelatedResult(resultDetails, color));
                 color++;
             }
-            resultDetailsDTOList.add(buildResultSecondaryPage(resultDetails, subType));
+            resultDetailsDTOList.add(buildResultSecondaryPage(resultDetails, subType, color1));
+            color1++;
         }
         return resultDetailsDTOList;
     }
@@ -149,16 +151,17 @@ public class ApplicationDbUtil {
         return secondaryPageDataDTO;
     }
 
-    public SecondaryPageDataDTO buildResultSecondaryPage(ResultDetails resultDetails, String subType){
+    public SecondaryPageDataDTO buildResultSecondaryPage(ResultDetails resultDetails, String subType, int color){
 
         SecondaryPageDataDTO secondaryPageDataDTO = new SecondaryPageDataDTO();
 
         secondaryPageDataDTO.setId(resultDetails.getId());
         secondaryPageDataDTO.setPageType("result");
         secondaryPageDataDTO.setTitle(resultDetails.getResultName());
+        secondaryPageDataDTO.setCardColor(FormUtil.fetchCardColor(color%4));
 
-        secondaryPageDataDTO.setReleaseDate(DateUtils.getFormatedDate1(resultDetails.getDateCreated()));
-        secondaryPageDataDTO.setReleaseDateColor(FormUtil.getLastXDaysDateColor(resultDetails.getDateCreated()));
+        secondaryPageDataDTO.setReleaseDate(DateUtils.getFormatedDate1(resultDetails.getResultDate()));
+        secondaryPageDataDTO.setReleaseDateColor(FormUtil.getLastXDaysDateColor(resultDetails.getResultDate()));
         secondaryPageDataDTO.setSubType(subType);
 
         return secondaryPageDataDTO;
@@ -214,7 +217,7 @@ public class ApplicationDbUtil {
         relatedFormDTO.setId(applicationForm.getId());
         relatedFormDTO.setName(applicationForm.getExamName());
         relatedFormDTO.setPageType("form");
-        relatedFormDTO.setReleaseDate(DateUtils.getFormatedDate1(applicationForm.getDateCreated()));
+        relatedFormDTO.setReleaseDate(DateUtils.getFormatedDate1(applicationForm.getStartDate()));
         relatedFormDTO.setCardColor(FormUtil.fetchSecCardColor(color%4));
 
         return relatedFormDTO;
@@ -238,7 +241,7 @@ public class ApplicationDbUtil {
         relatedFormDTO.setId(resultDetails.getId());
         relatedFormDTO.setPageType("result");
         relatedFormDTO.setName(resultDetails.getResultName());
-        relatedFormDTO.setReleaseDate(DateUtils.getFormatedDate1(resultDetails.getDateCreated()));
+        relatedFormDTO.setReleaseDate(DateUtils.getFormatedDate1(resultDetails.getResultDate()));
         relatedFormDTO.setCardColor(FormUtil.fetchSecCardColor(color%4));
 
         return relatedFormDTO;
