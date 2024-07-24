@@ -2,15 +2,16 @@ package com.examsofbharat.bramhsastra.jal.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SubPrimeSectionDTO {
 
-    @JsonProperty("home_admit")
+    @SerializedName("home_admit")
     HomeAdmitCardSection homeAdmitCardSection;
 
-    @JsonProperty("home_result")
+    @SerializedName("home_result")
     HomeResultDetailsDTO homeResultDetailsDTO;
 }

@@ -123,16 +123,6 @@
             <version>3.0.0</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox -->
-<!--        <dependency>-->
-<!--            <groupId>org.apache.pdfbox</groupId>-->
-<!--            <artifactId>pdfbox</artifactId>-->
-<!--            <version>3.0.2</version>-->
-<!--        </dependency>-->
-
-        <!-- https://mvnrepository.com/artifact/com.itextpdf/itextpdf -->
-        <!-- https://mvnrepository.com/artifact/com.itextpdf/itext7-core -->
-        <!-- https://mvnrepository.com/artifact/com.itextpdf/itext7-core -->
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>itext7-core</artifactId>
@@ -140,13 +130,11 @@
             <type>pom</type>
         </dependency>
 
-        <dependency>
-            <groupId>com.ibm.icu</groupId>
-            <artifactId>icu4j</artifactId>
-            <version>69.1</version>
-        </dependency>
-
-
+<!--        <dependency>-->
+<!--            <groupId>com.ibm.icu</groupId>-->
+<!--            <artifactId>icu4j</artifactId>-->
+<!--            <version>69.1</version>-->
+<!--        </dependency>-->
 
     </dependencies>
 

@@ -25,4 +25,6 @@ public class SecondaryPageDataDTO {
     private String extraField;
     private String pageType;
     private String status;
+    private String imageUrl;
+    private boolean newFlag;
 }

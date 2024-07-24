@@ -6,7 +6,7 @@ import com.examsofbharat.bramhsastra.jal.enums.FormSubTypeEnum;
 import com.examsofbharat.bramhsastra.jal.enums.FormTypeEnum;
 import com.examsofbharat.bramhsastra.jal.utils.StringUtil;
 import com.examsofbharat.bramhsastra.prithvi.entity.ApplicationAgeDetails;
-import com.ibm.icu.text.NumberFormat;
+//import com.ibm.icu.text.NumberFormat;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -61,6 +61,13 @@ public class FormUtil {
         if(flag)
             return RED_COLOR;
         return GREEN_COLOR;
+    }
+
+    public static boolean dateIsWithinXDays(Date date){
+        if(date == null) return false;
+
+        Date todayDate = new Date();
+        return date.after(DateUtils.addDays(todayDate,-5));
     }
 
     public static String getExpiryDateColor(Date date){
@@ -373,16 +380,16 @@ public class FormUtil {
         return DateUtils.addYears(normalDob, -relaxedYrs);
     }
 
-    public static String formatIntoIndianNumSystem(int amount){
-        try{
-            Format format = NumberFormat.getCurrencyInstance(new Locale("en","in"));
-            String formatValue = format.format(amount);
-            return processStrValue(formatValue).replaceAll("₹","");
-        }catch (Exception e){
-            log.error("Exception occurred while formating value into indian system");
-        }
-        return String.valueOf(amount);
-    }
+//    public static String formatIntoIndianNumSystem(int amount){
+//        try{
+//            Format format = NumberFormat.getCurrencyInstance(new Locale("en","in"));
+//            String formatValue = format.format(amount);
+//            return processStrValue(formatValue).replaceAll("₹","");
+//        }catch (Exception e){
+//            log.error("Exception occurred while formating value into indian system");
+//        }
+//        return String.valueOf(amount);
+//    }
 
     private static String processStrValue(String val){
         String[] splitVal = val.split("\\.");

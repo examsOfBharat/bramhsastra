@@ -47,12 +47,6 @@ public class ResponseManagementService {
 
     private static final Gson gson = new Gson();
 
-//    @PostConstruct
-//    public void init(){
-//        log.info("Updating home page and secondary on demand page!");
-//        buildAndUpdateClientHomePage();
-//    }
-
 
     public Response buildAndUpdateClientHomePage() {
         List<ExamMetaData> examMetaDataList = dbMgmtFacade.getExamMetaData();
@@ -124,19 +118,19 @@ public class ResponseManagementService {
             return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.DATA_NOT_FOUND);
         }
 
-        FormLandingPageDTO responseData = null;
-        try {
-            responseData = gson.fromJson(response, FormLandingPageDTO.class);
-        }catch (Exception e){
-             log.error("Exception occurred while parsing homeResponse responseType :: {}", responseType);
-            return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.DATA_NOT_FOUND);
-        }
+//        FormLandingPageDTO responseData = null;
+//        try {
+//            responseData = gson.fromJson(response, FormLandingPageDTO.class);
+//        }catch (Exception e){
+//             log.error("Exception occurred while parsing homeResponse responseType :: {}", responseType);
+//            return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.DATA_NOT_FOUND);
+//        }
+//
+//        if(Objects.isNull(responseData)){
+//            return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.DATA_NOT_FOUND);
+//        }
 
-        if(Objects.isNull(responseData)){
-            return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.DATA_NOT_FOUND);
-        }
-
-        return Response.ok(responseData).build();
+        return Response.ok(response).build();
     }
 
     public void buildAndParse(List<ExamMetaData> examMetaDataList,
@@ -266,7 +260,7 @@ public class ResponseManagementService {
             landingSubSectionDTO.setCardColor(FormUtil.fetchCardColor(i%4));
             landingSubSectionDTO.setShowDate(DateUtils.getFormatedDate1(applicationForm.getStartDate()));
             landingSubSectionDTO.setShowDateColor(FormUtil.getLastXDaysDateColor(applicationForm.getStartDate()));
-            landingSubSectionDTO.setTotalVacancy(FormUtil.formatIntoIndianNumSystem(applicationForm.getTotalVacancy()));
+            landingSubSectionDTO.setTotalVacancy(String.valueOf(applicationForm.getTotalVacancy()));
             i++;
 
             landingSubSectionDTOS.add(landingSubSectionDTO);
@@ -286,7 +280,7 @@ public class ResponseManagementService {
             landingSubSectionDTO.setCardColor(FormUtil.fetchCardColor(i%4));
             landingSubSectionDTO.setShowDate(DateUtils.getFormatedDate1(applicationForm.getEndDate()));
             landingSubSectionDTO.setShowDateColor(AkashConstants.RED_COLOR);
-            landingSubSectionDTO.setTotalVacancy(FormUtil.formatIntoIndianNumSystem(applicationForm.getTotalVacancy()));
+            landingSubSectionDTO.setTotalVacancy(String.valueOf(applicationForm.getTotalVacancy()));
             i++;
 
             landingSubSectionDTOS.add(landingSubSectionDTO);
@@ -316,7 +310,7 @@ public class ResponseManagementService {
         landingSubSectionDTO.setShowDate(DateUtils.getFormatedDate1(examMetaData.getDateModified()));
         landingSubSectionDTO.setShowDateColor(FormUtil.getFormShowDateColor(examMetaData.getDateModified()));
         landingSubSectionDTO.setTotalApplication(examMetaData.getTotalForm());
-        landingSubSectionDTO.setTotalVacancy(FormUtil.formatIntoIndianNumSystem(examMetaData.getTotalVacancy()));
+        landingSubSectionDTO.setTotalVacancy(String.valueOf(examMetaData.getTotalVacancy()));
 
         landingSubSectionDTOS.add(landingSubSectionDTO);
     }
@@ -325,7 +319,7 @@ public class ResponseManagementService {
     public void buildAdmitSubSections(LandingSectionDTO landingSectionDTO) {
 
         List<LandingSubSectionDTO> landingSubSectionDTOS = new ArrayList<>();
-        List<AdmitCard> admitCardList = dbMgmtFacade.getLatestAdmitCardList(0,6, AkashConstants.DATE_MODIFIED);
+        List<AdmitCard> admitCardList = dbMgmtFacade.getLatestAdmitCardList(0,5, AkashConstants.DATE_MODIFIED);
         int i = 0;
         for (AdmitCard admitCard : admitCardList) {
             LandingSubSectionDTO landingSubSectionDTO = new LandingSubSectionDTO();
@@ -365,7 +359,7 @@ public class ResponseManagementService {
 
         List<LandingSubSectionDTO> landingSubSectionDTOS = new ArrayList<>();
         //fetch result list
-        List<ResultDetails> resultDetailsList = dbMgmtFacade.getResultDetailList(0,6, AkashConstants.DATE_MODIFIED);
+        List<ResultDetails> resultDetailsList = dbMgmtFacade.getResultDetailList(0,5, AkashConstants.DATE_MODIFIED);
 
         int i = 0;
         for (ResultDetails resultDetails : resultDetailsList) {

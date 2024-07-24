@@ -79,6 +79,11 @@ public class ApplicationDbUtil {
                 relatedForms.add(buildRelatedForm(application, color));
                 color++;
             }
+//            if(color2 % 8 == 0){
+//                SecondaryPageDataDTO secondaryPageDataDTO = new SecondaryPageDataDTO();
+//                secondaryPageDataDTO.setImageUrl("https://res.cloudinary.com/djfi8sqip/image/upload/v1721764306/banking_banner_04_k3yccd.svg");
+//                applicationsListDTO.add(secondaryPageDataDTO);
+//            }
             applicationsListDTO.add(buildFormSecondaryPage(application, subType, color2));
             color2++;
         }
@@ -145,6 +150,7 @@ public class ApplicationDbUtil {
 
         secondaryPageDataDTO.setReleaseDate(DateUtils.getFormatedDate1(admitCard.getDateCreated()));
         secondaryPageDataDTO.setReleaseDateColor(FormUtil.getLastXDaysDateColor(admitCard.getDateCreated()));
+        secondaryPageDataDTO.setNewFlag(FormUtil.dateIsWithinXDays(admitCard.getDateCreated()));
         secondaryPageDataDTO.setSubType(subType);
         secondaryPageDataDTO.setCardColor(FormUtil.fetchCardColor(i%4));
 
@@ -162,6 +168,7 @@ public class ApplicationDbUtil {
 
         secondaryPageDataDTO.setReleaseDate(DateUtils.getFormatedDate1(resultDetails.getResultDate()));
         secondaryPageDataDTO.setReleaseDateColor(FormUtil.getLastXDaysDateColor(resultDetails.getResultDate()));
+        secondaryPageDataDTO.setNewFlag(FormUtil.dateIsWithinXDays(resultDetails.getResultDate()));
         secondaryPageDataDTO.setSubType(subType);
 
         return secondaryPageDataDTO;
@@ -207,6 +214,7 @@ public class ApplicationDbUtil {
         secondaryPageDataDTO.setCardColor(FormUtil.fetchCardColor(i%4));
         secondaryPageDataDTO.setLastDate(DateUtils.getFormatedDate1(applicationForm.getEndDate()));
         secondaryPageDataDTO.setLastDateColor(FormUtil.getExpiryDateColor(applicationForm.getEndDate()));
+        secondaryPageDataDTO.setNewFlag(FormUtil.dateIsWithinXDays(applicationForm.getStartDate()));
 
         return secondaryPageDataDTO;
     }

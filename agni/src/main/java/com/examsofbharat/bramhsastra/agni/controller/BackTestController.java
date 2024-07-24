@@ -3,6 +3,7 @@ package com.examsofbharat.bramhsastra.agni.controller;
 import com.examsofbharat.bramhsastra.akash.facade.ClientFacade;
 import com.examsofbharat.bramhsastra.akash.facade.CredFacade;
 import com.examsofbharat.bramhsastra.akash.service.*;
+import com.examsofbharat.bramhsastra.akash.utils.WebUtils;
 import com.examsofbharat.bramhsastra.jal.dto.request.*;
 import com.examsofbharat.bramhsastra.prithvi.manager.ApplicationFormManagerImpl;
 import jakarta.ws.rs.core.Response;
@@ -43,6 +44,13 @@ public class BackTestController {
     @Autowired
     ClientService clientService;
 
+    @Autowired
+    WebUtils webUtils;
+
+    @GetMapping("/test")
+    public Response test(){
+        return webUtils.buildSuccessResponse("SUCCESS");
+    }
 
     @PostMapping("/register")
     public Response registerUser(@RequestBody RegisterDTO registerData){
