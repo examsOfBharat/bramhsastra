@@ -54,6 +54,15 @@ public class VacancyEligibilitySummaryParser extends BaseContentParser {
             return;
         }
 
+        List<ApplicationEligibilityDTO> eligibilityDataDTOS = enrichedFormDetailsDTO.getApplicationEligibilityDTOS();
+        //sort based on sequence
+        FormUtil.eligibilityComparator(eligibilityDataDTOS);
+
+        List<ApplicationVacancyDTO> vacancyDTOS = enrichedFormDetailsDTO.getApplicationVacancyDTOS();
+        //sort based on sequence
+        FormUtil.vacancyComparator(vacancyDTOS);
+
+
         for(int i = 0; i < enrichedFormDetailsDTO.getApplicationVacancyDTOS().size(); i++){
 
             VacancyEligibilityDataDTO vacancyEligibilityDataDTO = buildVEData(enrichedFormDetailsDTO.getApplicationVacancyDTOS().get(i),

@@ -37,6 +37,9 @@ public class ApplicationEligibilityDetails {
     @Column(name = "others")
     private String others;
 
+    @Column(name = "sequence")
+    private Integer sequence;
+
     @Column(name = "date_created")
     private Date dateCreated;
 

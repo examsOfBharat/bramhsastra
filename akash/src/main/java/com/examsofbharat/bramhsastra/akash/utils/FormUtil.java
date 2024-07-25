@@ -1,6 +1,8 @@
 package com.examsofbharat.bramhsastra.akash.utils;
 
 import com.examsofbharat.bramhsastra.akash.constants.AkashConstants;
+import com.examsofbharat.bramhsastra.jal.dto.ApplicationEligibilityDTO;
+import com.examsofbharat.bramhsastra.jal.dto.ApplicationVacancyDTO;
 import com.examsofbharat.bramhsastra.jal.dto.response.EligibilityCheckResponseDTO;
 import com.examsofbharat.bramhsastra.jal.enums.FormSubTypeEnum;
 import com.examsofbharat.bramhsastra.jal.enums.FormTypeEnum;
@@ -403,6 +405,16 @@ public class FormUtil {
 //        System.out.println(FormUtil.formatIntoIndianNumSystem(value));
 //    }
 
+
+    public static void eligibilityComparator(List<ApplicationEligibilityDTO> list){
+        // Sorting the list based on the sequence field
+        Collections.sort(list, Comparator.comparingInt(ApplicationEligibilityDTO::getSequence));
+    }
+
+    public static void vacancyComparator(List<ApplicationVacancyDTO> list){
+        // Sorting the list based on the sequence field
+        Collections.sort(list, Comparator.comparingInt(ApplicationVacancyDTO::getSequence));
+    }
 
 
     public static String buildEmailHtml(String recipientName, String submitterName, String formName) {

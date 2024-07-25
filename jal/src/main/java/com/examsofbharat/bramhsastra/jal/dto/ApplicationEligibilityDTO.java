@@ -15,6 +15,7 @@ public class ApplicationEligibilityDTO {
     String ageRange;
     String experience;
     String others;
+    int sequence;
     Date dateCreated;
     Date dateModified;
 }

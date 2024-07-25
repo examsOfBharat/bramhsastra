@@ -53,6 +53,9 @@ public class ApplicationVacancyDetails {
     @Column(name = "information")
     private String information;
 
+    @Column(name = "sequence")
+    private Integer sequence;
+
     @Column(name = "date_created")
     private Date dateCreated;
 

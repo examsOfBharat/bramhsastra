@@ -20,6 +20,7 @@ public class ApplicationVacancyDTO {
     int exArmy;
     int totalVacancy;
     String information;
+    int sequence;
     Date dateCreated;
     Date dateModified;
 
