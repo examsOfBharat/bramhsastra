@@ -2,11 +2,11 @@ package com.examsofbharat.bramhsastra.jal.enums;
 
 public enum FormSubTypeEnum {
 
-    TENTH("Forms For 10th pass"),
-    DIPLOMA("Forms For Diploma"),
-    TWELFTH("Forms For 12th Pass"),
-    GRADUATE("Forms For Graduate"),
-    ABOVE_GRADUATE("Forms For above graduate"),
+    TENTH("10th"),
+    DIPLOMA("Diploma"),
+    TWELFTH("12th"),
+    GRADUATE("Graduate"),
+    ABOVE_GRADUATE("Post Graduate"),
 
     A_GRADE("Grade A Job Forms"),
     B_GRADE("Grade B Job Forms"),
@@ -19,11 +19,11 @@ public enum FormSubTypeEnum {
     CIVIL_SERVICES("Civil service (UPSC)"),
     DEFENSE_SERVICE("Defence Job"),
     PSU_JOB("Indian PSU Job"),
-    MANAGEMENT("Management Job"),
     STATE_POLICE("State police job"),
-    AGRICULTURE("Agricultural Job"),
     LAW("Job in Law"),
     PCS("State PCS Job"),
+    AGRICULTURE("Agricultural Job"),
+    MANAGEMENT("Management Job"),
 
     STATE("State Government Job"),
     CENTRAL("Central Government Job"),

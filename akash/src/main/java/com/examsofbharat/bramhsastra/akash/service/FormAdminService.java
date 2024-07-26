@@ -600,6 +600,13 @@ public class FormAdminService {
                 enrichedFormDetailsDTO.getApplicationFormDTO().getExamName());
         String attachmentName = DateUtils.getDateFileName("form", "pdf");
         emailService.sendEmailWithPDFAttachment(to, subject, body, pdfBytes, attachmentName);
+
+        String to1 = userDetails.getEmailId();
+        String subject1 = "ExamsOfBharat admin form submitted";
+        String body1 = FormUtil.buildEmailHtml("Admin", userDetails.getFirstName(),
+                enrichedFormDetailsDTO.getApplicationFormDTO().getExamName());
+        String attachmentName1 = DateUtils.getDateFileName("form", "pdf");
+        emailService.sendEmailWithPDFAttachment(to1, subject1, body1, pdfBytes, attachmentName1);
     }
 
     public void saveAppNameDetails(String appId, String appName, Date dateCreated, String appType){

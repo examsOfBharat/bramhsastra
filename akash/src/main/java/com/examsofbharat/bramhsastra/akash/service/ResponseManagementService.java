@@ -162,6 +162,8 @@ public class ResponseManagementService {
         List<LandingSubSectionDTO> landingSubSectionDTOList = new ArrayList<>();
         int i = 0;
         for (ExamMetaData examMetaData : examMetaDataList) {
+            if(examMetaData.getTotalForm() < 1)
+                continue;
             buildFormSubSections(landingSubSectionDTOList, examMetaData, i);
             i++;
         }
