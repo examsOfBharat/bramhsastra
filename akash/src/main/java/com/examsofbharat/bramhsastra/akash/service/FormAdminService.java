@@ -219,9 +219,12 @@ public class FormAdminService {
         List<ApplicationVacancyDetails> vacancyDetailList = new ArrayList<>();
 
         if(applicationVacancyDTOList != null && !applicationVacancyDTOList.isEmpty()){
+            final int[] i = {1};
             applicationVacancyDTOList.forEach(formVacancyDTO -> {
                 formVacancyDTO.setId(UUIDUtil.generateUUID());
                 formVacancyDTO.setAppIdRef(examId);
+                formVacancyDTO.setSequence(i[0]);
+                i[0]++;
                 formVacancyDTO.setDateCreated(dateCreated);
                 formVacancyDTO.setDateModified(dateCreated);
 
@@ -233,9 +236,12 @@ public class FormAdminService {
         List<ApplicationEligibilityDTO> eligibilityDetails = enrichedFormDetailsDTO.getApplicationEligibilityDTOS();
         List<ApplicationEligibilityDetails> eligibilityDetailsList = new ArrayList<>();
         if(eligibilityDetails != null && !eligibilityDetails.isEmpty()){
+            final int[] i = {1};
             eligibilityDetails.forEach(eligibilityDetailsDTO -> {
                 eligibilityDetailsDTO.setId(UUIDUtil.generateUUID());
                 eligibilityDetailsDTO.setAppIdRef(examId);
+                eligibilityDetailsDTO.setSequence(i[0]);
+                i[0]++;
                 eligibilityDetailsDTO.setDateCreated(dateCreated);
                 eligibilityDetailsDTO.setDateModified(dateCreated);
 
@@ -278,9 +284,17 @@ public class FormAdminService {
 
         for(String subCategory : categoryList){
             ExamMetaData examMetaData = dbMgmtFacade.getExamMetaData(subCategory);
+            if(Objects.nonNull(examMetaData)){
             examMetaData.setTotalVacancy(examMetaData.getTotalVacancy() + applicationFormDTO.getTotalVacancy());
             examMetaData.setTotalForm(examMetaData.getTotalForm()+1);
             examMetaData.setDateModified(new Date());
+            }else {
+                examMetaData = new ExamMetaData();
+                examMetaData.setTotalVacancy(applicationFormDTO.getTotalVacancy());
+                examMetaData.setTotalForm(1);
+                examMetaData.setDateModified(new Date());
+                examMetaData.setDateCreated(new Date());
+            }
             dbMgmtFacade.saveExamMetaData(examMetaData);
         }
 

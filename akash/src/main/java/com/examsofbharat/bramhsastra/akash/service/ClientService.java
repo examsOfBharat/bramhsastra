@@ -24,6 +24,7 @@ import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -56,6 +57,12 @@ public class ClientService {
         if(StringUtil.isEmpty(appId)){
             return webUtils.invalidRequest();
         }
+        FormViewResponseDTO formViewResponseDTO = FormUtil.formCache.get(appId);
+
+        if(Objects.nonNull(formViewResponseDTO)){
+            return Response.ok(formViewResponseDTO).build();
+        }
+
 
         //fetch form detail from db
         EnrichedFormDetailsDTO enrichedFormDetailsDTO = getEnrichedFormDetails(appId);
@@ -63,15 +70,42 @@ public class ClientService {
             return webUtils.buildErrorMessage(WebConstants.ERROR, DATA_NOT_FOUND);
         }
 
+        formViewResponseDTO = buildFormViewRes(enrichedFormDetailsDTO);
+
+        return Response.ok(formViewResponseDTO).build();
+    }
+
+    public void updateLatestFormInCache(){
+        List<ApplicationNameDetails> appNameList = dbMgmtFacade.fetchAllAppNames();
+        if(CollectionUtils.isEmpty(appNameList)){
+            return;
+        }
+
+        for(ApplicationNameDetails applicationNameDetails : appNameList){
+            //fetch form detail from db
+            EnrichedFormDetailsDTO enrichedFormDetailsDTO = getEnrichedFormDetails(
+                    applicationNameDetails.getAppIdRef());
+
+            if(Objects.isNull(enrichedFormDetailsDTO)){
+                continue;
+            }
+
+            FormUtil.formCache.put(applicationNameDetails.getAppIdRef(),
+                    buildFormViewRes(enrichedFormDetailsDTO));
+        }
+    }
+
+    private FormViewResponseDTO buildFormViewRes(EnrichedFormDetailsDTO enrichedFormDetailsDTO){
+
         ComponentRequestDTO componentRequestDTO = new ComponentRequestDTO();
         componentRequestDTO.setEnrichedFormDetailsDTO(enrichedFormDetailsDTO);
 
-        FormViewResponseDTO formViewResponseDTO = new FormViewResponseDTO();
+         FormViewResponseDTO formViewResponseDTO = new FormViewResponseDTO();
 
         populateApplicationResponse(formViewResponseDTO, componentRequestDTO);
         setRelatedFormList(enrichedFormDetailsDTO, formViewResponseDTO);
 
-        return Response.ok(formViewResponseDTO).build();
+        return formViewResponseDTO;
     }
 
 

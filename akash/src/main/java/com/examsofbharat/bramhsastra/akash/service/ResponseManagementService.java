@@ -40,6 +40,9 @@ public class ResponseManagementService {
     WebUtils webUtils;
 
     @Autowired
+    ClientService clientService;
+
+    @Autowired
     ApplicationDbUtil applicationDbUtil;
 
     @Autowired
@@ -84,6 +87,8 @@ public class ResponseManagementService {
         pushResponseToDb("HOME_PAGE", response, null);
 
         buildAndSaveResponseToDb();
+
+        clientService.updateLatestFormInCache();
 
         return webUtils.buildSuccessResponse("SUCCESS");
     }

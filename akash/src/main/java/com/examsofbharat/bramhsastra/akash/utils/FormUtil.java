@@ -3,6 +3,7 @@ package com.examsofbharat.bramhsastra.akash.utils;
 import com.examsofbharat.bramhsastra.akash.constants.AkashConstants;
 import com.examsofbharat.bramhsastra.jal.dto.ApplicationEligibilityDTO;
 import com.examsofbharat.bramhsastra.jal.dto.ApplicationVacancyDTO;
+import com.examsofbharat.bramhsastra.jal.dto.FormViewResponseDTO;
 import com.examsofbharat.bramhsastra.jal.dto.response.EligibilityCheckResponseDTO;
 import com.examsofbharat.bramhsastra.jal.enums.FormSubTypeEnum;
 import com.examsofbharat.bramhsastra.jal.enums.FormTypeEnum;
@@ -37,6 +38,7 @@ public class FormUtil {
     public static Map<String, String> qualificationName = new HashMap<>();
 
     public static Map<String,String> cacheData = new HashMap<>();
+    public static Map<String, FormViewResponseDTO> formCache = new HashMap<>();
 
     @PostConstruct
     public void init() {
@@ -116,6 +118,8 @@ public class FormUtil {
         formSubTypeMap.put(SSC_CENTRAL.name(), SECTOR_BASED);
         formSubTypeMap.put(LAW.name(), SECTOR_BASED);
         formSubTypeMap.put(PCS.name(), SECTOR_BASED);
+        formSubTypeMap.put(STATE_EXAM.name(), SECTOR_BASED);
+        formSubTypeMap.put(TEACHING.name(), SECTOR_BASED);
 
 
         formSubTypeMap.put(A_GRADE.name(), GRADE_BASED);
@@ -196,6 +200,8 @@ public class FormUtil {
         sectorFormTypeList.add(MANAGEMENT.name());
         sectorFormTypeList.add(RAILWAY.name());
         sectorFormTypeList.add(PCS.name());
+        sectorFormTypeList.add(STATE_EXAM.name());
+        sectorFormTypeList.add(TEACHING.name());
     }
 
     public void initGradeList(){
@@ -227,6 +233,8 @@ public class FormUtil {
         secondPageTitleMap.put(SSC_CENTRAL.name(), "SSC Forms");
         secondPageTitleMap.put(LAW.name(), "Law Forms");
         secondPageTitleMap.put(PCS.name(), "Forms Under PCS");
+        secondPageTitleMap.put(STATE_EXAM.name(), "All State exams");
+        secondPageTitleMap.put(TEACHING.name(), "All Teacher Exam");
 
 
         secondPageTitleMap.put(A_GRADE.name(), "Grade-A forms");
