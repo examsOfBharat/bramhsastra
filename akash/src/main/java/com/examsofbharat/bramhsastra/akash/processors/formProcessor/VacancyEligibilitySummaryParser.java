@@ -1,4 +1,4 @@
-package com.examsofbharat.bramhsastra.akash.processors;
+package com.examsofbharat.bramhsastra.akash.processors.formProcessor;
 
 import com.examsofbharat.bramhsastra.akash.factory.componentParser.BaseContentParser;
 import com.examsofbharat.bramhsastra.akash.utils.FormUtil;
@@ -22,7 +22,6 @@ public class VacancyEligibilitySummaryParser extends BaseContentParser {
 
     @Override
     public void parseComponentParser(ComponentRequestDTO componentRequestDTO, FormViewResponseDTO formViewResponseDTO, int sortIndex) {
-
         try {
             VacancyEligibilityCardDetailsDTO vacancyEligibilityCardDetailsDTO = new VacancyEligibilityCardDetailsDTO();
             vacancyEligibilityCardDetailsDTO.setTitle("Vacancy and Eligibility details");

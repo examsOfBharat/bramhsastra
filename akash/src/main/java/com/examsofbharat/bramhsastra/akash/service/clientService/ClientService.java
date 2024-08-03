@@ -1,4 +1,4 @@
-package com.examsofbharat.bramhsastra.akash.service;
+package com.examsofbharat.bramhsastra.akash.service.clientService;
 
 import com.examsofbharat.bramhsastra.akash.executor.FormExecutorService;
 import com.examsofbharat.bramhsastra.akash.factory.componentParser.FormViwerFactory;
@@ -57,10 +57,11 @@ public class ClientService {
         if(StringUtil.isEmpty(appId)){
             return webUtils.invalidRequest();
         }
-        FormViewResponseDTO formViewResponseDTO = FormUtil.formCache.get(appId);
+        String  formResponse = FormUtil.formCache.get(appId);
 
-        if(Objects.nonNull(formViewResponseDTO)){
-            return Response.ok(formViewResponseDTO).build();
+        if(StringUtil.notEmpty(formResponse)){
+            log.info("Form returned from cache id::{}", appId);
+            return Response.ok(formResponse).build();
         }
 
 
@@ -70,9 +71,9 @@ public class ClientService {
             return webUtils.buildErrorMessage(WebConstants.ERROR, DATA_NOT_FOUND);
         }
 
-        formViewResponseDTO = buildFormViewRes(enrichedFormDetailsDTO);
+        formResponse = buildFormViewRes(enrichedFormDetailsDTO);
 
-        return Response.ok(formViewResponseDTO).build();
+        return Response.ok(formResponse).build();
     }
 
     public void updateLatestFormInCache(){
@@ -95,17 +96,17 @@ public class ClientService {
         }
     }
 
-    private FormViewResponseDTO buildFormViewRes(EnrichedFormDetailsDTO enrichedFormDetailsDTO){
+    private String buildFormViewRes(EnrichedFormDetailsDTO enrichedFormDetailsDTO){
 
         ComponentRequestDTO componentRequestDTO = new ComponentRequestDTO();
         componentRequestDTO.setEnrichedFormDetailsDTO(enrichedFormDetailsDTO);
 
-         FormViewResponseDTO formViewResponseDTO = new FormViewResponseDTO();
+        FormViewResponseDTO formViewResponseDTO = new FormViewResponseDTO();
 
         populateApplicationResponse(formViewResponseDTO, componentRequestDTO);
         setRelatedFormList(enrichedFormDetailsDTO, formViewResponseDTO);
 
-        return formViewResponseDTO;
+        return new Gson().toJson(formViewResponseDTO);
     }
 
 
@@ -154,7 +155,6 @@ public class ClientService {
         if(Objects.isNull(ageDetails)){
             return Response.ok(FormUtil.eligibilitySorryResponse()).build();
         }
-
         return verifyEligibility(ageDetails, eligibilityCheckRequestDTO);
     }
 
@@ -185,7 +185,6 @@ public class ClientService {
 
         formViwerFactory.get(componentEnum)
                 .parseResponse(componentRequestDTO, formViewResponseDTO, sortIndex);
-
     }
 
     public EnrichedFormDetailsDTO getEnrichedFormDetails(String appId) {
@@ -214,7 +213,9 @@ public class ClientService {
 
 
         ApplicationAgeDetails applicationAgeDetails = dbMgmtFacade.getApplicationAgeDetails(appId);
-        enrichedFormDetailsDTO.setApplicationAgeDetailsDTO(objectMapper.convertValue(applicationAgeDetails, ApplicationAgeDetailsDTO.class));
+        if(Objects.nonNull(applicationAgeDetails)) {
+            enrichedFormDetailsDTO.setApplicationAgeDetailsDTO(objectMapper.convertValue(applicationAgeDetails, ApplicationAgeDetailsDTO.class));
+        }
 
         List<ApplicationVacancyDetails> applicationVacancyDetails = dbMgmtFacade.getApplicationVacancyDetails(appId);
         List<ApplicationVacancyDTO> applicationVacancyDTOList = new ArrayList<>();
@@ -263,7 +264,6 @@ public class ClientService {
             return getEligibilityWithMinDate(eligibilityCheckRequestDTO.getDob(), ageDetails.getMinNormalDob(), ageDetails,
                     eligibilityCheckRequestDTO.getCategory());
         }
-
         return Response.ok(FormUtil.eligibilitySuccessResponse()).build();
     }
 
@@ -308,7 +308,6 @@ public class ClientService {
         if(Objects.nonNull(admitCard)){
             admitCardResponseDTO.setAdmitCardIntroDTO(buildAdmitIntro(admitCard));
         }
-
         setTopAdmitCardList(admitCardResponseDTO);
         populateAdmitContent(admitCardResponseDTO, admitId);
 

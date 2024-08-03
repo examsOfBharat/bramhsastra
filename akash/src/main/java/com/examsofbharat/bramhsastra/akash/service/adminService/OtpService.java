@@ -1,4 +1,4 @@
-package com.examsofbharat.bramhsastra.akash.service;
+package com.examsofbharat.bramhsastra.akash.service.adminService;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

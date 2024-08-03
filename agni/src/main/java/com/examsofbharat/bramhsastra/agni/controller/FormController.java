@@ -1,8 +1,8 @@
 package com.examsofbharat.bramhsastra.agni.controller;
 
-import com.examsofbharat.bramhsastra.akash.service.ClientService;
-import com.examsofbharat.bramhsastra.akash.service.ResponseManagementService;
-import com.examsofbharat.bramhsastra.akash.service.SecondaryPageService;
+import com.examsofbharat.bramhsastra.akash.service.clientService.ClientService;
+import com.examsofbharat.bramhsastra.akash.service.clientService.ResponseManagementService;
+import com.examsofbharat.bramhsastra.akash.service.clientService.SecondaryPageService;
 import com.examsofbharat.bramhsastra.jal.dto.request.ApplicationRequestDTO;
 import com.examsofbharat.bramhsastra.jal.dto.request.EligibilityCheckRequestDTO;
 import jakarta.ws.rs.core.Response;
@@ -13,14 +13,11 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("/form")
-@CrossOrigin("*")
+@CrossOrigin("https://jarvis-psi.vercel.app/")
 public class FormController {
 
     @Autowired
     ResponseManagementService responseManagementService;
-
-//    @Autowired
-//    ApplicationClientService applicationClientService;
 
     @Autowired
     ClientService clientService;
@@ -45,12 +42,6 @@ public class FormController {
         log.info("Request reached for form details userId :: {}", applicationRequestDTO.getUserId());
         return clientService.buildAndGetApplication(applicationRequestDTO.getUserId());
     }
-
-//    @PostMapping("/fetch/second/page")
-//    public Response fetchSecondPage(@RequestParam String requestType){
-//        log.info("Fetch second page request reached ::{}" ,requestType);
-//        return secondaryPageService.fetchSecondPageData(requestType);
-//    }
 
 
     @PostMapping("/check/eligibility")

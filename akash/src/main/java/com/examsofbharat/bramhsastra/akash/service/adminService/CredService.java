@@ -1,7 +1,8 @@
-package com.examsofbharat.bramhsastra.akash.service;
+package com.examsofbharat.bramhsastra.akash.service.adminService;
 
 import com.examsofbharat.bramhsastra.akash.constants.AkashConstants;
 import com.examsofbharat.bramhsastra.akash.executor.FormExecutorService;
+import com.examsofbharat.bramhsastra.akash.service.EmailService;
 import com.examsofbharat.bramhsastra.akash.utils.*;
 import com.examsofbharat.bramhsastra.jal.constants.ErrorConstants;
 import com.examsofbharat.bramhsastra.jal.constants.WebConstants;

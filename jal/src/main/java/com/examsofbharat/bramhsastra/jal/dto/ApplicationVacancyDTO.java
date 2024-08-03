@@ -16,6 +16,7 @@ public class ApplicationVacancyDTO {
     int st;
     int sc;
     int obc;
+    int ews;
     int female;
     int exArmy;
     int totalVacancy;

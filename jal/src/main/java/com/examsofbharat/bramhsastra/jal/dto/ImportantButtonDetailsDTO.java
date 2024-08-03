@@ -14,5 +14,6 @@ public class ImportantButtonDetailsDTO {
     private String ansKeyUrl;
     private String other1;
     private String other2;
+    private String officialWebsite;
 
 }

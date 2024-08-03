@@ -41,6 +41,9 @@ public class ApplicationVacancyDetails {
     @Column(name = "obc")
     private Integer obc;
 
+    @Column(name = "ews")
+    private Integer ews;
+
     @Column(name = "female")
     private Integer female;
 

@@ -1,4 +1,4 @@
-package com.examsofbharat.bramhsastra.akash.service;
+package com.examsofbharat.bramhsastra.akash.service.clientService;
 
 import com.examsofbharat.bramhsastra.akash.constants.AkashConstants;
 import com.examsofbharat.bramhsastra.akash.executor.FormExecutorService;
@@ -14,7 +14,6 @@ import com.examsofbharat.bramhsastra.jal.utils.StringUtil;
 import com.examsofbharat.bramhsastra.prithvi.entity.*;
 import com.examsofbharat.bramhsastra.prithvi.facade.DBMgmtFacade;
 import com.google.gson.Gson;
-import jakarta.annotation.PostConstruct;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,7 +85,7 @@ public class ResponseManagementService {
         FormUtil.cacheData.put("HOME_PAGE", response);
         pushResponseToDb("HOME_PAGE", response, null);
 
-        buildAndSaveResponseToDb();
+        buildAndSaveSecAndRelatedData();
 
         clientService.updateLatestFormInCache();
 
@@ -122,21 +121,9 @@ public class ResponseManagementService {
         if(StringUtil.isEmpty(response)){
             return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.DATA_NOT_FOUND);
         }
-
-//        FormLandingPageDTO responseData = null;
-//        try {
-//            responseData = gson.fromJson(response, FormLandingPageDTO.class);
-//        }catch (Exception e){
-//             log.error("Exception occurred while parsing homeResponse responseType :: {}", responseType);
-//            return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.DATA_NOT_FOUND);
-//        }
-//
-//        if(Objects.isNull(responseData)){
-//            return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.DATA_NOT_FOUND);
-//        }
-
         return Response.ok(response).build();
     }
+
 
     public void buildAndParse(List<ExamMetaData> examMetaDataList,
                                            FormTypeEnum formTypeEnum,
@@ -257,7 +244,7 @@ public class ResponseManagementService {
     private void buildAllLatestForms(LandingSectionDTO landingSectionDTO){
 
         List<LandingSubSectionDTO> landingSubSectionDTOS = new ArrayList<>();
-        List<ApplicationForm> latestFormList = dbMgmtFacade.fetchAllLatestApp(0, 10);
+        List<ApplicationForm> latestFormList = dbMgmtFacade.fetchAllLatestApp(0, 5);
 
         int i = 0;
         for(ApplicationForm applicationForm : latestFormList){
@@ -268,13 +255,14 @@ public class ResponseManagementService {
             landingSubSectionDTO.setShowDate(DateUtils.getFormatedDate1(applicationForm.getStartDate()));
             landingSubSectionDTO.setShowDateColor(FormUtil.getLastXDaysDateColor(applicationForm.getStartDate()));
             landingSubSectionDTO.setTotalVacancy(String.valueOf(applicationForm.getTotalVacancy()));
+            landingSubSectionDTO.setFormLogoUrl(FormUtil.getLogoByName(applicationForm.getExamName()));
             i++;
 
             landingSubSectionDTOS.add(landingSubSectionDTO);
         }
         landingSectionDTO.setSubSections(landingSubSectionDTOS);
-
     }
+
     private void buildAllOlderForms(LandingSectionDTO landingSectionDTO){
         List<LandingSubSectionDTO> landingSubSectionDTOS = new ArrayList<>();
         List<ApplicationForm> latestFormList = dbMgmtFacade.fetchAllOldestApp(0, 10);
@@ -288,6 +276,7 @@ public class ResponseManagementService {
             landingSubSectionDTO.setShowDate(DateUtils.getFormatedDate1(applicationForm.getEndDate()));
             landingSubSectionDTO.setShowDateColor(AkashConstants.RED_COLOR);
             landingSubSectionDTO.setTotalVacancy(String.valueOf(applicationForm.getTotalVacancy()));
+            landingSubSectionDTO.setFormLogoUrl(FormUtil.getLogoByName(applicationForm.getExamName()));
             i++;
 
             landingSubSectionDTOS.add(landingSubSectionDTO);
@@ -409,7 +398,7 @@ public class ResponseManagementService {
 
 
     //build secondary page response based on type and subType
-    public void buildAndSaveResponseToDb(){
+    public void buildAndSaveSecAndRelatedData(){
 
         int size = eobInitilizer.getSecPageItemCount();
         for(FormSubTypeEnum formSubTypeEnum : FormSubTypeEnum.values()){
@@ -417,22 +406,21 @@ public class ResponseManagementService {
                 //will think latter based on response because to save each state it will have huge data in response table
                 continue;
             }
-            List<RelatedFormDTO> relatedForms = new ArrayList<>();
-            String responseRes = applicationDbUtil.fetchResponseBasedOnSubType(formSubTypeEnum.name(), 0, size, relatedForms);
-            FormUtil.cacheData.put(0 + "_" + formSubTypeEnum.name() , responseRes);
-            buildRelatedFormAndSaveResponse(responseRes, relatedForms, formSubTypeEnum.name());
+            //should be sync call, populating map for caching data
+            fetchBuildAndSaveSecAndRelatedData(formSubTypeEnum.name(), size);
         }
 
+        //save and cache latest data, keep sync call
+        fetchBuildAndSaveSecAndRelatedData(LATEST_FORMS.name(), size);
+        //save and cache older data, keep sync call
+        fetchBuildAndSaveSecAndRelatedData(OLDER_FORMS.name(), size);
+    }
+
+    private void fetchBuildAndSaveSecAndRelatedData(String formSubType, int size){
         List<RelatedFormDTO> relatedForms = new ArrayList<>();
-        String responseRes = applicationDbUtil.fetchResponseBasedOnSubType(LATEST_FORMS.name(), 0, size, relatedForms);
-        FormUtil.cacheData.put(0 + "_" + LATEST_FORMS.name() , responseRes);
-        buildRelatedFormAndSaveResponse(responseRes, relatedForms, LATEST_FORMS.name());
-
-        List<RelatedFormDTO> relatedForms2 = new ArrayList<>();
-        String responseRes2 = applicationDbUtil.fetchResponseBasedOnSubType(OLDER_FORMS.name(), 0, size, relatedForms);
-        FormUtil.cacheData.put(0 + "_" + OLDER_FORMS.name() , responseRes2);
-        buildRelatedFormAndSaveResponse(responseRes2, relatedForms2, OLDER_FORMS.name());
-
+        String responseRes = applicationDbUtil.fetchSecDataAndRelatedData(formSubType, 0, size, relatedForms);
+        FormUtil.cacheData.put(0 + "_" + formSubType , responseRes);
+        buildRelatedFormAndSaveResponse(responseRes, relatedForms, formSubType);
     }
 
     private void buildRelatedFormAndSaveResponse(String responseRes,

@@ -1,4 +1,4 @@
-package com.examsofbharat.bramhsastra.akash.processors;
+package com.examsofbharat.bramhsastra.akash.processors.formProcessor;
 
 import com.examsofbharat.bramhsastra.akash.constants.AkashConstants;
 import com.examsofbharat.bramhsastra.akash.factory.componentParser.BaseContentParser;
@@ -11,6 +11,10 @@ import com.examsofbharat.bramhsastra.jal.utils.StringUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import static com.examsofbharat.bramhsastra.akash.constants.AkashConstants.*;
 
@@ -39,7 +43,7 @@ public class TimeAndFeeSummaryParser extends BaseContentParser {
 
     private AgeRelaxationDTO buildAgeRelaxation(EnrichedFormDetailsDTO enrichedFormDetailsDTO){
         //if max-age is not available then remove the whole card (this cases can be seen in case of mains exams)
-        if(enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getMaxAge() <=0){
+        if(enrichedFormDetailsDTO.getApplicationAgeDetailsDTO() == null || enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getMaxAge() <=0){
             return null;
         }
 
@@ -58,17 +62,37 @@ public class TimeAndFeeSummaryParser extends BaseContentParser {
 
     private ImportantDatesDTO buildsFormDates(EnrichedFormDetailsDTO enrichedFormDetailsDTO){
         ImportantDatesDTO importantDatesDTO = new ImportantDatesDTO();
-        importantDatesDTO.setStartDate(DateUtils.getFormatedDate1(enrichedFormDetailsDTO.getApplicationFormDTO().getDateCreated()));
-        importantDatesDTO.setExamDate("AS SCHEDULED");
-        importantDatesDTO.setExamDateColor(GREEN_COLOR);
-        importantDatesDTO.setLastDate(DateUtils.getFormatedDate1(enrichedFormDetailsDTO.getApplicationFormDTO().getEndDate()));
-        importantDatesDTO.setLastDateColor(FormUtil.getLastXDaysDateColor(enrichedFormDetailsDTO.getApplicationFormDTO().getEndDate()));
+        List<DateDetailsDTO> dateDetailsDTOList = new ArrayList<>();
+
         importantDatesDTO.setTitle(AkashConstants.DATES_TITLE);
-        importantDatesDTO.setLastPayDate(DateUtils.getFormatedDate1(enrichedFormDetailsDTO.getApplicationFeeDTO().getLastPaymentDate()));
-        importantDatesDTO.setLastPayDateColor(FormUtil.getLastXDaysDateColor(enrichedFormDetailsDTO.getApplicationFeeDTO().getLastPaymentDate()));
         importantDatesDTO.setCardColor(FormUtil.fetchCardColor(1));
 
+        populateDateDetails(dateDetailsDTOList,"START DATE ", DateUtils.getFormatedDate1(enrichedFormDetailsDTO.getApplicationFormDTO().getDateCreated()),
+                FormUtil.getLastXDaysDateColor(enrichedFormDetailsDTO.getApplicationFormDTO().getDateCreated()));
+
+        populateDateDetails(dateDetailsDTOList, "LAST DATE ", DateUtils.getFormatedDate1(enrichedFormDetailsDTO.getApplicationFormDTO().getEndDate()),
+                FormUtil.getLastXDaysDateColor(enrichedFormDetailsDTO.getApplicationFormDTO().getEndDate()));
+
+        populateDateDetails(dateDetailsDTOList, "LAST PAY DATE ", DateUtils.getFormatedDate1(enrichedFormDetailsDTO.getApplicationFeeDTO().getLastPaymentDate()),
+                FormUtil.getLastXDaysDateColor(enrichedFormDetailsDTO.getApplicationFeeDTO().getLastPaymentDate()));
+
+        populateDateDetails(dateDetailsDTOList, "EXAM DATE ", "AS SCHEDULED", GREEN_COLOR);
+        populateDateDetails(dateDetailsDTOList, "ADMIT CARD DATE ", "AS SCHEDULED", GREEN_COLOR);
+
+        importantDatesDTO.setDateDetails(dateDetailsDTOList);
+
         return importantDatesDTO;
+    }
+
+    private void populateDateDetails(List<DateDetailsDTO> dateDetailsDTOList,
+                                     String title, String date, String color){
+
+        DateDetailsDTO dateDetailsDTO = new DateDetailsDTO();
+        dateDetailsDTO.setTitle(title);
+        dateDetailsDTO.setDate(date);
+        dateDetailsDTO.setDateColor(color);
+
+        dateDetailsDTOList.add(dateDetailsDTO);
     }
 
     private AppFeeDetailsDTO buildFeeDetails(EnrichedFormDetailsDTO enrichedFormDetailsDTO){
@@ -106,8 +130,12 @@ public class TimeAndFeeSummaryParser extends BaseContentParser {
     public AgeAndFeeInformation buildInformation(EnrichedFormDetailsDTO enrichedFormDetailsDTO){
         AgeAndFeeInformation ageAndFeeInformation = new AgeAndFeeInformation();
 
-        ageAndFeeInformation.setFeeInfo(enrichedFormDetailsDTO.getApplicationFeeDTO().getInformation());
-        ageAndFeeInformation.setAgeInfo(enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getInformation());
+        if(Objects.nonNull(enrichedFormDetailsDTO.getApplicationFeeDTO())) {
+            ageAndFeeInformation.setFeeInfo(enrichedFormDetailsDTO.getApplicationFeeDTO().getInformation());
+        }
+        if(Objects.nonNull(enrichedFormDetailsDTO.getApplicationAgeDetailsDTO())) {
+            ageAndFeeInformation.setAgeInfo(enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getInformation());
+        }
 
         return ageAndFeeInformation;
     }

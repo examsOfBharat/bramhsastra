@@ -1,6 +1,6 @@
 package com.examsofbharat.bramhsastra.akash.factory.componentParser;
 
-import com.examsofbharat.bramhsastra.akash.processors.*;
+import com.examsofbharat.bramhsastra.akash.processors.formProcessor.*;
 import com.examsofbharat.bramhsastra.jal.enums.ComponentEnum;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;

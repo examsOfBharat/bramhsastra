@@ -16,7 +16,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import static com.examsofbharat.bramhsastra.akash.constants.AkashConstants.*;
 
 @Component
 public class ApplicationDbUtil {
@@ -24,7 +27,7 @@ public class ApplicationDbUtil {
     @Autowired
     DBMgmtFacade dbMgmtFacade;
 
-    public String fetchResponseBasedOnSubType(String formSubTypeEnum, int page, int size, List<RelatedFormDTO> relatedForms) {
+    public String fetchSecDataAndRelatedData(String formSubTypeEnum, int page, int size, List<RelatedFormDTO> relatedForms) {
         WrapperSecondaryPageDataDTO wrapperSecondaryPageDataDTO = new WrapperSecondaryPageDataDTO();
         wrapperSecondaryPageDataDTO.setTitle(FormUtil.getSecondPageTitle(formSubTypeEnum));
 
@@ -79,11 +82,6 @@ public class ApplicationDbUtil {
                 relatedForms.add(buildRelatedForm(application, color));
                 color++;
             }
-//            if(color2 % 8 == 0){
-//                SecondaryPageDataDTO secondaryPageDataDTO = new SecondaryPageDataDTO();
-//                secondaryPageDataDTO.setImageUrl("https://res.cloudinary.com/djfi8sqip/image/upload/v1721764306/banking_banner_04_k3yccd.svg");
-//                applicationsListDTO.add(secondaryPageDataDTO);
-//            }
             applicationsListDTO.add(buildFormSecondaryPage(application, subType, color2));
             color2++;
         }
@@ -147,7 +145,6 @@ public class ApplicationDbUtil {
         secondaryPageDataDTO.setTitle(admitCard.getAdmitCardName());
         secondaryPageDataDTO.setExamDate(DateUtils.getFormatedDate1(admitCard.getExamDate()));
         secondaryPageDataDTO.setExamDateColor(FormUtil.getLastXDaysDateColor(admitCard.getExamDate()));
-
         secondaryPageDataDTO.setReleaseDate(DateUtils.getFormatedDate1(admitCard.getDateCreated()));
         secondaryPageDataDTO.setReleaseDateColor(FormUtil.getLastXDaysDateColor(admitCard.getDateCreated()));
         secondaryPageDataDTO.setNewFlag(FormUtil.dateIsWithinXDays(admitCard.getDateCreated()));
@@ -198,7 +195,7 @@ public class ApplicationDbUtil {
         secondaryPageDataDTO.setTitle(applicationForm.getExamName());
 
         secondaryPageDataDTO.setReleaseDate(DateUtils.getFormatedDate1(applicationForm.getStartDate()));
-        secondaryPageDataDTO.setReleaseDateColor(FormUtil.getLastXDaysDateColor(applicationForm.getStartDate()));
+//        secondaryPageDataDTO.setReleaseDateColor(FormUtil.getLastXDaysDateColor(applicationForm.getStartDate()));
 
         secondaryPageDataDTO.setTotalVacancy(applicationForm.getTotalVacancy());
 
@@ -215,6 +212,16 @@ public class ApplicationDbUtil {
         secondaryPageDataDTO.setLastDate(DateUtils.getFormatedDate1(applicationForm.getEndDate()));
         secondaryPageDataDTO.setLastDateColor(FormUtil.getExpiryDateColor(applicationForm.getEndDate()));
         secondaryPageDataDTO.setNewFlag(FormUtil.dateIsWithinXDays(applicationForm.getStartDate()));
+
+        if(new Date().after(applicationForm.getEndDate())){
+            secondaryPageDataDTO.setFormStatus("EXPIRED");
+            secondaryPageDataDTO.setReleaseDateColor(RED_COLOR);
+        }else if (FormUtil.dateIsWithinXDays(applicationForm.getStartDate())){
+            secondaryPageDataDTO.setFormStatus("NEW");
+            secondaryPageDataDTO.setReleaseDateColor(GREEN_COLOR);
+        }else{
+            secondaryPageDataDTO.setReleaseDateColor(BLUE_COLOR_CODE);
+        }
 
         return secondaryPageDataDTO;
     }

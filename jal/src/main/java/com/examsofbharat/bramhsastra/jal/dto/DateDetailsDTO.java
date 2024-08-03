@@ -5,14 +5,9 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class VacancyResDetailsDTO {
-    int general;
-    int obc;
-    int sc;
-    int st;
-    int ews;
-    int female;
-    int exArmy;
-    int totalVacancy;
-    String information;
+public class DateDetailsDTO {
+    private String title;
+    private String date;
+    private String dateColor;
+    private String timeBound;
 }

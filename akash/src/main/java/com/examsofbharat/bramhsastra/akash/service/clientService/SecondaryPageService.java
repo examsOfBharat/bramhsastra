@@ -1,14 +1,10 @@
-package com.examsofbharat.bramhsastra.akash.service;
+package com.examsofbharat.bramhsastra.akash.service.clientService;
 
 import com.examsofbharat.bramhsastra.akash.utils.ApplicationDbUtil;
 import com.examsofbharat.bramhsastra.akash.utils.EobInitilizer;
 import com.examsofbharat.bramhsastra.akash.utils.FormUtil;
 import com.examsofbharat.bramhsastra.akash.utils.WebUtils;
-import com.examsofbharat.bramhsastra.akash.validator.FormValidator;
-import com.examsofbharat.bramhsastra.jal.constants.ErrorConstants;
 import com.examsofbharat.bramhsastra.jal.constants.WebConstants;
-import com.examsofbharat.bramhsastra.jal.dto.request.SecondaryPageRequestDTO;
-import com.examsofbharat.bramhsastra.jal.enums.FormSubTypeEnum;
 import com.examsofbharat.bramhsastra.jal.utils.StringUtil;
 import com.examsofbharat.bramhsastra.prithvi.entity.ResponseManagement;
 import com.examsofbharat.bramhsastra.prithvi.facade.DBMgmtFacade;
@@ -66,7 +62,7 @@ public class SecondaryPageService {
             return Response.ok(responseData).build();
         }
 
-        String response = applicationDbUtil.fetchResponseBasedOnSubType(subType, pageNo,size, null);
+        String response = applicationDbUtil.fetchSecDataAndRelatedData(subType, pageNo,size, null);
         if(StringUtil.isEmpty(response)){
             return webUtils.buildErrorMessage(WebConstants.ERROR, DATA_NOT_FOUND);
         }

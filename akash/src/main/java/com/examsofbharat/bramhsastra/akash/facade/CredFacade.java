@@ -1,7 +1,7 @@
 package com.examsofbharat.bramhsastra.akash.facade;
 
 
-import com.examsofbharat.bramhsastra.akash.service.CredService;
+import com.examsofbharat.bramhsastra.akash.service.adminService.CredService;
 import com.examsofbharat.bramhsastra.akash.utils.WebUtils;
 import com.examsofbharat.bramhsastra.jal.dto.request.LogInDTO;
 import com.examsofbharat.bramhsastra.jal.dto.request.RegisterDTO;

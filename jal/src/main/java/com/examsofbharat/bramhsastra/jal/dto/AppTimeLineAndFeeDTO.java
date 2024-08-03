@@ -2,6 +2,7 @@ package com.examsofbharat.bramhsastra.jal.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 
 @Data
@@ -10,15 +11,15 @@ public class AppTimeLineAndFeeDTO {
     String heading;
     int sortIndex;
 
-    @JsonProperty("importants_dates")
+    @SerializedName("importants_dates")
     ImportantDatesDTO importantDatesDto;
 
-    @JsonProperty("fee_details")
+    @SerializedName("fee_details")
     AppFeeDetailsDTO appFeeDetailsDto;
 
-    @JsonProperty("age_relaxation")
+    @SerializedName("age_relaxation")
     AgeRelaxationDTO ageRelaxationDTO;
 
-    @JsonProperty("extra_information")
+    @SerializedName("extra_information")
     AgeAndFeeInformation ageAndFeeInformation;
 }

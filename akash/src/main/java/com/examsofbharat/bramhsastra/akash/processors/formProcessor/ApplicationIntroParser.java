@@ -1,4 +1,4 @@
-package com.examsofbharat.bramhsastra.akash.processors;
+package com.examsofbharat.bramhsastra.akash.processors.formProcessor;
 
 import com.examsofbharat.bramhsastra.akash.factory.componentParser.BaseContentParser;
 import com.examsofbharat.bramhsastra.akash.utils.DateUtils;
@@ -25,13 +25,15 @@ public class ApplicationIntroParser extends BaseContentParser {
             ApplicationFormIntroDTO applicationFormIntroDTO = new ApplicationFormIntroDTO();
             applicationFormIntroDTO.setAppId(enrichedFormDetailsDTO.getApplicationFormDTO().getId());
 
-            if (enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getMinAge() > 0 &&
+            if (Objects.nonNull(enrichedFormDetailsDTO.getApplicationAgeDetailsDTO()) &&
+                    enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getMinAge() > 0 &&
                     enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getMaxAge() > 0) {
                 applicationFormIntroDTO.setAgeRange(enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getMinAge() +
                         "-" + enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getMaxAge() + " years");
             }
 
-            if(Objects.isNull(enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getMaxNormalDob()) &&
+            if(Objects.nonNull(enrichedFormDetailsDTO.getApplicationAgeDetailsDTO()) &&
+                    Objects.isNull(enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getMaxNormalDob()) &&
                     Objects.isNull(enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getMinNormalDob())){
                 applicationFormIntroDTO.setCheckEligibility(false);
             }else{

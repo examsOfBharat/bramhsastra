@@ -38,7 +38,7 @@ public class FormUtil {
     public static Map<String, String> qualificationName = new HashMap<>();
 
     public static Map<String,String> cacheData = new HashMap<>();
-    public static Map<String, FormViewResponseDTO> formCache = new HashMap<>();
+    public static Map<String, String> formCache = new HashMap<>();
 
     @PostConstruct
     public void init() {
@@ -63,7 +63,7 @@ public class FormUtil {
         if(date == null) return null;
         boolean flag = DateUtils.isTimePassedDays(5, date);
         if(flag)
-            return RED_COLOR;
+            return BLUE_COLOR_CODE;
         return GREEN_COLOR;
     }
 

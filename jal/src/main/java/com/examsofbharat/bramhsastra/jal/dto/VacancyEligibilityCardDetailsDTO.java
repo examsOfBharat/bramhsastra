@@ -2,6 +2,7 @@ package com.examsofbharat.bramhsastra.jal.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 
 import java.util.List;
@@ -11,9 +12,9 @@ import java.util.List;
 public class VacancyEligibilityCardDetailsDTO {
     String title;
     int sortIndex;
-    @JsonProperty("vacancy_eligibility_data_list")
+    @SerializedName("vacancy_eligibility_data_list")
     List<VacancyEligibilityDataDTO> vacancyEligibilityDataList;
 
-    @JsonProperty("extra_info")
+    @SerializedName("extra_info")
     VacancyEligibilityAdditionalInfo vacancyEligibilityAdditionalInfo;
 }

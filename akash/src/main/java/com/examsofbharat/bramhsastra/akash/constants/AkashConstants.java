@@ -16,6 +16,7 @@ AkashConstants {
     public static final String GREEN_COLOR = "#03571a";
     public static final String BLUE_COLOR = "#03571a";
     public static final String RED_COLOR = "#870f07";
+    public static final String BLUE_COLOR_CODE = "#0000FF";
     public static final String RUPEE_SYMBOL = "₹";
     public static final String YEAR_SYMBOL = " yrs";
 }

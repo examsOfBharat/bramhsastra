@@ -2,9 +2,14 @@ package com.examsofbharat.bramhsastra.agni.controller;
 
 import com.examsofbharat.bramhsastra.akash.facade.ClientFacade;
 import com.examsofbharat.bramhsastra.akash.facade.CredFacade;
-import com.examsofbharat.bramhsastra.akash.service.*;
+import com.examsofbharat.bramhsastra.akash.service.adminService.CredService;
+import com.examsofbharat.bramhsastra.akash.service.adminService.FormAdminService;
+import com.examsofbharat.bramhsastra.akash.service.clientService.ClientService;
+import com.examsofbharat.bramhsastra.akash.service.clientService.ResponseManagementService;
+import com.examsofbharat.bramhsastra.akash.service.clientService.SecondaryPageService;
 import com.examsofbharat.bramhsastra.akash.utils.WebUtils;
 import com.examsofbharat.bramhsastra.jal.dto.request.*;
+import com.examsofbharat.bramhsastra.jal.utils.StringUtil;
 import com.examsofbharat.bramhsastra.prithvi.manager.ApplicationFormManagerImpl;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +22,13 @@ import java.io.FileNotFoundException;
 @Slf4j
 @RestController
 @RequestMapping("/user1")
+//@CrossOrigin("https://jarvis-psi.vercel.app/")
 @CrossOrigin("*")
+//@CrossOrigin(
+//        origins = {"https://jarvis-psi.vercel.app"},
+//        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT},
+//        allowedHeaders = {"Authorization", "Content-Type"},
+//        allowCredentials = "true")
 public class BackTestController {
 
     @Autowired
@@ -88,7 +99,10 @@ public class BackTestController {
     }
 
     @GetMapping("/get/response")
-    public Response getLandingResponse(@RequestParam String responseType){
+    public Response getLandingResponse(@RequestHeader(value = "App-Id", required = false) String appId,@RequestParam String responseType){
+        if(StringUtil.isEmpty(appId) || !"abcd".equals(appId)){
+            return Response.status(401).build();
+        }
         log.info("Request reached for home page responseType :: {}", responseType);
         return responseManagementService.fetchHomeResponse(responseType);
     }
@@ -121,19 +135,31 @@ public class BackTestController {
 
 
     @GetMapping("/get/form/details")
-    public Response getFormDetails(@RequestParam String appId){
+    public Response getFormDetails(@RequestHeader(value = "App-Id", required = false) String app_Id,
+                                   @RequestParam String appId){
+        if(StringUtil.isEmpty(app_Id) || !"abcd".equals(app_Id)){
+            return Response.status(401).build();
+        }
         log.info("Request reached for form details userId :: {}", appId);
         return clientService.buildAndGetApplication(appId);
     }
 
     @GetMapping("/get/admit/details")
-    public Response getAdmitDetails(@RequestParam String appId){
+    public Response getAdmitDetails(@RequestHeader(value = "App-Id", required = false) String app_Id,
+                                    @RequestParam String appId){
+        if(StringUtil.isEmpty(app_Id) || !"abcd".equals(app_Id)){
+            return Response.status(401).build();
+        }
         log.info("Request reached for admit card userId :: {}", appId);
         return clientFacade.buildAndGetAdmitCard(appId);
     }
 
     @GetMapping("/get/result/details")
-    public Response getResultDetails(@RequestParam String appId){
+    public Response getResultDetails(@RequestHeader(value = "App-Id", required = false) String app_Id,
+                                     @RequestParam String appId){
+        if(StringUtil.isEmpty(app_Id) || !"abcd".equals(app_Id)){
+            return Response.status(401).build();
+        }
         log.info("Request reached for result card userId :: {}", appId);
         return clientFacade.buildAndGetResult(appId);
     }
@@ -151,13 +177,6 @@ public class BackTestController {
         return formAdminService.fetchAllAppName();
     }
 
-
-//    @PostMapping("/fetch/second/page")
-//    public Response fetchSecondPage(@RequestParam String requestType){
-//        log.info("Fetch second page request reached ::{}" ,requestType);
-//        return secondaryPageService.fetchSecondPageData(requestType);
-//    }
-
     @GetMapping("fetch/by/min")
     public Response fetchByMin(@RequestParam String min){
         log.info("Min request reached");
@@ -171,13 +190,15 @@ public class BackTestController {
     }
 
     @GetMapping("/fetch/page/list")
-    public Response fetchSecondaryPageData(@RequestParam String subType, @RequestParam int page, @RequestParam int size){
+    public Response fetchSecondaryPageData(@RequestHeader(value = "App-Id", required = false) String appId,
+                                           @RequestParam String subType, @RequestParam int page, @RequestParam int size){
+
+        if(StringUtil.isEmpty(appId) || !"abcd".equals(appId)){
+            return Response.status(401).build();
+        }
         log.info("Request reached for 2nd page List: subtype::{} page::{} size::{}", subType, page, size);
         return secondaryPageService.fetchSecondaryPageDataV2(subType, page,size);
     }
-
-
-
 
 
     @GetMapping("/update/home/count")

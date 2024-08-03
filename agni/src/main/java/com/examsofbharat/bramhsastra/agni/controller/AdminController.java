@@ -1,8 +1,8 @@
 package com.examsofbharat.bramhsastra.agni.controller;
 
 import com.examsofbharat.bramhsastra.akash.facade.CredFacade;
-import com.examsofbharat.bramhsastra.akash.service.CredService;
-import com.examsofbharat.bramhsastra.akash.service.FormAdminService;
+import com.examsofbharat.bramhsastra.akash.service.adminService.CredService;
+import com.examsofbharat.bramhsastra.akash.service.adminService.FormAdminService;
 import com.examsofbharat.bramhsastra.jal.dto.request.*;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("/admin")
-@CrossOrigin("*")
+@CrossOrigin("https://jarvis-psi.vercel.app/")
 public class AdminController {
 
     @Autowired
@@ -23,6 +23,8 @@ public class AdminController {
 
     @Autowired
     FormAdminService formAdminService;
+
+    //Register and login
 
     @PostMapping("/register")
     public Response registerUser(@RequestBody RegisterDTO registerData){
@@ -41,6 +43,8 @@ public class AdminController {
         log.info("Verify OTP request reached ::{}" ,logInDTO.toString());
         return credService.verifyOtp(logInDTO);
     }
+
+    //save forms in data base
 
     @PostMapping("/save/form/detail")
     public Response saveFormDetail(@RequestBody EnrichedFormDetailsDTO formDetailsDTO){
@@ -77,5 +81,18 @@ public class AdminController {
         return credService.updateUserStatus(ownerLandingRequestDTO);
     }
 
+    //Admin response data fetch API
+
+    @GetMapping("/fetch/admin/submitted/detail")
+    public Response fetchAdminSubmission(@RequestParam String status){
+        log.info("Admin submission fetch call reached status::{}", status);
+        return formAdminService.fetchAdminResponseData(status);
+    }
+
+    @PostMapping("/update/approver/response")
+    public Response updateApproverResponse(@RequestBody ApproverRequestDTO approverRequestDTO){
+        log.info("Reached approver request {}",approverRequestDTO.toString());
+        return formAdminService.updateApproverResponse(approverRequestDTO);
+    }
 
 }

@@ -1,4 +1,4 @@
-package com.examsofbharat.bramhsastra.akash.processors;
+package com.examsofbharat.bramhsastra.akash.processors.formProcessor;
 
 import com.examsofbharat.bramhsastra.akash.factory.componentParser.BaseContentParser;
 import com.examsofbharat.bramhsastra.jal.dto.FormViewResponseDTO;
@@ -53,6 +53,9 @@ public class ImportantButtonDetailParser extends BaseContentParser {
 
             importantButtonDetailsDTO.setAnsKeyUrl(
                     componentRequestDTO.getEnrichedFormDetailsDTO().getApplicationUrlsDTO().getAnsKey());
+            importantButtonDetailsDTO.setOfficialWebsite(
+                    componentRequestDTO.getEnrichedFormDetailsDTO().getApplicationUrlsDTO().getOfficialWebsite()
+            );
 
             formViewResponseDTO.setImportantButtonDetailsDTO(importantButtonDetailsDTO);
 

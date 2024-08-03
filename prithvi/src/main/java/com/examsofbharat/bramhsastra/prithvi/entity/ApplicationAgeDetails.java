@@ -59,6 +59,9 @@ public class ApplicationAgeDetails {
     @Column(name = "min_normal_dob")
     private Date minNormalDob;
 
+    @Column(name = "extra_date_details")
+    private Date extraDateDetails;
+
     @Column(name = "date_created")
     private Date dateCreated;
 

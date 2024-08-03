@@ -1,6 +1,6 @@
 package com.examsofbharat.bramhsastra.akash.facade;
 
-import com.examsofbharat.bramhsastra.akash.service.ClientService;
+import com.examsofbharat.bramhsastra.akash.service.clientService.ClientService;
 import com.examsofbharat.bramhsastra.akash.utils.WebUtils;
 import com.examsofbharat.bramhsastra.jal.constants.WebConstants;
 import com.examsofbharat.bramhsastra.jal.dto.response.AdmitCardResponseDTO;

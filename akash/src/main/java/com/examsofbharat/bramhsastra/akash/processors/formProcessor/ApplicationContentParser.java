@@ -1,4 +1,4 @@
-package com.examsofbharat.bramhsastra.akash.processors;
+package com.examsofbharat.bramhsastra.akash.processors.formProcessor;
 
 import com.examsofbharat.bramhsastra.akash.factory.componentParser.BaseContentParser;
 import com.examsofbharat.bramhsastra.jal.dto.ApplicationContentManagerDTO;
