@@ -72,7 +72,6 @@ public class ClientService {
         }
 
         formResponse = buildFormViewRes(enrichedFormDetailsDTO);
-
         return Response.ok(formResponse).build();
     }
 
@@ -211,7 +210,6 @@ public class ClientService {
         ApplicationFeeDatails applicationFeeDatails = dbMgmtFacade.getApplicationFeeDetails(appId);
         enrichedFormDetailsDTO.setApplicationFeeDTO(objectMapper.convertValue(applicationFeeDatails, ApplicationFeeDTO.class));
 
-
         ApplicationAgeDetails applicationAgeDetails = dbMgmtFacade.getApplicationAgeDetails(appId);
         if(Objects.nonNull(applicationAgeDetails)) {
             enrichedFormDetailsDTO.setApplicationAgeDetailsDTO(objectMapper.convertValue(applicationAgeDetails, ApplicationAgeDetailsDTO.class));
@@ -224,12 +222,12 @@ public class ClientService {
         }
         enrichedFormDetailsDTO.setApplicationVacancyDTOS(applicationVacancyDTOList);
 
-
         List<ApplicationContentManager> applicationContentManagersList = dbMgmtFacade.getApplicationContentDetails(appId);
         List<ApplicationContentManagerDTO> applicationContentManagerDTOList = new ArrayList<>();
         for(ApplicationContentManager applicationContentManager : applicationContentManagersList){
             applicationContentManagerDTOList.add(objectMapper.convertValue(applicationContentManager, ApplicationContentManagerDTO.class));
         }
+
         enrichedFormDetailsDTO.setApplicationContentManagerDTO(applicationContentManagerDTOList);
 
         ApplicationUrl applicationUrl = dbMgmtFacade.getApplicationUrl(appId);

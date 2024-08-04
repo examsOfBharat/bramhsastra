@@ -115,8 +115,16 @@ public class DBMgmtFacade {
         return admitCardManager.getLatestAdmitCards(page, size, dateType);
     }
 
+    public List<AdmitCard> getLastXDayAdmitCardList(int xDays){
+        return admitCardManager.getXDaysAdmitCards(xDays);
+    }
+
     public List<ResultDetails> getResultDetailList(int page, int size, String dateType){
         return resultDetailsManager.getLatestResultList(page, size, dateType);
+    }
+
+    public List<ResultDetails> getLastXDaysResult(int xDays){
+        return resultDetailsManager.getXDaysAdmitCards(xDays);
     }
 
     public void saveResponseData(ResponseManagement responseManagement){

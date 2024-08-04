@@ -11,6 +11,7 @@ import com.examsofbharat.bramhsastra.jal.dto.request.*;
 import com.examsofbharat.bramhsastra.jal.dto.response.AdminResponseDataDTO;
 import com.examsofbharat.bramhsastra.jal.enums.FormSubTypeEnum;
 import com.examsofbharat.bramhsastra.jal.enums.StatusEnum;
+import com.examsofbharat.bramhsastra.jal.utils.StringUtil;
 import com.examsofbharat.bramhsastra.prithvi.entity.*;
 import com.examsofbharat.bramhsastra.prithvi.facade.DBMgmtFacade;
 import com.examsofbharat.bramhsastra.prithvi.manager.ApplicationNameDetailsManagerImpl;
@@ -307,6 +308,20 @@ public class FormAdminService {
         responseManagementService.buildAndUpdateClientHomePage();
     }
 
+    public void updateMetaData(String subCategory){
+        ExamMetaData examMetaData = dbMgmtFacade.getExamMetaData(subCategory);
+        if(Objects.nonNull(examMetaData)){
+            examMetaData.setTotalForm(examMetaData.getTotalForm()+1);
+            examMetaData.setDateModified(new Date());
+        }else {
+            examMetaData = new ExamMetaData();
+            examMetaData.setTotalForm(1);
+            examMetaData.setDateModified(new Date());
+            examMetaData.setDateCreated(new Date());
+        }
+        dbMgmtFacade.saveExamMetaData(examMetaData);
+    }
+
     //User for home page heading counting value
     public void updateHomeCount(int totalVacancy){
         ResponseManagement responseManagement;
@@ -354,7 +369,12 @@ public class FormAdminService {
         buildAndSaveAdmitContent(admitCardId, admitCardRequestDTO);
 
         //update admitId in applicationForm
-        updateAdmitIdInApplication(admitCardRequestDTO.getAppIdRef(), admitCardId);
+        if(StringUtil.notEmpty(admitCardRequestDTO.getAppIdRef())) {
+            updateAdmitIdInApplication(admitCardRequestDTO.getAppIdRef(), admitCardId);
+        }
+
+        //Update meta-data for admit card
+        updateMetaData("ADMIT");
 
         responseManagementService.buildAndUpdateClientHomePage();
 

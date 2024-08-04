@@ -60,7 +60,7 @@ public class ApplicationAgeDetails {
     private Date minNormalDob;
 
     @Column(name = "extra_date_details")
-    private Date extraDateDetails;
+    private String extraDateDetails;
 
     @Column(name = "date_created")
     private Date dateCreated;

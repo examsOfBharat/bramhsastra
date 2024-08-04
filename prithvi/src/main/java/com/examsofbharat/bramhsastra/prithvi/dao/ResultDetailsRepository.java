@@ -6,7 +6,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.Date;
+import java.util.List;
+
 public interface ResultDetailsRepository extends CrudRepository<ResultDetails, String> {
 
     Page<ResultDetails> findAll(Pageable pageable);
+
+    List<ResultDetails> findByResultDateAfterOrderByResultDateDesc(Date resultDate);
 }

@@ -3,6 +3,7 @@ package com.examsofbharat.bramhsastra.prithvi.manager;
 import com.examsofbharat.bramhsastra.prithvi.dao.AdmitCardRepository;
 import com.examsofbharat.bramhsastra.prithvi.entity.AdmitCard;
 import com.examsofbharat.bramhsastra.prithvi.sql.GenericManager;
+import com.examsofbharat.bramhsastra.prithvi.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +32,13 @@ public class AdmitCardManagerImpl extends GenericManager<AdmitCard, String> {
         Pageable pageable = PageRequest.of(page, size, Sort.by(dateType).descending());
         Page<AdmitCard> pageResult = admitCardRepository.findAll(pageable);
         return pageResult.getContent();
+    }
+
+    public List<AdmitCard> getXDaysAdmitCards(int daysGap) {
+        // Assuming AdmitCardRepository has method to fetch latest admit cards
+        // sorted by creation date
+        Date dateCriteria = DateUtils.addDays(new Date(), -daysGap);
+        return admitCardRepository.findByAdmitCardDateAfterOrderByAdmitCardDateDesc(dateCriteria);
     }
 
     public AdmitCard fetchAdmitCardById(String admitId){

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.text.Format;
 import java.text.MessageFormat;
+import java.text.NumberFormat;
 import java.util.*;
 
 import static com.examsofbharat.bramhsastra.akash.constants.AkashConstants.*;
@@ -390,16 +391,16 @@ public class FormUtil {
         return DateUtils.addYears(normalDob, -relaxedYrs);
     }
 
-//    public static String formatIntoIndianNumSystem(int amount){
-//        try{
-//            Format format = NumberFormat.getCurrencyInstance(new Locale("en","in"));
-//            String formatValue = format.format(amount);
-//            return processStrValue(formatValue).replaceAll("₹","");
-//        }catch (Exception e){
-//            log.error("Exception occurred while formating value into indian system");
-//        }
-//        return String.valueOf(amount);
-//    }
+    public static String formatIntoIndianNumSystem(int amount){
+        try{
+            Format format = NumberFormat.getCurrencyInstance(new Locale("en","in"));
+            String formatValue = format.format(amount);
+            return processStrValue(formatValue).replaceAll("₹","");
+        }catch (Exception e){
+            log.error("Exception occurred while formating value into indian system");
+        }
+        return String.valueOf(amount);
+    }
 
     private static String processStrValue(String val){
         String[] splitVal = val.split("\\.");

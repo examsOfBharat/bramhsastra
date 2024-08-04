@@ -166,9 +166,20 @@ public class ResponseManagementService {
                                                     FormLandingPageDTO formLandingPageDTO){
         buildAdmitSubSections(landingSectionDTO);
         HomeAdmitCardSection homeAdmitCardSection = new HomeAdmitCardSection();
-        homeAdmitCardSection.setLastUpdate(DateUtils.getFormatedDate1(new Date()));
-        homeAdmitCardSection.setUpdateDateColor(FormUtil.getLastXDaysDateColor(new Date()));
-        homeAdmitCardSection.setLastAdmitReleaseCount("4");
+
+        //Checking if we have any new admit card in last 2 days
+        List<AdmitCard> admitCardList = dbMgmtFacade.getLastXDayAdmitCardList(2);
+        if(Objects.nonNull(admitCardList)){
+            homeAdmitCardSection.setLastAdmitReleaseCount(String.valueOf(admitCardList.size()));
+        }
+
+        // Use meta-data modified date for last updated date
+        ExamMetaData examMetaData = dbMgmtFacade.getExamMetaData("ADMIT");
+        if(Objects.nonNull(examMetaData)) {
+            homeAdmitCardSection.setLastUpdate(DateUtils.getFormatedDate1(examMetaData.getDateModified()));
+            homeAdmitCardSection.setUpdateDateColor(FormUtil.getLastXDaysDateColor(examMetaData.getDateModified()));
+        }
+
         homeAdmitCardSection.setCardColor(FormUtil.fetchSecCardColor(0));
         homeAdmitCardSection.setLastReleaseCountTitle("Admit card released in last 2 days : ");
         homeAdmitCardSection.setTitle(FormTypeEnum.ADMIT.getVal());
@@ -181,9 +192,19 @@ public class ResponseManagementService {
                                                      FormLandingPageDTO formLandingPageDTO){
         buildResultSubSection(landingSectionDTO);
         HomeResultDetailsDTO homeResultDetailsDTO = new HomeResultDetailsDTO();
-        homeResultDetailsDTO.setLastUpdate(DateUtils.getFormatedDate1(new Date()));
-        homeResultDetailsDTO.setLastResultReleaseCount("4");
-        homeResultDetailsDTO.setUpdateDateColor(FormUtil.getLastXDaysDateColor(new Date()));
+        //Checking if we have any new admit card in last 2 days
+        List<ResultDetails> resultDetailsList = dbMgmtFacade.getLastXDaysResult(2);
+        if(Objects.nonNull(resultDetailsList)){
+            homeResultDetailsDTO.setLastResultReleaseCount(String.valueOf(resultDetailsList.size()));
+        }
+
+        // Use meta-data modified date for last updated date
+        ExamMetaData examMetaData = dbMgmtFacade.getExamMetaData("RESULT");
+        if(Objects.nonNull(examMetaData)) {
+            homeResultDetailsDTO.setLastUpdate(DateUtils.getFormatedDate1(examMetaData.getDateModified()));
+            homeResultDetailsDTO.setUpdateDateColor(FormUtil.getLastXDaysDateColor(examMetaData.getDateModified()));
+        }
+
         homeResultDetailsDTO.setCardColor(FormUtil.fetchSecCardColor(2));
         homeResultDetailsDTO.setLastReleaseCountTitle("Result released in last 2 days : ");
         homeResultDetailsDTO.setTitle(FormTypeEnum.RESULT.getVal());
@@ -254,7 +275,7 @@ public class ResponseManagementService {
             landingSubSectionDTO.setCardColor(FormUtil.fetchCardColor(i%4));
             landingSubSectionDTO.setShowDate(DateUtils.getFormatedDate1(applicationForm.getStartDate()));
             landingSubSectionDTO.setShowDateColor(FormUtil.getLastXDaysDateColor(applicationForm.getStartDate()));
-            landingSubSectionDTO.setTotalVacancy(String.valueOf(applicationForm.getTotalVacancy()));
+            landingSubSectionDTO.setTotalVacancy(FormUtil.formatIntoIndianNumSystem(applicationForm.getTotalVacancy()));
             landingSubSectionDTO.setFormLogoUrl(FormUtil.getLogoByName(applicationForm.getExamName()));
             i++;
 
@@ -275,7 +296,7 @@ public class ResponseManagementService {
             landingSubSectionDTO.setCardColor(FormUtil.fetchCardColor(i%4));
             landingSubSectionDTO.setShowDate(DateUtils.getFormatedDate1(applicationForm.getEndDate()));
             landingSubSectionDTO.setShowDateColor(AkashConstants.RED_COLOR);
-            landingSubSectionDTO.setTotalVacancy(String.valueOf(applicationForm.getTotalVacancy()));
+            landingSubSectionDTO.setTotalVacancy(FormUtil.formatIntoIndianNumSystem(applicationForm.getTotalVacancy()));
             landingSubSectionDTO.setFormLogoUrl(FormUtil.getLogoByName(applicationForm.getExamName()));
             i++;
 
@@ -306,7 +327,7 @@ public class ResponseManagementService {
         landingSubSectionDTO.setShowDate(DateUtils.getFormatedDate1(examMetaData.getDateModified()));
         landingSubSectionDTO.setShowDateColor(FormUtil.getFormShowDateColor(examMetaData.getDateModified()));
         landingSubSectionDTO.setTotalApplication(examMetaData.getTotalForm());
-        landingSubSectionDTO.setTotalVacancy(String.valueOf(examMetaData.getTotalVacancy()));
+        landingSubSectionDTO.setTotalVacancy(FormUtil.formatIntoIndianNumSystem(examMetaData.getTotalVacancy()));
 
         landingSubSectionDTOS.add(landingSubSectionDTO);
     }
@@ -326,7 +347,7 @@ public class ResponseManagementService {
             landingSubSectionDTO.setId(admitCard.getId());
             landingSubSectionDTO.setExamId(admitCard.getAppIdRef());
             landingSubSectionDTO.setExamDateColor(FormUtil.getLastXDaysDateColor(admitCard.getExamDate()));
-            landingSubSectionDTO.setShowDate(DateUtils.getFormatedDate1(admitCard.getDateCreated()));
+            landingSubSectionDTO.setShowDate(DateUtils.getFormatedDate1(admitCard.getAdmitCardDate()));
 
             landingSubSectionDTOS.add(landingSubSectionDTO);
             i++;

@@ -76,8 +76,8 @@ public class TimeAndFeeSummaryParser extends BaseContentParser {
         populateDateDetails(dateDetailsDTOList, "LAST PAY DATE ", DateUtils.getFormatedDate1(enrichedFormDetailsDTO.getApplicationFeeDTO().getLastPaymentDate()),
                 FormUtil.getLastXDaysDateColor(enrichedFormDetailsDTO.getApplicationFeeDTO().getLastPaymentDate()));
 
-        populateDateDetails(dateDetailsDTOList, "EXAM DATE ", "AS SCHEDULED", GREEN_COLOR);
-        populateDateDetails(dateDetailsDTOList, "ADMIT CARD DATE ", "AS SCHEDULED", GREEN_COLOR);
+        buildExtraDate(dateDetailsDTOList,
+                enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getExtraDateDetails());
 
         importantDatesDTO.setDateDetails(dateDetailsDTOList);
 
@@ -140,6 +140,26 @@ public class TimeAndFeeSummaryParser extends BaseContentParser {
         return ageAndFeeInformation;
     }
 
+    private void buildExtraDate(List<DateDetailsDTO> dateDetailsDTOS, String extraDates){
+
+        if(StringUtil.isEmpty(extraDates))
+            return;
+        String[] titleDate = extraDates.split(",");
+        for(String title : titleDate){
+            String[] titleDat = title.trim().split(":");
+            if(titleDat.length < 2){
+                continue;
+            }
+            DateDetailsDTO dateDetailsDTO = new DateDetailsDTO();
+            dateDetailsDTO.setTitle(titleDat[0]);
+            dateDetailsDTO.setDate(titleDat[1]);
+            dateDetailsDTO.setDateColor(GREEN_COLOR);
+
+            dateDetailsDTOS.add(dateDetailsDTO);
+        }
+    }
+
+
     public boolean isValidValue(String fee){
         if(StringUtil.isEmpty(fee))
             return false;
@@ -147,5 +167,18 @@ public class TimeAndFeeSummaryParser extends BaseContentParser {
         if(fee.equalsIgnoreCase("-1") || fee.equalsIgnoreCase("-1.0"))
             return false;
         return true;
+    }
+
+    public static void main(String[] args) {
+        String extraDate = "ADMIT CARD DATE:20 Aug 2024, RESULT DATE:20 Sep 2024";
+        String[] titleDate = extraDate.split(",");
+        for(String title : titleDate){
+            String[] titleDat = title.trim().split(":");
+            if(titleDat.length < 2){
+                continue;
+            }
+            System.out.println(titleDat[0]);
+            System.out.println(titleDat[1]);
+        }
     }
 }

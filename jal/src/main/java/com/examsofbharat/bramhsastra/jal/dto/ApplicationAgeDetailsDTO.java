@@ -23,6 +23,7 @@ public class ApplicationAgeDetailsDTO {
     String information;
     private Date maxNormalDob;
     private Date minNormalDob;
+    private String extraDateDetails;
     Date dateCreated;
     Date dateModified;
 }

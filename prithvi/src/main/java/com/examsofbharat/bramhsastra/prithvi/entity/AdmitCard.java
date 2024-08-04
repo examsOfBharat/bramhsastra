@@ -39,4 +39,7 @@ public class AdmitCard {
 
     @Column(name = "date_modified")
     private Date dateModified;
+
+    @Column(name = "admit_card_date")
+    private Date admitCardDate;
 }
