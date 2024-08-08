@@ -76,13 +76,15 @@ public class ApplicationFormManagerImpl extends GenericManager<ApplicationForm, 
         return pageResult.getContent();
     }
 
-    public List<ApplicationForm> getFormWithAnsKey(int page, int size){
-        String dateType = "answerDate";
-        Date endDate = DateUtils.getEndOfDay(new Date());
-        Date startDate = DateUtils.addDays(new Date(), -5);
-
+    public List<ApplicationForm> getFormWithAnsKey(int page, int size, String dateType, Date startDate){
         Pageable pageable = PageRequest.of(page, size, Sort.by(dateType).descending());
         Page<ApplicationForm> pageResult = applicationFormRepository.findByAnswerDateAfter(startDate, pageable);
+        return pageResult.getContent();
+    }
+
+    public List<ApplicationForm> getFormAfterDateCreated(int page, int size, String dateType, Date startDate){
+        Pageable pageable = PageRequest.of(page, size, Sort.by(dateType).descending());
+        Page<ApplicationForm> pageResult = applicationFormRepository.findByDateCreatedAfter(startDate, pageable);
         return pageResult.getContent();
     }
 }

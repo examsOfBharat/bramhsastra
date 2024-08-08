@@ -126,7 +126,10 @@ public class ApplicationDbUtil {
 
     //return result list based on page number and record count
     public List<SecondaryPageDataDTO> getAnsKeyList(int page, int size, String subType) {
-        List<ApplicationForm> ansKeyList = dbMgmtFacade.getFormWithAnsKey(page, size);
+
+        String dateType = "answerDate";
+        Date startDate = DateUtils.addDays(new Date(), -5);
+        List<ApplicationForm> ansKeyList = dbMgmtFacade.getFormWithAnsKey(page, size, dateType, startDate);
 
         List<SecondaryPageDataDTO> resultDetailsDTOList = new ArrayList<>();
         int color = 0;

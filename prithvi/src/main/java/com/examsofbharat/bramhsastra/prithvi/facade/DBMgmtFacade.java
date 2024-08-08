@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -277,8 +278,12 @@ public class DBMgmtFacade {
         return applicationFormManager.getOldestForm(page, size);
     }
 
-    public List<ApplicationForm> getFormWithAnsKey(int page, int size){
-        return applicationFormManager.getFormWithAnsKey(page, size);
+    public List<ApplicationForm> getFormWithAnsKey(int page, int size, String dateType, Date startDate){
+        return applicationFormManager.getFormWithAnsKey(page, size, dateType, startDate);
+    }
+
+    public List<ApplicationForm> getFormAfterDateCreated(int page, int size, String dateType, Date startDate){
+        return applicationFormManager.getFormAfterDateCreated(page, size, dateType, startDate);
     }
 
     public AdminResponseManager findAdminResById(String resId){

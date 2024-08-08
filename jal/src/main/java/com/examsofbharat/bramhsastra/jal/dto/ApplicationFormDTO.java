@@ -28,4 +28,5 @@ public class ApplicationFormDTO {
     String answerDate;
     Date dateCreated;
     Date dateModified;
+    String qualification;
 }

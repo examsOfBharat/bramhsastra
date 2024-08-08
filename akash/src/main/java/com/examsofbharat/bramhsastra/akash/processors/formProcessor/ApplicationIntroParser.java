@@ -7,9 +7,11 @@ import com.examsofbharat.bramhsastra.jal.dto.ApplicationFormIntroDTO;
 import com.examsofbharat.bramhsastra.jal.dto.FormViewResponseDTO;
 import com.examsofbharat.bramhsastra.jal.dto.request.ComponentRequestDTO;
 import com.examsofbharat.bramhsastra.jal.dto.request.EnrichedFormDetailsDTO;
+import com.examsofbharat.bramhsastra.jal.utils.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -29,7 +31,7 @@ public class ApplicationIntroParser extends BaseContentParser {
                     enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getMinAge() > 0 &&
                     enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getMaxAge() > 0) {
                 applicationFormIntroDTO.setAgeRange(enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getMinAge() +
-                        "-" + enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getMaxAge() + " years");
+                        " - " + enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getMaxAge() + " years");
             }
 
             if(Objects.nonNull(enrichedFormDetailsDTO.getApplicationAgeDetailsDTO()) &&
@@ -51,8 +53,16 @@ public class ApplicationIntroParser extends BaseContentParser {
             applicationFormIntroDTO.setMinQualification(FormUtil.qualificationName.get(enrichedFormDetailsDTO.getApplicationFormDTO().getMinQualification()));
             applicationFormIntroDTO.setLogoUrl(FormUtil.getLogoByName(componentRequestDTO.getEnrichedFormDetailsDTO().
                     getApplicationFormDTO().getExamName()));
+
+            //Setting release date
+            if(enrichedFormDetailsDTO.getApplicationFormDTO().getStartDate().compareTo(DateUtils.getStartOfDay(new Date())) >= 0){
+                applicationFormIntroDTO.setReleaseDateTitle("Release Date : ");
+            }else{
+                applicationFormIntroDTO.setReleaseDateTitle("Released On : ");
+            }
             applicationFormIntroDTO.setReleaseDate(DateUtils.getFormatedDate1(
                     enrichedFormDetailsDTO.getApplicationFormDTO().getStartDate()));
+
 
             long daysCount = DateUtils.getNoOfDaysFromToday(enrichedFormDetailsDTO.getApplicationFormDTO().getDateCreated());
             List<String> postedList = FormUtil.getPostedDetail(daysCount);
@@ -69,6 +79,12 @@ public class ApplicationIntroParser extends BaseContentParser {
             applicationFormIntroDTO.setVacancy(enrichedFormDetailsDTO.getApplicationFormDTO().getTotalVacancy());
             applicationFormIntroDTO.setApplyUrl(componentRequestDTO.getEnrichedFormDetailsDTO().getApplicationUrlsDTO().getApply());
             applicationFormIntroDTO.setRegisterUrl(componentRequestDTO.getEnrichedFormDetailsDTO().getApplicationUrlsDTO().getRegister());
+
+            if(StringUtil.notEmpty(enrichedFormDetailsDTO.getApplicationFormDTO().getQualification())){
+                applicationFormIntroDTO.setQualificationKey("Qualification");
+                applicationFormIntroDTO.setQualificationValue(enrichedFormDetailsDTO.getApplicationFormDTO()
+                        .getQualification());
+            }
 
             formViewResponseDTO.setApplicationFormIntroDTO(applicationFormIntroDTO);
 

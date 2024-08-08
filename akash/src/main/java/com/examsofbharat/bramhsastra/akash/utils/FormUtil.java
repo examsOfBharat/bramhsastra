@@ -34,6 +34,8 @@ public class FormUtil {
     public static final List<String> sectorFormTypeList = new ArrayList<>();
     public static final List<String> gradeTypeList = new ArrayList<>();
     public static List<String> cardColor = new ArrayList<>();
+    public static List<String> newCardColor = new ArrayList<>();
+    public static List<String> new2CardColor = new ArrayList<>();
     public static List<String> cardSecColor = new ArrayList<>();
     public static Map<String, String> secondPageTitleMap =  new HashMap<>();
     public static Map<String, String> qualificationName = new HashMap<>();
@@ -45,6 +47,8 @@ public class FormUtil {
     public void init() {
         initFormTypeMap();
         initVacancyColor();
+        initNewVacancyColor();
+        initNew2VacancyColor();
         initSecColor();
         initRelatedFormType();
         initSecondPageTitle();
@@ -170,6 +174,20 @@ public class FormUtil {
         cardColor.add("#e9f1fb");
         cardColor.add("#f5f2f8");
         cardColor.add("#e7f4ed");
+    }
+
+    public void initNewVacancyColor(){
+        newCardColor.add("#184688");
+        newCardColor.add("#31a05e");
+        newCardColor.add("#1d3868");
+        newCardColor.add("#4b238d");
+    }
+    public void initNew2VacancyColor(){
+        new2CardColor.add("#F9BBAE");
+        new2CardColor.add("#F3ACB4");
+        new2CardColor.add("#C794B0");
+        new2CardColor.add("#8A7EA4");
+        new2CardColor.add("B59DD1");
     }
 //
 //    public void initVacancyColor(){
@@ -323,6 +341,14 @@ public class FormUtil {
 
     public static  String fetchCardColor(int val){
         return cardColor.get(val);
+    }
+
+    public static  String fetchNewCardColor(int val){
+        return newCardColor.get(val);
+    }
+
+    public static  String fetchNew2CardColor(int val){
+        return new2CardColor.get(val);
     }
 
     public static String fetchSecCardColor(int val){return cardSecColor.get(val);}

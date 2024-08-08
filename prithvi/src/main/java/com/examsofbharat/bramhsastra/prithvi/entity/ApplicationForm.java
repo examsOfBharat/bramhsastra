@@ -72,4 +72,7 @@ public class ApplicationForm {
 
     @Column(name = "answer_date")
     private Date answerDate;
+
+    @Column(name = "qualification")
+    private String qualification;
 }

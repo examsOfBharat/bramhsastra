@@ -13,6 +13,7 @@ public class ApplicationFormIntroDTO {
     String logoUrl;
     String lastDate;
     String lastDateColor;
+    String releaseDateTitle;
     String releaseDate;
     String minQualification;
     int vacancy;
@@ -23,4 +24,6 @@ public class ApplicationFormIntroDTO {
     String ageRange;
     private boolean checkEligibility;
     UrlsDetailsDTO urlsDetailsDto;
+    String qualificationKey;
+    String qualificationValue;
 }

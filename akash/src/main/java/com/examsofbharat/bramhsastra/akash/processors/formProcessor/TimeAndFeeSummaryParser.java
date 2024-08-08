@@ -67,8 +67,8 @@ public class TimeAndFeeSummaryParser extends BaseContentParser {
         importantDatesDTO.setTitle(AkashConstants.DATES_TITLE);
         importantDatesDTO.setCardColor(FormUtil.fetchCardColor(1));
 
-        populateDateDetails(dateDetailsDTOList,"START DATE ", DateUtils.getFormatedDate1(enrichedFormDetailsDTO.getApplicationFormDTO().getDateCreated()),
-                FormUtil.getLastXDaysDateColor(enrichedFormDetailsDTO.getApplicationFormDTO().getDateCreated()));
+        populateDateDetails(dateDetailsDTOList,"START DATE ", DateUtils.getFormatedDate1(enrichedFormDetailsDTO.getApplicationFormDTO().getStartDate()),
+                FormUtil.getLastXDaysDateColor(enrichedFormDetailsDTO.getApplicationFormDTO().getStartDate()));
 
         populateDateDetails(dateDetailsDTOList, "LAST DATE ", DateUtils.getFormatedDate1(enrichedFormDetailsDTO.getApplicationFormDTO().getEndDate()),
                 FormUtil.getLastXDaysDateColor(enrichedFormDetailsDTO.getApplicationFormDTO().getEndDate()));

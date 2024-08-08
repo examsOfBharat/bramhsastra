@@ -80,6 +80,9 @@ public class ResponseManagementService {
         //Update header count
         updateHeaderCountDate(formLandingPageDTO);
 
+        //Update today's count (form and vacancy of today)
+        buildAndCacheTodayUpdate(formLandingPageDTO);
+
         String response = gson.toJson(formLandingPageDTO);
         //push data to cache
         FormUtil.cacheData.put("HOME_PAGE", response);
@@ -180,7 +183,7 @@ public class ResponseManagementService {
             homeAdmitCardSection.setUpdateDateColor(FormUtil.getLastXDaysDateColor(examMetaData.getDateModified()));
         }
 
-        homeAdmitCardSection.setCardColor(FormUtil.fetchSecCardColor(0));
+        homeAdmitCardSection.setCardColor(FormUtil.fetchCardColor(0));
         homeAdmitCardSection.setLastReleaseCountTitle("Admit card released in last 2 days : ");
         homeAdmitCardSection.setTitle(FormTypeEnum.ADMIT.getVal());
         homeAdmitCardSection.setType("ADMIT");
@@ -205,7 +208,7 @@ public class ResponseManagementService {
             homeResultDetailsDTO.setUpdateDateColor(FormUtil.getLastXDaysDateColor(examMetaData.getDateModified()));
         }
 
-        homeResultDetailsDTO.setCardColor(FormUtil.fetchSecCardColor(2));
+        homeResultDetailsDTO.setCardColor(FormUtil.fetchCardColor(1));
         homeResultDetailsDTO.setLastReleaseCountTitle("Result released in last 2 days : ");
         homeResultDetailsDTO.setTitle(FormTypeEnum.RESULT.getVal());
         homeResultDetailsDTO.setType("RESULT");
@@ -321,15 +324,26 @@ public class ResponseManagementService {
 
         LandingSubSectionDTO landingSubSectionDTO = new LandingSubSectionDTO();
 
-        landingSubSectionDTO.setCardColor(FormUtil.fetchCardColor(i%4));
+        colorCardByType(landingSubSectionDTO, i, FormTypeEnum.valueOf(examMetaData.getExamCategory()),
+                examMetaData);
         landingSubSectionDTO.setKey(FormSubTypeEnum.valueOf(examMetaData.getExamSubCategory()).name());
         landingSubSectionDTO.setTitle(FormSubTypeEnum.valueOf(examMetaData.getExamSubCategory()).getVal());
         landingSubSectionDTO.setShowDate(DateUtils.getFormatedDate1(examMetaData.getDateModified()));
-        landingSubSectionDTO.setShowDateColor(FormUtil.getFormShowDateColor(examMetaData.getDateModified()));
         landingSubSectionDTO.setTotalApplication(examMetaData.getTotalForm());
         landingSubSectionDTO.setTotalVacancy(FormUtil.formatIntoIndianNumSystem(examMetaData.getTotalVacancy()));
 
         landingSubSectionDTOS.add(landingSubSectionDTO);
+    }
+
+    private void colorCardByType(LandingSubSectionDTO landingSubSectionDTO, int i,
+                                 FormTypeEnum formType, ExamMetaData examMetaData){
+        if(formType.equals(GRADE_BASED)){
+            landingSubSectionDTO.setCardColor(FormUtil.fetchNewCardColor(i%4));
+            landingSubSectionDTO.setShowDateColor("#FFFF00");
+        }else{
+            landingSubSectionDTO.setCardColor(FormUtil.fetchCardColor(i%4));
+            landingSubSectionDTO.setShowDateColor(FormUtil.getFormShowDateColor(examMetaData.getDateModified()));
+        }
     }
 
     //build tox x admit card list to send to home page
@@ -363,12 +377,31 @@ public class ResponseManagementService {
 
         List<String> ansNameList = new ArrayList<>();
 
-        List<ApplicationForm> latestAnsKey = dbMgmtFacade.getFormWithAnsKey(0,5);
+        String dateType = "answerDate";
+        Date startDate = DateUtils.addDays(new Date(), -5);
+
+        List<ApplicationForm> latestAnsKey = dbMgmtFacade.getFormWithAnsKey(0,5, dateType, startDate);
 
         latestAnsKey.forEach(applicationForm -> ansNameList.add(applicationForm.getExamName()));
         homeAnsKeySectionDTO.setResultNameList(ansNameList);
 
         formLandingPageDTO.setHomeAnsKeySectionDTO(homeAnsKeySectionDTO);
+    }
+
+    private void buildAndCacheTodayUpdate(FormLandingPageDTO formLandingPageDTO){
+        String dateType = "dateCreated";
+        Date startDate = com.examsofbharat.bramhsastra.prithvi.util.DateUtils.getStartOfDay(new Date());
+
+        List<ApplicationForm> todayData = dbMgmtFacade.getFormAfterDateCreated(0,15, dateType, startDate);
+
+        int newForm = todayData.size();
+        int todayVacancy = todayData.stream()
+                .mapToInt(ApplicationForm::getTotalVacancy)
+                .sum();
+
+        //Update today's count both form and vacancy
+        formLandingPageDTO.getHomePageCountDataDTO().setTodayForm(newForm);
+        formLandingPageDTO.getHomePageCountDataDTO().setTodayVacancy(todayVacancy);
     }
 
     //build tox x result list to send to home page

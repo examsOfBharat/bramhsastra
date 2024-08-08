@@ -32,6 +32,7 @@ public interface ApplicationFormRepository extends CrudRepository<ApplicationFor
 
     Page<ApplicationForm> findByAnswerDateAfter(Date startDate, Pageable pageable);
 
+    Page<ApplicationForm> findByDateCreatedAfter(Date startDate, Pageable pageable);
 
 
 }
