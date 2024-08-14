@@ -67,13 +67,13 @@ public class TimeAndFeeSummaryParser extends BaseContentParser {
         importantDatesDTO.setTitle(AkashConstants.DATES_TITLE);
         importantDatesDTO.setCardColor(FormUtil.fetchCardColor(1));
 
-        populateDateDetails(dateDetailsDTOList,"START DATE ", DateUtils.getFormatedDate1(enrichedFormDetailsDTO.getApplicationFormDTO().getStartDate()),
+        populateDateDetails(dateDetailsDTOList,"Start Date ", DateUtils.getFormatedDate1(enrichedFormDetailsDTO.getApplicationFormDTO().getStartDate()),
                 FormUtil.getLastXDaysDateColor(enrichedFormDetailsDTO.getApplicationFormDTO().getStartDate()));
 
-        populateDateDetails(dateDetailsDTOList, "LAST DATE ", DateUtils.getFormatedDate1(enrichedFormDetailsDTO.getApplicationFormDTO().getEndDate()),
+        populateDateDetails(dateDetailsDTOList, "Last Date ", DateUtils.getFormatedDate1(enrichedFormDetailsDTO.getApplicationFormDTO().getEndDate()),
                 FormUtil.getLastXDaysDateColor(enrichedFormDetailsDTO.getApplicationFormDTO().getEndDate()));
 
-        populateDateDetails(dateDetailsDTOList, "LAST PAY DATE ", DateUtils.getFormatedDate1(enrichedFormDetailsDTO.getApplicationFeeDTO().getLastPaymentDate()),
+        populateDateDetails(dateDetailsDTOList, "Last Pay Date ", DateUtils.getFormatedDate1(enrichedFormDetailsDTO.getApplicationFeeDTO().getLastPaymentDate()),
                 FormUtil.getLastXDaysDateColor(enrichedFormDetailsDTO.getApplicationFeeDTO().getLastPaymentDate()));
 
         buildExtraDate(dateDetailsDTOList,

@@ -26,6 +26,8 @@ public enum FormSubTypeEnum {
     MANAGEMENT("Management"),
     STATE_EXAM("State exams"),
     TEACHING("Teacher exam"),
+    APPRENTICES("APPRENTICES"),
+    OTHERS("Others"),
 
     STATE("State Government Job"),
     CENTRAL("Central Government Job"),

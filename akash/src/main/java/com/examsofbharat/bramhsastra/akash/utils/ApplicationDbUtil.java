@@ -197,7 +197,7 @@ public class ApplicationDbUtil {
         secondaryPageDataDTO.setPageType("form");
         secondaryPageDataDTO.setTitle(applicationForm.getExamName());
 
-        secondaryPageDataDTO.setReleaseDate(DateUtils.getFormatedDate1(applicationForm.getStartDate()));
+        secondaryPageDataDTO.setReleaseDate(DateUtils.getFormatedDate1(applicationForm.getDateCreated()));
 //        secondaryPageDataDTO.setReleaseDateColor(FormUtil.getLastXDaysDateColor(applicationForm.getStartDate()));
 
         secondaryPageDataDTO.setTotalVacancy(applicationForm.getTotalVacancy());
@@ -216,7 +216,10 @@ public class ApplicationDbUtil {
         secondaryPageDataDTO.setLastDateColor(FormUtil.getExpiryDateColor(applicationForm.getEndDate()));
         secondaryPageDataDTO.setNewFlag(FormUtil.dateIsWithinXDays(applicationForm.getStartDate()));
 
-        if(new Date().after(applicationForm.getEndDate())){
+        if(applicationForm.getDateModified().compareTo(DateUtils.addDays(applicationForm.getDateCreated(), 5)) > 0){
+            secondaryPageDataDTO.setFormStatus("UPDATES");
+            secondaryPageDataDTO.setReleaseDateColor(RED_COLOR);
+        }else if(new Date().after(applicationForm.getEndDate())){
             secondaryPageDataDTO.setFormStatus("EXPIRED");
             secondaryPageDataDTO.setReleaseDateColor(RED_COLOR);
         }else if (FormUtil.dateIsWithinXDays(applicationForm.getStartDate())){

@@ -59,7 +59,7 @@ public class ApplicationFormManagerImpl extends GenericManager<ApplicationForm, 
     public List<ApplicationForm> getLatestForm(int page, int size) {
         // find latest application form present in data
         // sorted by creation date
-        String dateType = "startDate";
+        String dateType = "dateModified";
         Pageable pageable = PageRequest.of(page, size, Sort.by(dateType).descending());
         Page<ApplicationForm> pageResult = applicationFormRepository.findAll(pageable);
         return pageResult.getContent();

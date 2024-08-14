@@ -276,8 +276,9 @@ public class ResponseManagementService {
             landingSubSectionDTO.setKey(LATEST_FORMS.name());
             landingSubSectionDTO.setTitle(applicationForm.getExamName());
             landingSubSectionDTO.setCardColor(FormUtil.fetchCardColor(i%4));
-            landingSubSectionDTO.setShowDate(DateUtils.getFormatedDate1(applicationForm.getStartDate()));
-            landingSubSectionDTO.setShowDateColor(FormUtil.getLastXDaysDateColor(applicationForm.getStartDate()));
+            landingSubSectionDTO.setShowDate(DateUtils.getFormatedDate1(applicationForm.getDateModified()));
+            landingSubSectionDTO.setShowDateColor(FormUtil.getLastXDaysDateColor(applicationForm.getDateModified()));
+            landingSubSectionDTO.setVacancyTitle("Vacancy");
             landingSubSectionDTO.setTotalVacancy(FormUtil.formatIntoIndianNumSystem(applicationForm.getTotalVacancy()));
             landingSubSectionDTO.setFormLogoUrl(FormUtil.getLogoByName(applicationForm.getExamName()));
             i++;
@@ -299,6 +300,7 @@ public class ResponseManagementService {
             landingSubSectionDTO.setCardColor(FormUtil.fetchCardColor(i%4));
             landingSubSectionDTO.setShowDate(DateUtils.getFormatedDate1(applicationForm.getEndDate()));
             landingSubSectionDTO.setShowDateColor(AkashConstants.RED_COLOR);
+            landingSubSectionDTO.setVacancyTitle("Vacancy");
             landingSubSectionDTO.setTotalVacancy(FormUtil.formatIntoIndianNumSystem(applicationForm.getTotalVacancy()));
             landingSubSectionDTO.setFormLogoUrl(FormUtil.getLogoByName(applicationForm.getExamName()));
             i++;
@@ -330,6 +332,7 @@ public class ResponseManagementService {
         landingSubSectionDTO.setTitle(FormSubTypeEnum.valueOf(examMetaData.getExamSubCategory()).getVal());
         landingSubSectionDTO.setShowDate(DateUtils.getFormatedDate1(examMetaData.getDateModified()));
         landingSubSectionDTO.setTotalApplication(examMetaData.getTotalForm());
+        landingSubSectionDTO.setVacancyTitle("Total Vacancy");
         landingSubSectionDTO.setTotalVacancy(FormUtil.formatIntoIndianNumSystem(examMetaData.getTotalVacancy()));
 
         landingSubSectionDTOS.add(landingSubSectionDTO);

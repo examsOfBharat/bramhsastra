@@ -56,9 +56,9 @@ public class ApplicationIntroParser extends BaseContentParser {
 
             //Setting release date
             if(enrichedFormDetailsDTO.getApplicationFormDTO().getStartDate().compareTo(DateUtils.getStartOfDay(new Date())) >= 0){
-                applicationFormIntroDTO.setReleaseDateTitle("Release Date : ");
+                applicationFormIntroDTO.setReleaseDateTitle("Application Start Date : ");
             }else{
-                applicationFormIntroDTO.setReleaseDateTitle("Released On : ");
+                applicationFormIntroDTO.setReleaseDateTitle("Application Start Date : ");
             }
             applicationFormIntroDTO.setReleaseDate(DateUtils.getFormatedDate1(
                     enrichedFormDetailsDTO.getApplicationFormDTO().getStartDate()));

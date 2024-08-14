@@ -125,6 +125,8 @@ public class FormUtil {
         formSubTypeMap.put(PCS.name(), SECTOR_BASED);
         formSubTypeMap.put(STATE_EXAM.name(), SECTOR_BASED);
         formSubTypeMap.put(TEACHING.name(), SECTOR_BASED);
+        formSubTypeMap.put(APPRENTICES.name(), SECTOR_BASED);
+        formSubTypeMap.put(OTHERS.name(),SECTOR_BASED);
 
 
         formSubTypeMap.put(A_GRADE.name(), GRADE_BASED);
@@ -221,6 +223,8 @@ public class FormUtil {
         sectorFormTypeList.add(PCS.name());
         sectorFormTypeList.add(STATE_EXAM.name());
         sectorFormTypeList.add(TEACHING.name());
+        sectorFormTypeList.add(APPRENTICES.name());
+        sectorFormTypeList.add(OTHERS.name());
     }
 
     public void initGradeList(){
@@ -254,6 +258,8 @@ public class FormUtil {
         secondPageTitleMap.put(PCS.name(), "Forms Under PCS");
         secondPageTitleMap.put(STATE_EXAM.name(), "All State exams");
         secondPageTitleMap.put(TEACHING.name(), "All Teacher Exam");
+        secondPageTitleMap.put(APPRENTICES.name(), "All latest Apprentices");
+        secondPageTitleMap.put(OTHERS.name(), "Other recent forms");
 
 
         secondPageTitleMap.put(A_GRADE.name(), "Grade-A forms");
