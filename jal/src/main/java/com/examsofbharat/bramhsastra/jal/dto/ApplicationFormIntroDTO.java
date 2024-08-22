@@ -16,7 +16,7 @@ public class ApplicationFormIntroDTO {
     String releaseDateTitle;
     String releaseDate;
     String minQualification;
-    int vacancy;
+    String vacancy;
     String postedOn;
     String postedOnColor;
     String applyUrl;
@@ -26,4 +26,5 @@ public class ApplicationFormIntroDTO {
     UrlsDetailsDTO urlsDetailsDto;
     String qualificationKey;
     String qualificationValue;
+    private String formStatus;
 }

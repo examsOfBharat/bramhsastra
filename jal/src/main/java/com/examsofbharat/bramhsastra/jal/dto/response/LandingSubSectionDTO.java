@@ -10,9 +10,11 @@ public class LandingSubSectionDTO {
     private String id;
     private String title;
     private String titleColor;
+    private String formType;
     private String key;
     private String examId;
     private String logoUrl;
+    private String showDateTitle;
     private String showDate;
     private String showDateColor;
     private String examDate;

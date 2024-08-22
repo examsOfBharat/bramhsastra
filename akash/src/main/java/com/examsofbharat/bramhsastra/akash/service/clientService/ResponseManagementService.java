@@ -273,13 +273,28 @@ public class ResponseManagementService {
         int i = 0;
         for(ApplicationForm applicationForm : latestFormList){
             LandingSubSectionDTO landingSubSectionDTO = new LandingSubSectionDTO();
+
+            landingSubSectionDTO.setExamId(applicationForm.getId());
+            landingSubSectionDTO.setFormType("form");
             landingSubSectionDTO.setKey(LATEST_FORMS.name());
             landingSubSectionDTO.setTitle(applicationForm.getExamName());
             landingSubSectionDTO.setCardColor(FormUtil.fetchCardColor(i%4));
+
+            if(applicationForm.getDateModified().compareTo(DateUtils.addDays(applicationForm.getDateCreated(), 5)) > 0){
+                landingSubSectionDTO.setShowDateTitle("Updated On");
+                landingSubSectionDTO.setShowDateColor("#4A235A");
+            }else{
+                landingSubSectionDTO.setShowDateTitle("Released On");
+                landingSubSectionDTO.setShowDateColor(FormUtil.getLastXDaysDateColor(applicationForm.getDateModified()));
+            }
+
             landingSubSectionDTO.setShowDate(DateUtils.getFormatedDate1(applicationForm.getDateModified()));
-            landingSubSectionDTO.setShowDateColor(FormUtil.getLastXDaysDateColor(applicationForm.getDateModified()));
             landingSubSectionDTO.setVacancyTitle("Vacancy");
-            landingSubSectionDTO.setTotalVacancy(FormUtil.formatIntoIndianNumSystem(applicationForm.getTotalVacancy()));
+            if(applicationForm.getTotalVacancy() > 0) {
+                landingSubSectionDTO.setTotalVacancy(FormUtil.formatIntoIndianNumSystem(applicationForm.getTotalVacancy()));
+            }else{
+                landingSubSectionDTO.setTotalVacancy("Not Available");
+            }
             landingSubSectionDTO.setFormLogoUrl(FormUtil.getLogoByName(applicationForm.getExamName()));
             i++;
 
@@ -295,6 +310,9 @@ public class ResponseManagementService {
         int i = 0;
         for(ApplicationForm applicationForm : latestFormList){
             LandingSubSectionDTO landingSubSectionDTO = new LandingSubSectionDTO();
+
+            landingSubSectionDTO.setExamId(applicationForm.getId());
+            landingSubSectionDTO.setFormType("form");
             landingSubSectionDTO.setKey(OLDER_FORMS.name());
             landingSubSectionDTO.setTitle(applicationForm.getExamName());
             landingSubSectionDTO.setCardColor(FormUtil.fetchCardColor(i%4));
@@ -359,6 +377,8 @@ public class ResponseManagementService {
             LandingSubSectionDTO landingSubSectionDTO = new LandingSubSectionDTO();
             landingSubSectionDTO.setCardColor("#e0f7fa");
             landingSubSectionDTO.setKey("ADMIT");
+            landingSubSectionDTO.setFormType("admit");
+            landingSubSectionDTO.setExamId(admitCard.getId());
             landingSubSectionDTO.setTitle(admitCard.getAdmitCardName());
             landingSubSectionDTO.setExamDate(FormUtil.formatExamDate(admitCard.getExamDate()));
             landingSubSectionDTO.setId(admitCard.getId());
@@ -420,6 +440,8 @@ public class ResponseManagementService {
 
             landingSubSectionDTO.setCardColor("#e8f5e9");
             landingSubSectionDTO.setKey("RESULT");
+            landingSubSectionDTO.setExamId(resultDetails.getId());
+            landingSubSectionDTO.setFormType("result");
             landingSubSectionDTO.setTitle(resultDetails.getResultName());
             landingSubSectionDTO.setShowDate(DateUtils.getFormatedDate1(resultDetails.getResultDate()));
             landingSubSectionDTO.setExamId(resultDetails.getAppIdRef());

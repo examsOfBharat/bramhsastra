@@ -373,6 +373,7 @@ public class ClientService {
         ResultIntroDTO resultIntroDTO = objectMapper.convertValue(resultDetails, ResultIntroDTO.class);
 
         resultIntroDTO.setAppIdRef(resultDetails.getAppIdRef());
+        resultIntroDTO.setDownloadUrl(resultDetails.getResultUrl());
         resultIntroDTO.setResultDate(DateUtils.getFormatedDate1(resultDetails.getResultDate()));
         resultIntroDTO.setSubtitle("Government of India");
 

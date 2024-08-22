@@ -3,6 +3,7 @@ package com.examsofbharat.bramhsastra.akash.processors.formProcessor;
 import com.examsofbharat.bramhsastra.akash.factory.componentParser.BaseContentParser;
 import com.examsofbharat.bramhsastra.akash.utils.DateUtils;
 import com.examsofbharat.bramhsastra.akash.utils.FormUtil;
+import com.examsofbharat.bramhsastra.jal.dto.ApplicationFormDTO;
 import com.examsofbharat.bramhsastra.jal.dto.ApplicationFormIntroDTO;
 import com.examsofbharat.bramhsastra.jal.dto.FormViewResponseDTO;
 import com.examsofbharat.bramhsastra.jal.dto.request.ComponentRequestDTO;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+
+import static com.examsofbharat.bramhsastra.akash.constants.AkashConstants.*;
 
 @Slf4j
 @Component
@@ -76,7 +79,11 @@ public class ApplicationIntroParser extends BaseContentParser {
                 applicationFormIntroDTO.setSubtitle("Government of " + enrichedFormDetailsDTO.getApplicationFormDTO().getState());
             }
 
-            applicationFormIntroDTO.setVacancy(enrichedFormDetailsDTO.getApplicationFormDTO().getTotalVacancy());
+            if(enrichedFormDetailsDTO.getApplicationFormDTO().getTotalVacancy() > 0) {
+                applicationFormIntroDTO.setVacancy(FormUtil.formatIntoIndianNumSystem(enrichedFormDetailsDTO.getApplicationFormDTO().getTotalVacancy()));
+            }else {
+                applicationFormIntroDTO.setVacancy("Not Available");
+            }
             applicationFormIntroDTO.setApplyUrl(componentRequestDTO.getEnrichedFormDetailsDTO().getApplicationUrlsDTO().getApply());
             applicationFormIntroDTO.setRegisterUrl(componentRequestDTO.getEnrichedFormDetailsDTO().getApplicationUrlsDTO().getRegister());
 
@@ -84,6 +91,16 @@ public class ApplicationIntroParser extends BaseContentParser {
                 applicationFormIntroDTO.setQualificationKey("Qualification");
                 applicationFormIntroDTO.setQualificationValue(enrichedFormDetailsDTO.getApplicationFormDTO()
                         .getQualification());
+            }
+
+            //form status banner condition
+            ApplicationFormDTO applicationFormDTO = enrichedFormDetailsDTO.getApplicationFormDTO();
+            if(applicationFormDTO.getDateModified().compareTo(DateUtils.addDays(applicationFormDTO.getDateCreated(), 5)) > 0){
+                applicationFormIntroDTO.setFormStatus("UPDATES");
+            }else if(new Date().after(applicationFormDTO.getEndDate())){
+                applicationFormIntroDTO.setFormStatus("EXPIRED");
+            }else if(FormUtil.dateIsWithinXDays(applicationFormDTO.getStartDate())){
+                applicationFormIntroDTO.setFormStatus("NEW");
             }
 
             formViewResponseDTO.setApplicationFormIntroDTO(applicationFormIntroDTO);
