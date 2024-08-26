@@ -63,6 +63,9 @@ public class DBMgmtFacade {
     ApplicationAgeDetailsManagerImpl applicationAgeDetailsManagerImpl;
 
     @Autowired
+    ApplicationSeoDetailsManagerImpl applicationSeoDetailsManager;
+
+    @Autowired
     ApplicationNameDetailsManagerImpl applicationNameDetailsManagerImpl;
 
     @Autowired
@@ -167,6 +170,10 @@ public class DBMgmtFacade {
 
     public ApplicationAgeDetails getApplicationAgeDetails(String appId){
         return applicationAgeDetailsManagerImpl.getApplicationAgeDetailsById(appId);
+    }
+
+    public ApplicationSeoDetails getApplicationSeoDetails(String appId){
+        return applicationSeoDetailsManager.getSeoDetails(appId);
     }
 
     public void saveApplicationForm(ApplicationForm applicationForm){

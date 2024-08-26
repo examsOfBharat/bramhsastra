@@ -2,7 +2,6 @@ package com.examsofbharat.bramhsastra.prithvi.manager;
 
 import com.examsofbharat.bramhsastra.jal.enums.FormTypeEnum;
 import com.examsofbharat.bramhsastra.prithvi.dao.ApplicationFormRepository;
-import com.examsofbharat.bramhsastra.prithvi.entity.AdmitCard;
 import com.examsofbharat.bramhsastra.prithvi.entity.ApplicationForm;
 import com.examsofbharat.bramhsastra.prithvi.sql.GenericManager;
 import com.examsofbharat.bramhsastra.prithvi.util.DateUtils;
@@ -13,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 

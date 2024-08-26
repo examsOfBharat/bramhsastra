@@ -34,4 +34,7 @@ public class EnrichedFormDetailsDTO {
 
     @JsonProperty("application_eligibility")
     List<ApplicationEligibilityDTO> applicationEligibilityDTOS;
+
+    @JsonProperty("application_seo_details")
+    ApplicationSeoDetailsDTO applicationSeoDetailsDTO;
 }

@@ -38,7 +38,7 @@ public class AdmitCardManagerImpl extends GenericManager<AdmitCard, String> {
         // Assuming AdmitCardRepository has method to fetch latest admit cards
         // sorted by creation date
         Date dateCriteria = DateUtils.addDays(new Date(), -daysGap);
-        return admitCardRepository.findByAdmitCardDateAfterOrderByAdmitCardDateDesc(dateCriteria);
+        return admitCardRepository.findByDateCreatedAfterOrderByDateCreatedDesc(dateCriteria);
     }
 
     public AdmitCard fetchAdmitCardById(String admitId){

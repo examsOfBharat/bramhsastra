@@ -30,6 +30,7 @@ public class ApplicationDbUtil {
     public String fetchSecDataAndRelatedData(String formSubTypeEnum, int page, int size, List<RelatedFormDTO> relatedForms) {
         WrapperSecondaryPageDataDTO wrapperSecondaryPageDataDTO = new WrapperSecondaryPageDataDTO();
         wrapperSecondaryPageDataDTO.setTitle(FormUtil.getSecondPageTitle(formSubTypeEnum));
+        wrapperSecondaryPageDataDTO.setSeoDetailsDTO(FormUtil.getSecondPageSeo(formSubTypeEnum));
 
         if(formSubTypeEnum.equals(FormSubTypeEnum.ADMIT.name())){
             List<SecondaryPageDataDTO> admitCardList = getAdmitCardsList(page, size, formSubTypeEnum, relatedForms);

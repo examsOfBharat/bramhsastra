@@ -1,8 +1,6 @@
 package com.examsofbharat.bramhsastra.prithvi.manager;
 
 import com.examsofbharat.bramhsastra.prithvi.dao.ResultDetailsRepository;
-import com.examsofbharat.bramhsastra.prithvi.entity.AdmitCard;
-import com.examsofbharat.bramhsastra.prithvi.entity.ResultContentManager;
 import com.examsofbharat.bramhsastra.prithvi.entity.ResultDetails;
 import com.examsofbharat.bramhsastra.prithvi.sql.GenericManager;
 import com.examsofbharat.bramhsastra.prithvi.util.DateUtils;
@@ -15,7 +13,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class ResultDetailsManagerImpl extends GenericManager<ResultDetails, String> {
@@ -41,6 +38,6 @@ public class ResultDetailsManagerImpl extends GenericManager<ResultDetails, Stri
         // Assuming AdmitCardRepository has method to fetch latest admit cards
         // sorted by creation date
         Date dateCriteria = DateUtils.addDays(new Date(), -daysGap);
-        return resultDetailsRepository.findByResultDateAfterOrderByResultDateDesc(dateCriteria);
+        return resultDetailsRepository.findByDateCreatedAfterOrderByDateCreatedDesc(dateCriteria);
     }
 }

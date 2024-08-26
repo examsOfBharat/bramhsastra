@@ -215,6 +215,11 @@ public class ClientService {
             enrichedFormDetailsDTO.setApplicationAgeDetailsDTO(objectMapper.convertValue(applicationAgeDetails, ApplicationAgeDetailsDTO.class));
         }
 
+        ApplicationSeoDetails applicationSeoDetails = dbMgmtFacade.getApplicationSeoDetails(appId);
+        if(Objects.nonNull(applicationSeoDetails)){
+            enrichedFormDetailsDTO.setApplicationSeoDetailsDTO(objectMapper.convertValue(applicationSeoDetails, ApplicationSeoDetailsDTO.class));
+        }
+
         List<ApplicationVacancyDetails> applicationVacancyDetails = dbMgmtFacade.getApplicationVacancyDetails(appId);
         List<ApplicationVacancyDTO> applicationVacancyDTOList = new ArrayList<>();
         for (ApplicationVacancyDetails vacancyDetails : applicationVacancyDetails) {

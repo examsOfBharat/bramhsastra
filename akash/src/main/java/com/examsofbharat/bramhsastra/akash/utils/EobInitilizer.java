@@ -37,6 +37,7 @@ public class EobInitilizer {
     private static String homeBgImageUrl;
     private List<String> approverIdList = new ArrayList<>();
     public static Map<String, String> logoMap = new HashMap<>();
+    public static Map<String,String> pngLogoMap = new HashMap<>();
     public static List<String> homePageComponent = new ArrayList<>();
 
     @PostConstruct
@@ -112,6 +113,8 @@ public class EobInitilizer {
         List<LogoUrlManager> logoUrlList = dbMgmtFacade.findAllLogo();
         logoMap = logoUrlList.stream()
                 .collect(Collectors.toMap(logo -> logo.getName().toLowerCase(), LogoUrlManager::getLogoUrl));
+        pngLogoMap = logoUrlList.stream()
+                .collect(Collectors.toMap(logo -> logo.getName().toLowerCase(), LogoUrlManager::getPngLogoUrl));
     }
 
 
@@ -135,6 +138,13 @@ public class EobInitilizer {
     public static String getLogoByName(String name){
         if(logoMap.containsKey(name.toLowerCase())){
             return logoMap.get(name.toLowerCase());
+        }
+        return null;
+    }
+
+    public static String getPngLogoByName(String name){
+        if(pngLogoMap.containsKey(name.toLowerCase())){
+            return pngLogoMap.get(name.toLowerCase());
         }
         return null;
     }

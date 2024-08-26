@@ -37,7 +37,7 @@ public class SecondaryPageService {
     public Response fetchSecondaryPageDataV2(String subType, int pageNo, int size){
         size = eobInitilizer.getSecPageItemCount();
 
-        if( StringUtil.isEmpty(subType)
+        if(StringUtil.isEmpty(subType)
                 || pageNo < 0 || size <= 0){
             return webUtils.invalidRequest();
         }

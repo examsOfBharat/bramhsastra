@@ -3,7 +3,7 @@ package com.examsofbharat.bramhsastra.akash.utils;
 import com.examsofbharat.bramhsastra.akash.constants.AkashConstants;
 import com.examsofbharat.bramhsastra.jal.dto.ApplicationEligibilityDTO;
 import com.examsofbharat.bramhsastra.jal.dto.ApplicationVacancyDTO;
-import com.examsofbharat.bramhsastra.jal.dto.FormViewResponseDTO;
+import com.examsofbharat.bramhsastra.jal.dto.SecondPageSeoDetailsDTO;
 import com.examsofbharat.bramhsastra.jal.dto.response.EligibilityCheckResponseDTO;
 import com.examsofbharat.bramhsastra.jal.enums.FormSubTypeEnum;
 import com.examsofbharat.bramhsastra.jal.enums.FormTypeEnum;
@@ -38,10 +38,12 @@ public class FormUtil {
     public static List<String> new2CardColor = new ArrayList<>();
     public static List<String> cardSecColor = new ArrayList<>();
     public static Map<String, String> secondPageTitleMap =  new HashMap<>();
+    public static Map<String,SecondPageSeoDetailsDTO> secondPageSeoMap = new HashMap<>();
     public static Map<String, String> qualificationName = new HashMap<>();
 
     public static Map<String,String> cacheData = new HashMap<>();
     public static Map<String, String> formCache = new HashMap<>();
+
 
     @PostConstruct
     public void init() {
@@ -54,6 +56,7 @@ public class FormUtil {
         initSecondPageTitle();
         initGradeList();
         initQualificationName();
+        initSecondPageSeo();
     }
 
     public void initQualificationName(){
@@ -234,6 +237,30 @@ public class FormUtil {
         gradeTypeList.add(D_GRADE.name());
     }
 
+    public void initSecondPageSeo(){
+        SecondPageSeoDetailsDTO latesFormSeo = new SecondPageSeoDetailsDTO();
+        latesFormSeo.setTitle("Latest Form 2024 - Sarkari naukri");
+        latesFormSeo.setKeywords("Latest Government Job Forms 2024,Sarkari Naukri Application Form,Latest Sarkari Job Forms,Latest Govt Exam Forms,Latest Sarkari Form Updates,New Sarkari Form");
+        latesFormSeo.setDescription("Stay updated with the latest government job application forms for 2024. Find forms for Sarkari Naukri, entrance exams, and more at Exams of Bharat. Filter by qualification, region, and category to apply for the right job easily.");
+        secondPageSeoMap.put(LATEST_FORMS.name(), latesFormSeo);
+
+
+        SecondPageSeoDetailsDTO defaultSeo = new SecondPageSeoDetailsDTO();
+        defaultSeo.setTitle("Forms Details");
+        defaultSeo.setKeywords("All forms, Forms based on qualification, Form based on sector");
+        defaultSeo.setDescription("Exams of bharat is entitled to show all forms updates, entrance exams, admit card and results etc");
+
+        secondPageSeoMap.put("DEFAULT", defaultSeo);
+    }
+
+    public static SecondPageSeoDetailsDTO getSecondPageSeo(String subType){
+        if(secondPageSeoMap.containsKey(subType)){
+            return secondPageSeoMap.get(subType);
+        }
+        return secondPageSeoMap.get("DEFAULT");
+    }
+
+
     public void initSecondPageTitle(){
         secondPageTitleMap.put(ADMIT.name(), "All Admit card details");
         secondPageTitleMap.put(RESULT.name(), "All Result Details");
@@ -342,6 +369,19 @@ public class FormUtil {
             }
         }
         return EobInitilizer.getLogoByName("default");
+    }
+
+    //TODO need to optimise this section with above code
+    public static String getPngLogoByName(String formName){
+        String[] nameList = formName.split(" ");
+        String url;
+        for(String str : nameList){
+            url = EobInitilizer.getPngLogoByName(str);
+            if(Objects.nonNull(url)){
+                return url;
+            }
+        }
+        return EobInitilizer.getPngLogoByName("default");
     }
 
 

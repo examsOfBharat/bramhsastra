@@ -1,7 +1,6 @@
 package com.examsofbharat.bramhsastra.prithvi.manager;
 
 import com.examsofbharat.bramhsastra.prithvi.dao.ApplicationFeeDetailsRepository;
-import com.examsofbharat.bramhsastra.prithvi.entity.ApplicationContentManager;
 import com.examsofbharat.bramhsastra.prithvi.entity.ApplicationFeeDatails;
 import com.examsofbharat.bramhsastra.prithvi.sql.GenericManager;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -5,10 +5,12 @@ import com.examsofbharat.bramhsastra.akash.utils.DateUtils;
 import com.examsofbharat.bramhsastra.akash.utils.FormUtil;
 import com.examsofbharat.bramhsastra.jal.dto.ApplicationFormDTO;
 import com.examsofbharat.bramhsastra.jal.dto.ApplicationFormIntroDTO;
+import com.examsofbharat.bramhsastra.jal.dto.ApplicationSeoDetailsDTO;
 import com.examsofbharat.bramhsastra.jal.dto.FormViewResponseDTO;
 import com.examsofbharat.bramhsastra.jal.dto.request.ComponentRequestDTO;
 import com.examsofbharat.bramhsastra.jal.dto.request.EnrichedFormDetailsDTO;
 import com.examsofbharat.bramhsastra.jal.utils.StringUtil;
+import com.examsofbharat.bramhsastra.prithvi.entity.ApplicationSeoDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -54,7 +56,13 @@ public class ApplicationIntroParser extends BaseContentParser {
 
             applicationFormIntroDTO.setType(enrichedFormDetailsDTO.getApplicationFormDTO().getState());
             applicationFormIntroDTO.setMinQualification(FormUtil.qualificationName.get(enrichedFormDetailsDTO.getApplicationFormDTO().getMinQualification()));
+
+            //main form logo
             applicationFormIntroDTO.setLogoUrl(FormUtil.getLogoByName(componentRequestDTO.getEnrichedFormDetailsDTO().
+                    getApplicationFormDTO().getExamName()));
+
+            //logo for sharing url
+            applicationFormIntroDTO.setShareLogoUrl(FormUtil.getPngLogoByName(componentRequestDTO.getEnrichedFormDetailsDTO().
                     getApplicationFormDTO().getExamName()));
 
             //Setting release date
@@ -101,6 +109,14 @@ public class ApplicationIntroParser extends BaseContentParser {
                 applicationFormIntroDTO.setFormStatus("EXPIRED");
             }else if(FormUtil.dateIsWithinXDays(applicationFormDTO.getStartDate())){
                 applicationFormIntroDTO.setFormStatus("NEW");
+            }
+
+            //populate seo details
+            ApplicationSeoDetailsDTO seoDetailsDTO = enrichedFormDetailsDTO.getApplicationSeoDetailsDTO();
+            if(Objects.nonNull(seoDetailsDTO)){
+                applicationFormIntroDTO.setSeoTitle(seoDetailsDTO.getTitle());
+                applicationFormIntroDTO.setSeoKeywords(seoDetailsDTO.getKeywords());
+                applicationFormIntroDTO.setSeoDescription(seoDetailsDTO.getDescreption());
             }
 
             formViewResponseDTO.setApplicationFormIntroDTO(applicationFormIntroDTO);

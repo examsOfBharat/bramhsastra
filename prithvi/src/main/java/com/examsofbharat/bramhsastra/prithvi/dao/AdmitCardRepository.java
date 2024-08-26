@@ -18,4 +18,7 @@ public interface AdmitCardRepository extends CrudRepository<AdmitCard, String> {
     AdmitCard findByAppIdRef(String appId);
 
     List<AdmitCard> findByAdmitCardDateAfterOrderByAdmitCardDateDesc(Date admitDate);
+
+    List<AdmitCard> findByDateCreatedAfterOrderByDateCreatedDesc(Date admitDate);
+
 }

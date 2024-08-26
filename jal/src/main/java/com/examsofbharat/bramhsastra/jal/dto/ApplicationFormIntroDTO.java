@@ -27,4 +27,10 @@ public class ApplicationFormIntroDTO {
     String qualificationKey;
     String qualificationValue;
     private String formStatus;
+
+    //SEO related details
+    private String seoTitle;
+    private String seoDescription;
+    private String seoKeywords;
+    private String shareLogoUrl;
 }

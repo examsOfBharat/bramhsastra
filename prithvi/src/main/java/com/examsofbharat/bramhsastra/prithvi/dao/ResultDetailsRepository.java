@@ -14,4 +14,6 @@ public interface ResultDetailsRepository extends CrudRepository<ResultDetails, S
     Page<ResultDetails> findAll(Pageable pageable);
 
     List<ResultDetails> findByResultDateAfterOrderByResultDateDesc(Date resultDate);
+
+    List<ResultDetails> findByDateCreatedAfterOrderByDateCreatedDesc(Date resultDate);
 }

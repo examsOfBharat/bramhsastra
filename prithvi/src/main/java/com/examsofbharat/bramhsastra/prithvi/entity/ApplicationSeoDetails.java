@@ -14,21 +14,24 @@ import java.util.Date;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
-@Table(name= "logo_url_manager")
-public class LogoUrlManager {
+@Table(name= "application_seo_details")
+public class ApplicationSeoDetails {
     @Id
     @GeneratedValue(generator = "system-uuid")
     @GenericGenerator(name ="system-uuid", strategy = "uuid")
     private String id;
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "app_id_ref")
+    private String appIdRef;
 
-    @Column(name = "logo_url")
-    private String logoUrl;
+    @Column(name = "title")
+    private String title;
 
-    @Column(name = "png_logo_url")
-    private String pngLogoUrl;
+    @Column(name = "keywords")
+    private String keywords;
+
+    @Column(name = "descreption")
+    private String descreption;
 
     @Column(name = "date_created")
     private Date dateCreated;
