@@ -143,6 +143,7 @@ public class BackTestController {
         return clientService.buildAndGetApplication(appId);
     }
 
+    //adding testing details
     @GetMapping("/get/admit/details")
     public Response getAdmitDetails(@RequestHeader(value = "App-Id", required = false) String app_Id,
                                     @RequestParam String appId){
