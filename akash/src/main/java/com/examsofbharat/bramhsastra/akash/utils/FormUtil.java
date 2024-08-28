@@ -244,12 +244,22 @@ public class FormUtil {
         latesFormSeo.setDescription("Stay updated with the latest government job application forms for 2024. Find forms for Sarkari Naukri, entrance exams, and more at Exams of Bharat. Filter by qualification, region, and category to apply for the right job easily.");
         secondPageSeoMap.put(LATEST_FORMS.name(), latesFormSeo);
 
+        SecondPageSeoDetailsDTO admitCardSeo = new SecondPageSeoDetailsDTO();
+        admitCardSeo.setTitle("Latest Admit card 2024 - examsofbharat");
+        admitCardSeo.setKeywords("Latest Government admit card 2024,Sarkari Naukri admit card,Latest admit card,admit card examsofbharat,examsofbharat admitcard Updates,New Sarkari admit card");
+        admitCardSeo.setDescription("Stay updated with the latest government job admit card for 2024. Find admit card for Sarkari Naukri, entrance exams, and more at Exams of Bharat.");
+        secondPageSeoMap.put(ADMIT.name(), admitCardSeo);
+
+        SecondPageSeoDetailsDTO resultSeo = new SecondPageSeoDetailsDTO();
+        resultSeo.setTitle("Latest Result 2024");
+        resultSeo.setKeywords("Latest Government Job result 2024,Sarkari Naukri result,Latest result,Latest Govt Exam result,ssc result,upsc result, bpsc result, new result");
+        resultSeo.setDescription("Stay updated with the latest government job result for 2024. Find result for Sarkari Naukri, entrance exams, and more at Exams of Bharat.");
+        secondPageSeoMap.put(RESULT.name(), resultSeo);
 
         SecondPageSeoDetailsDTO defaultSeo = new SecondPageSeoDetailsDTO();
         defaultSeo.setTitle("Forms Details");
         defaultSeo.setKeywords("All forms, Forms based on qualification, Form based on sector");
         defaultSeo.setDescription("Exams of bharat is entitled to show all forms updates, entrance exams, admit card and results etc");
-
         secondPageSeoMap.put("DEFAULT", defaultSeo);
     }
 

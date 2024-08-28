@@ -1,5 +1,6 @@
 package com.examsofbharat.bramhsastra.prithvi.facade;
 
+import com.examsofbharat.bramhsastra.jal.dto.ApplicationSeoDetailsDTO;
 import com.examsofbharat.bramhsastra.jal.enums.FormTypeEnum;
 import com.examsofbharat.bramhsastra.prithvi.dao.AdmitContentManagerRepository;
 import com.examsofbharat.bramhsastra.prithvi.dao.ApplicationEligibilityRepository;
@@ -198,6 +199,10 @@ public class DBMgmtFacade {
 
     public void saveApplicationAgeDetail(ApplicationAgeDetails applicationAgeDetail){
         applicationAgeDetailsManagerImpl.save(applicationAgeDetail);
+    }
+
+    public void saveApplicationSeoDetails(ApplicationSeoDetails applicationSeoDetails){
+        applicationSeoDetailsManager.save(applicationSeoDetails);
     }
 
     public void saveApplicationContent(List<ApplicationContentManager> applicationContentManager){

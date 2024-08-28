@@ -188,6 +188,13 @@ public class FormAdminService {
         applicationAgeDetailsDTO.setDateModified(dateCreated);
         dbMgmtFacade.saveApplicationAgeDetail(mapper.convertValue(applicationAgeDetailsDTO, ApplicationAgeDetails.class));
 
+        ApplicationSeoDetailsDTO applicationSeoDetailsDTO = enrichedFormDetailsDTO.getApplicationSeoDetailsDTO();
+        applicationSeoDetailsDTO.setId(UUIDUtil.generateUUID());
+        applicationSeoDetailsDTO.setAppIdRef(examId);
+        applicationSeoDetailsDTO.setDateCreated(new Date());
+        applicationSeoDetailsDTO.setDateModified(new Date());
+        dbMgmtFacade.saveApplicationSeoDetails(mapper.convertValue(applicationSeoDetailsDTO, ApplicationSeoDetails.class));
+
         ApplicationFeeDTO applicationFeeDTO = enrichedFormDetailsDTO.getApplicationFeeDTO();
         applicationFeeDTO.setId(UUIDUtil.generateUUID());
         applicationFeeDTO.setAppIdRef(examId);

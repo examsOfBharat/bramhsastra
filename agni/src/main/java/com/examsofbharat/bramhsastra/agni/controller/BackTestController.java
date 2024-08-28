@@ -108,7 +108,6 @@ public class BackTestController {
     }
 
     //save details from frontend
-
     @PostMapping("/save/form/detail")
     public Response saveFormDetail(@RequestBody EnrichedFormDetailsDTO formDetailsDTO){
         log.info("Save form detail request reached ::{}" ,formDetailsDTO.toString());

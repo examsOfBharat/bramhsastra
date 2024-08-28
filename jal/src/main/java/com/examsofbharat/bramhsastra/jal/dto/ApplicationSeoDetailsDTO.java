@@ -13,7 +13,7 @@ public class ApplicationSeoDetailsDTO {
     private String appIdRef;
     private String title;
     private String keywords;
-    private String descreption;
+    private String description;
     private Date dateCreated;
     private Date dateModified;
 }

@@ -10,15 +10,12 @@ import com.examsofbharat.bramhsastra.jal.dto.FormViewResponseDTO;
 import com.examsofbharat.bramhsastra.jal.dto.request.ComponentRequestDTO;
 import com.examsofbharat.bramhsastra.jal.dto.request.EnrichedFormDetailsDTO;
 import com.examsofbharat.bramhsastra.jal.utils.StringUtil;
-import com.examsofbharat.bramhsastra.prithvi.entity.ApplicationSeoDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-
-import static com.examsofbharat.bramhsastra.akash.constants.AkashConstants.*;
 
 @Slf4j
 @Component
@@ -116,7 +113,7 @@ public class ApplicationIntroParser extends BaseContentParser {
             if(Objects.nonNull(seoDetailsDTO)){
                 applicationFormIntroDTO.setSeoTitle(seoDetailsDTO.getTitle());
                 applicationFormIntroDTO.setSeoKeywords(seoDetailsDTO.getKeywords());
-                applicationFormIntroDTO.setSeoDescription(seoDetailsDTO.getDescreption());
+                applicationFormIntroDTO.setSeoDescription(seoDetailsDTO.getDescription());
             }
 
             formViewResponseDTO.setApplicationFormIntroDTO(applicationFormIntroDTO);
