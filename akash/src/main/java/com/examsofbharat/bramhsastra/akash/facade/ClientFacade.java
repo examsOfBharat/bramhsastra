@@ -1,6 +1,8 @@
 package com.examsofbharat.bramhsastra.akash.facade;
 
+import com.examsofbharat.bramhsastra.akash.executor.FormExecutorService;
 import com.examsofbharat.bramhsastra.akash.service.clientService.ClientService;
+import com.examsofbharat.bramhsastra.akash.utils.FormUtil;
 import com.examsofbharat.bramhsastra.akash.utils.WebUtils;
 import com.examsofbharat.bramhsastra.jal.constants.WebConstants;
 import com.examsofbharat.bramhsastra.jal.dto.response.AdmitCardResponseDTO;
@@ -29,10 +31,46 @@ public class ClientFacade {
     @Autowired
     WebUtils webUtils;
 
-    public Response buildAndGetAdmitCard(String admitCardId){
+    /**
+     * Fetch application form details from cache
+     * if data not present in cache then call service layer for fresh fetch
+     * save utm data async into database
+     * @param appId
+     * @param utmSource
+     * @param pageType
+     * @return
+     */
+    public Response buildAndGetApplicationForm(String appId, String utmSource, String pageType){
+
+        if(StringUtil.isEmpty(appId)){
+            return webUtils.invalidRequest();
+        }
+
+        //save source async
+        FormExecutorService.mailExecutorService.submit(()->
+                clientService.saveApiRequestLog(utmSource, appId, pageType));
+
+        String  formResponse = FormUtil.formCache.get(appId);
+
+        if(StringUtil.notEmpty(formResponse)){
+            log.info("Form returned from cache id::{}", appId);
+            return Response.ok(formResponse).build();
+        }
+
+        //if data is not present in cache
+        return clientService.buildAndGetApplication(appId);
+    }
+
+
+    public Response buildAndGetAdmitCard(String admitCardId, String utmSource, String pageType){
         if(StringUtil.isEmpty(admitCardId)){
             return webUtils.invalidRequest();
         }
+
+        //save source async
+        FormExecutorService.mailExecutorService.submit(()->
+                clientService.saveApiRequestLog(utmSource, admitCardId, pageType));
+
         AdmitCardResponseDTO admitCardResponseDTO = new AdmitCardResponseDTO();
 
         clientService.buildAdmitCardResponse(admitCardResponseDTO, admitCardId);
@@ -45,10 +83,16 @@ public class ClientFacade {
         return webUtils.buildErrorMessage(WebConstants.ERROR, DATA_NOT_FOUND);
     }
 
-    public Response buildAndGetResult(String resultId){
+    public Response buildAndGetResult(String resultId, String utmSource, String pageType){
+
         if(StringUtil.isEmpty(resultId)){
             return webUtils.invalidRequest();
         }
+
+        //save source async
+        FormExecutorService.mailExecutorService.submit(()->
+                clientService.saveApiRequestLog(utmSource, resultId, pageType));
+
         ResultResponseDTO resultResponseDTO = new ResultResponseDTO();
 
         clientService.buildResultResponse(resultResponseDTO, resultId);

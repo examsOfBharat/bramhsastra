@@ -135,33 +135,42 @@ public class BackTestController {
 
     @GetMapping("/get/form/details")
     public Response getFormDetails(@RequestHeader(value = "App-Id", required = false) String app_Id,
+                                   @RequestHeader(value = "utm_source", required = false) String utmSource,
                                    @RequestParam String appId){
+
+        log.info("get form details request reached ::{}" ,utmSource);
         if(StringUtil.isEmpty(app_Id) || !"abcd".equals(app_Id)){
             return Response.status(401).build();
         }
         log.info("Request reached for form details userId :: {}", appId);
-        return clientService.buildAndGetApplication(appId);
+        return clientFacade.buildAndGetApplicationForm(appId, utmSource, "form");
     }
 
     //adding testing details
     @GetMapping("/get/admit/details")
     public Response getAdmitDetails(@RequestHeader(value = "App-Id", required = false) String app_Id,
+                                    @RequestHeader(value = "utm_source", required = false) String utmSource,
                                     @RequestParam String appId){
+
+        log.info("get form details request reached ::{}" ,utmSource);
         if(StringUtil.isEmpty(app_Id) || !"abcd".equals(app_Id)){
             return Response.status(401).build();
         }
         log.info("Request reached for admit card userId :: {}", appId);
-        return clientFacade.buildAndGetAdmitCard(appId);
+        return clientFacade.buildAndGetAdmitCard(appId,utmSource,"admit-card");
     }
 
     @GetMapping("/get/result/details")
     public Response getResultDetails(@RequestHeader(value = "App-Id", required = false) String app_Id,
+                                     @RequestHeader(value = "utm_source", required = false) String utmSource,
                                      @RequestParam String appId){
+
+        log.info("get form details request reached ::{}" ,utmSource);
         if(StringUtil.isEmpty(app_Id) || !"abcd".equals(app_Id)){
             return Response.status(401).build();
         }
         log.info("Request reached for result card userId :: {}", appId);
-        return clientFacade.buildAndGetResult(appId);
+        return clientFacade.buildAndGetResult(appId, utmSource, "result");
     }
 
     @GetMapping("/get/form/admit/details")

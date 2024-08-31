@@ -1,5 +1,6 @@
 package com.examsofbharat.bramhsastra.agni.controller;
 
+import com.examsofbharat.bramhsastra.akash.facade.ClientFacade;
 import com.examsofbharat.bramhsastra.akash.service.clientService.ClientService;
 import com.examsofbharat.bramhsastra.akash.service.clientService.ResponseManagementService;
 import com.examsofbharat.bramhsastra.akash.service.clientService.SecondaryPageService;
@@ -23,6 +24,9 @@ public class FormController {
     ClientService clientService;
 
     @Autowired
+    ClientFacade clientFacade;
+
+    @Autowired
     SecondaryPageService secondaryPageService;
 
     @PostMapping("/update/client/home/page")
@@ -40,7 +44,7 @@ public class FormController {
     @PostMapping("/fetch/form/details")
     public Response fetchFormDetails(@RequestBody ApplicationRequestDTO applicationRequestDTO){
         log.info("Request reached for form details userId :: {}", applicationRequestDTO.getUserId());
-        return clientService.buildAndGetApplication(applicationRequestDTO.getUserId());
+        return clientFacade.buildAndGetApplicationForm(applicationRequestDTO.getUserId(),"", "form");
     }
 
 

@@ -4,6 +4,7 @@ import com.examsofbharat.bramhsastra.akash.executor.FormExecutorService;
 import com.examsofbharat.bramhsastra.akash.factory.componentParser.FormViwerFactory;
 import com.examsofbharat.bramhsastra.akash.utils.DateUtils;
 import com.examsofbharat.bramhsastra.akash.utils.FormUtil;
+import com.examsofbharat.bramhsastra.akash.utils.UUIDUtil;
 import com.examsofbharat.bramhsastra.akash.utils.WebUtils;
 import com.examsofbharat.bramhsastra.akash.validator.FormValidator;
 import com.examsofbharat.bramhsastra.jal.constants.WebConstants;
@@ -49,21 +50,10 @@ public class ClientService {
     @Autowired
     FormViwerFactory formViwerFactory;
 
-//    private static final ModelMapper modelMapper = new ModelMapper();
-
     ObjectMapper objectMapper = new ObjectMapper();
 
+
     public Response buildAndGetApplication(String appId){
-        if(StringUtil.isEmpty(appId)){
-            return webUtils.invalidRequest();
-        }
-        String  formResponse = FormUtil.formCache.get(appId);
-
-        if(StringUtil.notEmpty(formResponse)){
-            log.info("Form returned from cache id::{}", appId);
-            return Response.ok(formResponse).build();
-        }
-
 
         //fetch form detail from db
         EnrichedFormDetailsDTO enrichedFormDetailsDTO = getEnrichedFormDetails(appId);
@@ -71,8 +61,19 @@ public class ClientService {
             return webUtils.buildErrorMessage(WebConstants.ERROR, DATA_NOT_FOUND);
         }
 
-        formResponse = buildFormViewRes(enrichedFormDetailsDTO);
+        String formResponse = buildFormViewRes(enrichedFormDetailsDTO);
         return Response.ok(formResponse).build();
+    }
+
+    public void saveApiRequestLog(String utmSource, String appId, String pageType){
+        ApiRequestLog apiRequestLog = new ApiRequestLog();
+        apiRequestLog.setId(UUIDUtil.generateUUID());
+        apiRequestLog.setAppId(appId);
+        apiRequestLog.setPageType(pageType);
+        apiRequestLog.setSource(utmSource);
+        apiRequestLog.setDateCreated(new Date());
+        apiRequestLog.setDateModified(new Date());
+        dbMgmtFacade.saveRequestLog(apiRequestLog);
     }
 
     public void updateLatestFormInCache(){

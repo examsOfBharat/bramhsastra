@@ -76,6 +76,9 @@ public class DBMgmtFacade {
     LogoUrlManagerImpl logoUrlManager;
 
     @Autowired
+    ApiRequestLogManagerImpl apiRequestLogManagerImpl;
+
+    @Autowired
     private ApplicationNameDetailsRepository applicationNameDetailsRepository;
 
     public UserDetails getUserDetails(String userId){
@@ -308,6 +311,10 @@ public class DBMgmtFacade {
 
     public List<AdminResponseManager> fetchAdminDataByStatus(String status){
         return adminResponseManagerImpl.fetchAdminDataByStatus(status);
+    }
+
+    public void saveRequestLog(ApiRequestLog apiRequestLog){
+        apiRequestLogManagerImpl.save(apiRequestLog);
     }
 
 }

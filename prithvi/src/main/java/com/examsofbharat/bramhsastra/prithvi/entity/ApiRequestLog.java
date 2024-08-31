@@ -1,5 +1,6 @@
 package com.examsofbharat.bramhsastra.prithvi.entity;
 
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -14,24 +15,21 @@ import java.util.Date;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
-@Table(name= "application_seo_details")
-public class ApplicationSeoDetails {
+@Table(name= "api_request_log")
+public class ApiRequestLog {
     @Id
     @GeneratedValue(generator = "system-uuid")
     @GenericGenerator(name ="system-uuid", strategy = "uuid")
     private String id;
 
-    @Column(name = "app_id_ref")
-    private String appIdRef;
+    @Column(name = "app_id")
+    private String appId;
 
-    @Column(name = "title")
-    private String title;
+    @Column(name = "page_type")
+    private String pageType;
 
-    @Column(name = "keywords")
-    private String keywords;
-
-    @Column(name = "description")
-    private String description;
+    @Column(name = "source")
+    private String source;
 
     @Column(name = "date_created")
     private Date dateCreated;

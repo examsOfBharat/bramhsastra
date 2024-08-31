@@ -26,6 +26,8 @@ public class ApplicationIntroParser extends BaseContentParser {
         try {
             EnrichedFormDetailsDTO enrichedFormDetailsDTO = componentRequestDTO.getEnrichedFormDetailsDTO();
 
+            ApplicationFormDTO applicationFormDTO = enrichedFormDetailsDTO.getApplicationFormDTO();
+
             ApplicationFormIntroDTO applicationFormIntroDTO = new ApplicationFormIntroDTO();
             applicationFormIntroDTO.setAppId(enrichedFormDetailsDTO.getApplicationFormDTO().getId());
 
@@ -45,61 +47,62 @@ public class ApplicationIntroParser extends BaseContentParser {
             }
 
             applicationFormIntroDTO.setLastDate(DateUtils.getFormatedDate1(
-                    enrichedFormDetailsDTO.getApplicationFormDTO().getEndDate()));
+                    applicationFormDTO.getEndDate()));
             applicationFormIntroDTO.setLastDateColor(FormUtil.getExpiryDateColor(
-                    enrichedFormDetailsDTO.getApplicationFormDTO().getEndDate()));
+                    applicationFormDTO.getEndDate()));
             applicationFormIntroDTO.setTitle(componentRequestDTO.getEnrichedFormDetailsDTO().
                     getApplicationFormDTO().getExamName());
 
-            applicationFormIntroDTO.setType(enrichedFormDetailsDTO.getApplicationFormDTO().getState());
+            applicationFormIntroDTO.setType(applicationFormDTO.getState());
             applicationFormIntroDTO.setMinQualification(FormUtil.qualificationName.get(enrichedFormDetailsDTO.getApplicationFormDTO().getMinQualification()));
 
             //main form logo
-            applicationFormIntroDTO.setLogoUrl(FormUtil.getLogoByName(componentRequestDTO.getEnrichedFormDetailsDTO().
-                    getApplicationFormDTO().getExamName()));
+            applicationFormIntroDTO.setLogoUrl(FormUtil.getLogoByName(applicationFormDTO.getExamName()));
 
             //logo for sharing url
-            applicationFormIntroDTO.setShareLogoUrl(FormUtil.getPngLogoByName(componentRequestDTO.getEnrichedFormDetailsDTO().
-                    getApplicationFormDTO().getExamName()));
+            applicationFormIntroDTO.setShareLogoUrl(FormUtil.getPngLogoByName(applicationFormDTO.getExamName()));
 
             //Setting release date
-            if(enrichedFormDetailsDTO.getApplicationFormDTO().getStartDate().compareTo(DateUtils.getStartOfDay(new Date())) >= 0){
+            if(applicationFormDTO.getStartDate().compareTo(DateUtils.getStartOfDay(new Date())) >= 0){
                 applicationFormIntroDTO.setReleaseDateTitle("Application Start Date : ");
             }else{
                 applicationFormIntroDTO.setReleaseDateTitle("Application Start Date : ");
             }
             applicationFormIntroDTO.setReleaseDate(DateUtils.getFormatedDate1(
-                    enrichedFormDetailsDTO.getApplicationFormDTO().getStartDate()));
+                    applicationFormDTO.getStartDate()));
 
 
-            long daysCount = DateUtils.getNoOfDaysFromToday(enrichedFormDetailsDTO.getApplicationFormDTO().getDateCreated());
+            long daysCount = DateUtils.getNoOfDaysFromToday(applicationFormDTO.getDateCreated());
             List<String> postedList = FormUtil.getPostedDetail(daysCount);
 
             applicationFormIntroDTO.setPostedOn(postedList.get(0));
             applicationFormIntroDTO.setPostedOnColor(postedList.get(1));
 
-            if(enrichedFormDetailsDTO.getApplicationFormDTO().getState().equalsIgnoreCase("CENTRAL")) {
+            if(applicationFormDTO.getState().equalsIgnoreCase("CENTRAL")) {
                 applicationFormIntroDTO.setSubtitle("Government of Bharat");
             }else{
-                applicationFormIntroDTO.setSubtitle("Government of " + enrichedFormDetailsDTO.getApplicationFormDTO().getState());
+                applicationFormIntroDTO.setSubtitle("Government of " + applicationFormDTO.getState());
             }
 
-            if(enrichedFormDetailsDTO.getApplicationFormDTO().getTotalVacancy() > 0) {
+            if(applicationFormDTO.getTotalVacancy() > 0) {
                 applicationFormIntroDTO.setVacancy(FormUtil.formatIntoIndianNumSystem(enrichedFormDetailsDTO.getApplicationFormDTO().getTotalVacancy()));
             }else {
                 applicationFormIntroDTO.setVacancy("Not Available");
             }
-            applicationFormIntroDTO.setApplyUrl(componentRequestDTO.getEnrichedFormDetailsDTO().getApplicationUrlsDTO().getApply());
-            applicationFormIntroDTO.setRegisterUrl(componentRequestDTO.getEnrichedFormDetailsDTO().getApplicationUrlsDTO().getRegister());
 
-            if(StringUtil.notEmpty(enrichedFormDetailsDTO.getApplicationFormDTO().getQualification())){
+            //remove apply and register button for expired form
+            if(new Date().before(applicationFormDTO.getEndDate())) {
+                applicationFormIntroDTO.setApplyUrl(componentRequestDTO.getEnrichedFormDetailsDTO().getApplicationUrlsDTO().getApply());
+                applicationFormIntroDTO.setRegisterUrl(componentRequestDTO.getEnrichedFormDetailsDTO().getApplicationUrlsDTO().getRegister());
+            }
+
+            if(StringUtil.notEmpty(applicationFormDTO.getQualification())){
                 applicationFormIntroDTO.setQualificationKey("Qualification");
-                applicationFormIntroDTO.setQualificationValue(enrichedFormDetailsDTO.getApplicationFormDTO()
+                applicationFormIntroDTO.setQualificationValue(applicationFormDTO
                         .getQualification());
             }
 
             //form status banner condition
-            ApplicationFormDTO applicationFormDTO = enrichedFormDetailsDTO.getApplicationFormDTO();
             if(applicationFormDTO.getDateModified().compareTo(DateUtils.addDays(applicationFormDTO.getDateCreated(), 5)) > 0){
                 applicationFormIntroDTO.setFormStatus("UPDATES");
             }else if(new Date().after(applicationFormDTO.getEndDate())){
