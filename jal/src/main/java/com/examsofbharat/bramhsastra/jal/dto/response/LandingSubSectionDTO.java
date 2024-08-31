@@ -26,4 +26,5 @@ public class LandingSubSectionDTO {
     private String vacancyColor;
     private String extraField;
     private String formLogoUrl;
+    private String formStatus;
 }

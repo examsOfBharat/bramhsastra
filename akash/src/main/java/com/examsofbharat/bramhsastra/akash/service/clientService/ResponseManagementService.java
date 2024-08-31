@@ -280,6 +280,13 @@ public class ResponseManagementService {
             landingSubSectionDTO.setTitle(applicationForm.getExamName());
             landingSubSectionDTO.setCardColor(FormUtil.fetchCardColor(i%4));
 
+            //form status banner condition
+            if(applicationForm.getDateModified().compareTo(DateUtils.addDays(applicationForm.getDateCreated(), 5)) > 0){
+                landingSubSectionDTO.setFormStatus("UPDATES");
+            }else if(FormUtil.dateIsWithinXDays(applicationForm.getStartDate())){
+                landingSubSectionDTO.setFormStatus("NEW");
+            }
+
             if(applicationForm.getDateModified().compareTo(DateUtils.addDays(applicationForm.getDateCreated(), 5)) > 0){
                 landingSubSectionDTO.setShowDateTitle("Updated On");
                 landingSubSectionDTO.setShowDateColor("#4A235A");
