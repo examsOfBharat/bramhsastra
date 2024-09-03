@@ -19,4 +19,10 @@ public class AdmitCardIntroDTO {
     private String subtitle;
     private String postedOn;
     private String postedOnColor;
+
+    //SEO related details
+    private String seoTitle;
+    private String seoDescription;
+    private String seoKeywords;
+    private String shareLogoUrl;
 }

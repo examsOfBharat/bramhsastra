@@ -52,17 +52,17 @@ public class AdminController {
         return formAdminService.saveForm(formDetailsDTO);
     }
 
-    @PostMapping("/save/admit/card")
-    public Response saveAdmitCard(@RequestBody AdmitCardRequestDTO admitCardRequestDTO){
-        log.info("Save admit card detail request reached ::{}" ,admitCardRequestDTO.toString());
-        return formAdminService.saveAdmitCard(admitCardRequestDTO);
-    }
+//    @PostMapping("/save/admit/card")
+//    public Response saveAdmitCard(@RequestBody AdmitCardRequestDTO admitCardRequestDTO){
+//        log.info("Save admit card detail request reached ::{}" ,admitCardRequestDTO.toString());
+//        return formAdminService.saveAdmitCard(admitCardRequestDTO);
+//    }
 
-    @PostMapping("/save/result")
-    public Response saveAdmitCard(@RequestBody ResultRequestDTO resultRequestDTO){
-        log.info("Save result detail request reached ::{}" ,resultRequestDTO.toString());
-        return formAdminService.buildAndSaveResultData(resultRequestDTO);
-    }
+//    @PostMapping("/save/result")
+//    public Response saveAdmitCard(@RequestBody ResultRequestDTO resultRequestDTO){
+//        log.info("Save result detail request reached ::{}" ,resultRequestDTO.toString());
+//        return formAdminService.buildAndSaveResultData(resultRequestDTO);
+//    }
 
     @PostMapping("/fetch/name")
     public Response fetchName(){

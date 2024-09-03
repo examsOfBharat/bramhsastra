@@ -1,5 +1,6 @@
 package com.examsofbharat.bramhsastra.jal.dto.request;
 
+import com.examsofbharat.bramhsastra.jal.dto.ApplicationSeoDetailsDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -13,5 +14,8 @@ public class WrapperAdmitCardRequestDTO {
 
     @JsonProperty("admit_card_details")
     AdmitCardRequestDTO admitCardRequestDTO;
+
+    @JsonProperty("application_seo_details")
+    ApplicationSeoDetailsDTO applicationSeoDetailsDTO;
 
 }

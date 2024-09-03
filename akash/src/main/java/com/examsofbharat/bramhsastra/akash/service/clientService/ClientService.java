@@ -315,6 +315,13 @@ public class ClientService {
         setTopAdmitCardList(admitCardResponseDTO);
         populateAdmitContent(admitCardResponseDTO, admitId);
 
+        ApplicationSeoDetails applicationSeoDetails = dbMgmtFacade.getApplicationSeoDetails(admitId);
+        if(Objects.nonNull(applicationSeoDetails)){
+            admitCardResponseDTO.getAdmitCardIntroDTO().setSeoTitle(applicationSeoDetails.getTitle());
+            admitCardResponseDTO.getAdmitCardIntroDTO().setSeoKeywords(applicationSeoDetails.getKeywords());
+            admitCardResponseDTO.getAdmitCardIntroDTO().setSeoDescription(applicationSeoDetails.getDescription());
+        }
+
     }
 
     public void buildResultResponse(ResultResponseDTO resultResponseDTO,
@@ -327,6 +334,14 @@ public class ClientService {
 
         setTopResultList(resultResponseDTO);
         populateResultContent(resultResponseDTO, resultId);
+
+        ApplicationSeoDetails applicationSeoDetails = dbMgmtFacade.getApplicationSeoDetails(resultId);
+        if(Objects.nonNull(applicationSeoDetails)){
+            resultResponseDTO.getResultIntroDTO().setSeoTitle(applicationSeoDetails.getTitle());
+            resultResponseDTO.getResultIntroDTO().setSeoKeywords(applicationSeoDetails.getKeywords());
+            resultResponseDTO.getResultIntroDTO().setSeoDescription(applicationSeoDetails.getDescription());
+            resultResponseDTO.getResultIntroDTO().setShareLogoUrl(FormUtil.getPngLogoByName(resultDetails.getResultName()));
+        }
 
     }
 

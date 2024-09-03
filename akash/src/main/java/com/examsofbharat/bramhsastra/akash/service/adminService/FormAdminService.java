@@ -105,7 +105,7 @@ public class FormAdminService {
         }
 
         try{
-            String response = new Gson().toJson(wrapperAdmitCardRequestDTO.getAdmitCardRequestDTO());
+            String response = new Gson().toJson(wrapperAdmitCardRequestDTO);
 
             UserDetails userDetails = dbMgmtFacade.findUserByUserId(wrapperAdmitCardRequestDTO.
                     getAdminUserDetailsDTO().getUserId());
@@ -137,7 +137,7 @@ public class FormAdminService {
         }
 
         try{
-            String response = new Gson().toJson(wrapperResultRequestDTO.getResultRequestDTO());
+            String response = new Gson().toJson(wrapperResultRequestDTO);
 
             UserDetails userDetails = dbMgmtFacade.findUserByUserId(wrapperResultRequestDTO.
                     getAdminUserDetailsDTO().getUserId());
@@ -188,12 +188,9 @@ public class FormAdminService {
         applicationAgeDetailsDTO.setDateModified(dateCreated);
         dbMgmtFacade.saveApplicationAgeDetail(mapper.convertValue(applicationAgeDetailsDTO, ApplicationAgeDetails.class));
 
-        ApplicationSeoDetailsDTO applicationSeoDetailsDTO = enrichedFormDetailsDTO.getApplicationSeoDetailsDTO();
-        applicationSeoDetailsDTO.setId(UUIDUtil.generateUUID());
-        applicationSeoDetailsDTO.setAppIdRef(examId);
-        applicationSeoDetailsDTO.setDateCreated(new Date());
-        applicationSeoDetailsDTO.setDateModified(new Date());
-        dbMgmtFacade.saveApplicationSeoDetails(mapper.convertValue(applicationSeoDetailsDTO, ApplicationSeoDetails.class));
+        if(Objects.nonNull(enrichedFormDetailsDTO.getApplicationSeoDetailsDTO())) {
+            saveSeoDetails(enrichedFormDetailsDTO.getApplicationSeoDetailsDTO(), examId);
+        }
 
         ApplicationFeeDTO applicationFeeDTO = enrichedFormDetailsDTO.getApplicationFeeDTO();
         applicationFeeDTO.setId(UUIDUtil.generateUUID());
@@ -267,6 +264,16 @@ public class FormAdminService {
         saveOrUpdateApplicationMetaData(applicationFormDTO, applicationVacancyDTOList);
 
         return Response.ok().build();
+    }
+
+    private void saveSeoDetails(ApplicationSeoDetailsDTO applicationSeoDetailsDTO, String formId){
+
+        applicationSeoDetailsDTO.setId(UUIDUtil.generateUUID());
+        applicationSeoDetailsDTO.setAppIdRef(formId);
+        applicationSeoDetailsDTO.setDateCreated(new Date());
+        applicationSeoDetailsDTO.setDateModified(new Date());
+        dbMgmtFacade.saveApplicationSeoDetails(mapper.convertValue(applicationSeoDetailsDTO, ApplicationSeoDetails.class));
+
     }
 
     /**
@@ -352,7 +359,9 @@ public class FormAdminService {
     /**
      * Save admit card detail
      */
-    public Response saveAdmitCard(AdmitCardRequestDTO admitCardRequestDTO){
+    public Response saveAdmitCard(WrapperAdmitCardRequestDTO wrapperAdmitCardRequestDTO){
+
+        AdmitCardRequestDTO admitCardRequestDTO = wrapperAdmitCardRequestDTO.getAdmitCardRequestDTO();
         if(Objects.isNull(admitCardRequestDTO)){
             return webUtils.invalidRequest();
         }
@@ -368,6 +377,11 @@ public class FormAdminService {
         admitCard.setDateModified(new Date());
 
         dbMgmtFacade.saveAdmitCard(admitCard);
+
+        //save seo detail
+        if(Objects.nonNull(wrapperAdmitCardRequestDTO.getApplicationSeoDetailsDTO())) {
+            saveSeoDetails(wrapperAdmitCardRequestDTO.getApplicationSeoDetailsDTO(), admitCardId);
+        }
 
         //save admit card details
         saveAppNameDetails(admitCardId, admitCard.getAdmitCardName(), new Date(), "admit");
@@ -417,7 +431,9 @@ public class FormAdminService {
     /**
      * Save result data in to respective tables
      */
-    public Response buildAndSaveResultData(ResultRequestDTO resultRequestDTO){
+    public Response buildAndSaveResultData(WrapperResultRequestDTO wrapperResultRequestDTO){
+
+        ResultRequestDTO resultRequestDTO = wrapperResultRequestDTO.getResultRequestDTO();
 
         if(Objects.isNull(resultRequestDTO)){
             webUtils.invalidRequest();
@@ -434,6 +450,10 @@ public class FormAdminService {
         resultDetails.setDateModified(new Date());
 
         dbMgmtFacade.saveResultDetail(resultDetails);
+
+        if(Objects.nonNull(wrapperResultRequestDTO.getApplicationSeoDetailsDTO())){
+            saveSeoDetails(wrapperResultRequestDTO.getApplicationSeoDetailsDTO(), resultId);
+        }
 
         saveAppNameDetails(resultId, resultDetails.getResultName(), new Date(), "result");
 
@@ -500,14 +520,16 @@ public class FormAdminService {
             EnrichedFormDetailsDTO enrichedFormDetailsDTO = new Gson().fromJson(adminResponseManager.getResponse(),
                     EnrichedFormDetailsDTO.class);
             return updateFormResponse(enrichedFormDetailsDTO, adminResponseManager, approverRequestDTO);
+
         } else if (adminResponseManager.getResponseType().equalsIgnoreCase("admit")) {
-            AdmitCardRequestDTO admitCardRequestDTO = new Gson().fromJson(adminResponseManager.getResponse(),
-                    AdmitCardRequestDTO.class);
-            return updateAdmitResponse(admitCardRequestDTO, adminResponseManager, approverRequestDTO);
+            WrapperAdmitCardRequestDTO wrapperAdmitCardRequestDTO = new Gson().fromJson(adminResponseManager.getResponse(),
+                    WrapperAdmitCardRequestDTO.class);
+            return updateAdmitResponse(wrapperAdmitCardRequestDTO, adminResponseManager, approverRequestDTO);
+
         } else if (adminResponseManager.getResponseType().equalsIgnoreCase("result")) {
-            ResultRequestDTO resultRequestDTO = new Gson().fromJson(adminResponseManager.getResponse(),
-                    ResultRequestDTO.class);
-            return updateResultResponse(resultRequestDTO, adminResponseManager, approverRequestDTO);
+            WrapperResultRequestDTO wrapperResultRequestDTO = new Gson().fromJson(adminResponseManager.getResponse(),
+                    WrapperResultRequestDTO.class);
+            return updateResultResponse(wrapperResultRequestDTO, adminResponseManager, approverRequestDTO);
         }
 
         return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.SERVER_ERROR);
@@ -526,11 +548,12 @@ public class FormAdminService {
         return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.SERVER_ERROR);
     }
 
-    private Response updateAdmitResponse(AdmitCardRequestDTO admitCardRequestDTO,
+    private Response updateAdmitResponse(WrapperAdmitCardRequestDTO wrapperAdmitCardRequestDTO,
                                          AdminResponseManager adminResponseManager,
                                          ApproverRequestDTO approverRequestDTO){
-        if(Objects.nonNull(admitCardRequestDTO)){
-            Response response = saveAdmitCard(admitCardRequestDTO);
+        if(Objects.nonNull(wrapperAdmitCardRequestDTO) &&
+        Objects.nonNull(wrapperAdmitCardRequestDTO.getAdmitCardRequestDTO())){
+            Response response = saveAdmitCard(wrapperAdmitCardRequestDTO);
             if(response != null && response.getStatus() == 200){
                 updateAdminResponse(adminResponseManager, approverRequestDTO);
             }
@@ -539,11 +562,14 @@ public class FormAdminService {
         return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.SERVER_ERROR);
     }
 
-    private Response updateResultResponse(ResultRequestDTO resultRequestDTO,
+    private Response updateResultResponse(WrapperResultRequestDTO wrapperResultRequestDTO,
                                           AdminResponseManager adminResponseManager,
                                           ApproverRequestDTO approverRequestDTO){
-        if(Objects.nonNull(resultRequestDTO)){
-            Response response = buildAndSaveResultData(resultRequestDTO);
+
+        if(Objects.nonNull(wrapperResultRequestDTO) &&
+                Objects.nonNull(wrapperResultRequestDTO.getResultRequestDTO())){
+
+            Response response = buildAndSaveResultData(wrapperResultRequestDTO);
             if(response != null && response.getStatus() == 200){
                 updateAdminResponse(adminResponseManager, approverRequestDTO);
             }

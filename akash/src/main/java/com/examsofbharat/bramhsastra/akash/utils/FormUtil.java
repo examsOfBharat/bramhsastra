@@ -82,6 +82,14 @@ public class FormUtil {
         return date.after(DateUtils.addDays(todayDate,-8));
     }
 
+    public static boolean dateIsWithin2Days(Date date){
+        if(date == null) return false;
+
+        Date todayDate = new Date();
+        return date.after(DateUtils.addDays(todayDate,-2));
+    }
+
+
     public static String getExpiryDateColor(Date date){
         if(date == null) return null;
 

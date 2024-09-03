@@ -153,6 +153,9 @@ public class ApplicationDbUtil {
         secondaryPageDataDTO.setReleaseDateColor(FormUtil.getLastXDaysDateColor(admitCard.getDateCreated()));
         secondaryPageDataDTO.setNewFlag(FormUtil.dateIsWithinXDays(admitCard.getDateCreated()));
         secondaryPageDataDTO.setSubType(subType);
+        if(FormUtil.dateIsWithin2Days(admitCard.getDateCreated())){
+            secondaryPageDataDTO.setFormStatus("NEW");
+        }
         secondaryPageDataDTO.setCardColor(FormUtil.fetchCardColor(i%4));
 
         return secondaryPageDataDTO;
@@ -171,6 +174,9 @@ public class ApplicationDbUtil {
         secondaryPageDataDTO.setReleaseDateColor(FormUtil.getLastXDaysDateColor(resultDetails.getResultDate()));
         secondaryPageDataDTO.setNewFlag(FormUtil.dateIsWithinXDays(resultDetails.getResultDate()));
         secondaryPageDataDTO.setSubType(subType);
+        if(FormUtil.dateIsWithin2Days(resultDetails.getDateCreated())){
+            secondaryPageDataDTO.setFormStatus("NEW");
+        }
 
         return secondaryPageDataDTO;
     }
