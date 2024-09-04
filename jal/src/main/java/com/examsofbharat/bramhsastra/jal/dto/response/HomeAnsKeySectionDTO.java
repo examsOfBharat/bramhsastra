@@ -12,5 +12,6 @@ public class HomeAnsKeySectionDTO {
     private String title;
     private String subTitle;
     private String ansKeyType;
+    private String lastResultReleaseCount;
     private List<String> resultNameList = new ArrayList<>();
 }

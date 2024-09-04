@@ -98,6 +98,13 @@ public class BackTestController {
         return responseManagementService.buildAndUpdateClientHomePage();
     }
 
+
+    /**
+     * Fetch HOME page
+     * @param appId @mandatory
+     * @param responseType @mandatory
+     * @return
+     */
     @GetMapping("/get/response")
     public Response getLandingResponse(@RequestHeader(value = "App-Id", required = false) String appId,@RequestParam String responseType){
         if(StringUtil.isEmpty(appId) || !"abcd".equals(appId)){
@@ -173,6 +180,24 @@ public class BackTestController {
         return clientFacade.buildAndGetResult(appId, utmSource, "result");
     }
 
+    /**
+     * FETCH ANS KEY THIRD PAGE
+     */
+    @GetMapping("/get/anskey/details")
+    public Response getAnsKeyDetails(@RequestHeader(value = "App-Id", required = false) String app_Id,
+                                     @RequestHeader(value = "utm_source", required = false) String utmSource,
+                                     @RequestParam String appId){
+
+        log.info("get ansKey details request reached ::{}" ,utmSource);
+        if(StringUtil.isEmpty(app_Id) || !"abcd".equals(app_Id)){
+            return Response.status(401).build();
+        }
+        log.info("Request reached for ans key card userId :: {}", appId);
+        return clientFacade.buildAndGetAnsKeyData(appId, utmSource, "answer");
+    }
+
+
+
     @GetMapping("/get/form/admit/details")
     public Response fetchAdmitDetailsByAppId(@RequestParam String appId){
         log.info("Request reached for admit by appId ::{}", appId);
@@ -198,6 +223,15 @@ public class BackTestController {
         return clientService.checkEligibility(eligibilityCheckRequestDTO);
     }
 
+
+    /**
+     * Fetch SECOND PAGE data
+     * @param appId authenticate the api
+     * @param subType required to return correct page data
+     * @param page count of page
+     * @param size count of size
+     * @return
+     */
     @GetMapping("/fetch/page/list")
     public Response fetchSecondaryPageData(@RequestHeader(value = "App-Id", required = false) String appId,
                                            @RequestParam String subType, @RequestParam int page, @RequestParam int size){

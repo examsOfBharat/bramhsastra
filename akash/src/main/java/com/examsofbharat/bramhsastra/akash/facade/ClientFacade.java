@@ -6,6 +6,7 @@ import com.examsofbharat.bramhsastra.akash.utils.FormUtil;
 import com.examsofbharat.bramhsastra.akash.utils.WebUtils;
 import com.examsofbharat.bramhsastra.jal.constants.WebConstants;
 import com.examsofbharat.bramhsastra.jal.dto.response.AdmitCardResponseDTO;
+import com.examsofbharat.bramhsastra.jal.dto.response.AnsKeyResponseDTO;
 import com.examsofbharat.bramhsastra.jal.dto.response.ResultResponseDTO;
 import com.examsofbharat.bramhsastra.jal.utils.StringUtil;
 import com.examsofbharat.bramhsastra.prithvi.facade.DBMgmtFacade;
@@ -100,6 +101,37 @@ public class ClientFacade {
         String response = new Gson().toJson(resultResponseDTO);
 
         if(Objects.nonNull(resultResponseDTO.getResultIntroDTO())){
+            return  Response.ok(response).build();
+        }
+        return webUtils.buildErrorMessage(WebConstants.ERROR, DATA_NOT_FOUND);
+    }
+
+
+    /**
+     * Build ans key third page response
+     * @param ansKeyId
+     * @param utmSource
+     * @param pageType
+     * @return
+     */
+    public Response buildAndGetAnsKeyData(String ansKeyId, String utmSource, String pageType){
+
+        if(StringUtil.isEmpty(ansKeyId)){
+            return webUtils.invalidRequest();
+        }
+
+        //save source async
+        FormExecutorService.mailExecutorService.submit(()->
+                clientService.saveApiRequestLog(utmSource, ansKeyId, pageType));
+
+        AnsKeyResponseDTO ansKeyResponseDTO = new AnsKeyResponseDTO();
+
+        clientService.buildAnsKeyResponseP3(ansKeyResponseDTO, ansKeyId);
+
+        //convert to string
+        String response = new Gson().toJson(ansKeyResponseDTO);
+
+        if(Objects.nonNull(ansKeyResponseDTO.getAnsKeyIntroDTO())){
             return  Response.ok(response).build();
         }
         return webUtils.buildErrorMessage(WebConstants.ERROR, DATA_NOT_FOUND);

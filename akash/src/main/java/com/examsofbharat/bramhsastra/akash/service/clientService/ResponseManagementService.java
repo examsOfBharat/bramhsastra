@@ -74,6 +74,9 @@ public class ResponseManagementService {
             sortIndex++;
         }
 
+        //Update upcoming forms
+        updateUpcomingForm(formLandingPageDTO);
+
         //update home page title and subtitle
         updateHomeTitle(formLandingPageDTO);
 
@@ -93,6 +96,15 @@ public class ResponseManagementService {
         clientService.updateLatestFormInCache();
 
         return webUtils.buildSuccessResponse("SUCCESS");
+    }
+
+    private void updateUpcomingForm(FormLandingPageDTO formLandingPageDTO){
+        HomeUpcomingFormDTO homeUpcomingFormDTO = new HomeUpcomingFormDTO();
+
+        homeUpcomingFormDTO.setTitle("Upcoming form");
+        homeUpcomingFormDTO.setPageType("UPCOMING");
+
+        formLandingPageDTO.setHomeUpcomingFormDTO(homeUpcomingFormDTO);
     }
 
     private void updateHomeTitle(FormLandingPageDTO formLandingPageDTO) {
@@ -171,7 +183,7 @@ public class ResponseManagementService {
         HomeAdmitCardSection homeAdmitCardSection = new HomeAdmitCardSection();
 
         //Checking if we have any new admit card in last 2 days
-        List<AdmitCard> admitCardList = dbMgmtFacade.getLastXDayAdmitCardList(2);
+        List<GenericResponseV1> admitCardList = dbMgmtFacade.getLastXDayResponseV1List(2, "ADMIT");
         if(Objects.nonNull(admitCardList)){
             homeAdmitCardSection.setLastAdmitReleaseCount(String.valueOf(admitCardList.size()));
         }
@@ -196,7 +208,7 @@ public class ResponseManagementService {
         buildResultSubSection(landingSectionDTO);
         HomeResultDetailsDTO homeResultDetailsDTO = new HomeResultDetailsDTO();
         //Checking if we have any new admit card in last 2 days
-        List<ResultDetails> resultDetailsList = dbMgmtFacade.getLastXDaysResult(2);
+        List<GenericResponseV1> resultDetailsList = dbMgmtFacade.getLastXDayResponseV1List(2,"RESULT");
         if(Objects.nonNull(resultDetailsList)){
             homeResultDetailsDTO.setLastResultReleaseCount(String.valueOf(resultDetailsList.size()));
         }
@@ -378,20 +390,20 @@ public class ResponseManagementService {
     public void buildAdmitSubSections(LandingSectionDTO landingSectionDTO) {
 
         List<LandingSubSectionDTO> landingSubSectionDTOS = new ArrayList<>();
-        List<AdmitCard> admitCardList = dbMgmtFacade.getLatestAdmitCardList(0,5, AkashConstants.DATE_MODIFIED);
+        List<GenericResponseV1> admitCardList = dbMgmtFacade.getLatestResponseV1List(0,5, AkashConstants.DATE_MODIFIED, "ADMIT");
         int i = 0;
-        for (AdmitCard admitCard : admitCardList) {
+        for (GenericResponseV1 admitCard : admitCardList) {
             LandingSubSectionDTO landingSubSectionDTO = new LandingSubSectionDTO();
             landingSubSectionDTO.setCardColor("#e0f7fa");
             landingSubSectionDTO.setKey("ADMIT");
             landingSubSectionDTO.setFormType("admit");
             landingSubSectionDTO.setExamId(admitCard.getId());
-            landingSubSectionDTO.setTitle(admitCard.getAdmitCardName());
-            landingSubSectionDTO.setExamDate(FormUtil.formatExamDate(admitCard.getExamDate()));
+            landingSubSectionDTO.setTitle(admitCard.getTitle());
+            landingSubSectionDTO.setExamDate(FormUtil.formatExamDate(admitCard.getShowDate()));
             landingSubSectionDTO.setId(admitCard.getId());
             landingSubSectionDTO.setExamId(admitCard.getAppIdRef());
-            landingSubSectionDTO.setExamDateColor(FormUtil.getLastXDaysDateColor(admitCard.getExamDate()));
-            landingSubSectionDTO.setShowDate(DateUtils.getFormatedDate1(admitCard.getAdmitCardDate()));
+            landingSubSectionDTO.setExamDateColor(FormUtil.getLastXDaysDateColor(admitCard.getShowDate()));
+            landingSubSectionDTO.setShowDate(DateUtils.getFormatedDate1(admitCard.getUpdatedDate()));
 
             landingSubSectionDTOS.add(landingSubSectionDTO);
             i++;
@@ -407,13 +419,17 @@ public class ResponseManagementService {
 
         List<String> ansNameList = new ArrayList<>();
 
-        String dateType = "answerDate";
-        Date startDate = DateUtils.addDays(new Date(), -5);
 
-        List<ApplicationForm> latestAnsKey = dbMgmtFacade.getFormWithAnsKey(0,5, dateType, startDate);
+        List<GenericResponseV1> ansKeyList = dbMgmtFacade.getLatestResponseV1List(0,5, AkashConstants.DATE_MODIFIED,"ANSWER");
 
-        latestAnsKey.forEach(applicationForm -> ansNameList.add(applicationForm.getExamName()));
+        ansKeyList.forEach(genericResponseV1 -> ansNameList.add(genericResponseV1.getTitle()));
         homeAnsKeySectionDTO.setResultNameList(ansNameList);
+
+        //Checking if we have any new admit card in last 2 days
+        List<GenericResponseV1> answerDetailsList = dbMgmtFacade.getLastXDayResponseV1List(2,"ANS_KEY");
+        if(Objects.nonNull(answerDetailsList)){
+            homeAnsKeySectionDTO.setLastResultReleaseCount(String.valueOf(answerDetailsList.size()));
+        }
 
         formLandingPageDTO.setHomeAnsKeySectionDTO(homeAnsKeySectionDTO);
     }
@@ -439,21 +455,21 @@ public class ResponseManagementService {
 
         List<LandingSubSectionDTO> landingSubSectionDTOS = new ArrayList<>();
         //fetch result list
-        List<ResultDetails> resultDetailsList = dbMgmtFacade.getResultDetailList(0,5, AkashConstants.DATE_MODIFIED);
+        List<GenericResponseV1> resultDetailsList = dbMgmtFacade.getLatestResponseV1List(0,5, AkashConstants.DATE_MODIFIED,"RESULT");
 
         int i = 0;
-        for (ResultDetails resultDetails : resultDetailsList) {
+        for (GenericResponseV1 resultDetails : resultDetailsList) {
             LandingSubSectionDTO landingSubSectionDTO = new LandingSubSectionDTO();
 
             landingSubSectionDTO.setCardColor("#e8f5e9");
             landingSubSectionDTO.setKey("RESULT");
             landingSubSectionDTO.setExamId(resultDetails.getId());
             landingSubSectionDTO.setFormType("result");
-            landingSubSectionDTO.setTitle(resultDetails.getResultName());
-            landingSubSectionDTO.setShowDate(DateUtils.getFormatedDate1(resultDetails.getResultDate()));
+            landingSubSectionDTO.setTitle(resultDetails.getTitle());
+            landingSubSectionDTO.setShowDate(DateUtils.getFormatedDate1(resultDetails.getUpdatedDate()));
             landingSubSectionDTO.setExamId(resultDetails.getAppIdRef());
             landingSubSectionDTO.setId(resultDetails.getId());
-            landingSubSectionDTO.setShowDateColor(FormUtil.getLastXDaysDateColor(resultDetails.getResultDate()));
+            landingSubSectionDTO.setShowDateColor(FormUtil.getLastXDaysDateColor(resultDetails.getUpdatedDate()));
 
             landingSubSectionDTOS.add(landingSubSectionDTO);
             i++;
@@ -500,6 +516,9 @@ public class ResponseManagementService {
         fetchBuildAndSaveSecAndRelatedData(LATEST_FORMS.name(), size);
         //save and cache older data, keep sync call
         fetchBuildAndSaveSecAndRelatedData(OLDER_FORMS.name(), size);
+
+        //save upcoming forms
+        fetchAndCacheUpcomingForms();
     }
 
     private void fetchBuildAndSaveSecAndRelatedData(String formSubType, int size){
@@ -507,6 +526,12 @@ public class ResponseManagementService {
         String responseRes = applicationDbUtil.fetchSecDataAndRelatedData(formSubType, 0, size, relatedForms);
         FormUtil.cacheData.put(0 + "_" + formSubType , responseRes);
         buildRelatedFormAndSaveResponse(responseRes, relatedForms, formSubType);
+    }
+
+    private void fetchAndCacheUpcomingForms(){
+
+        String responseRes = applicationDbUtil.buildSecDataForUpcomingForm(0, 10);
+        FormUtil.cacheData.put(0 + "_" + "UPCOMING", responseRes);
     }
 
     private void buildRelatedFormAndSaveResponse(String responseRes,

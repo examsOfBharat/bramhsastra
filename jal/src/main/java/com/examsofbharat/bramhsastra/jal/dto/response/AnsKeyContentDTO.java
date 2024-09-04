@@ -1,4 +1,4 @@
-package com.examsofbharat.bramhsastra.jal.dto;
+package com.examsofbharat.bramhsastra.jal.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
@@ -7,7 +7,8 @@ import java.util.Date;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ResultContentManagerDTO {
+public class AnsKeyContentDTO {
+
     private String id;
     private String formIdRef;
     private String heading;

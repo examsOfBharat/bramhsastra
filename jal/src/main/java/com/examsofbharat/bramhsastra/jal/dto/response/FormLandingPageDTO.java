@@ -27,13 +27,15 @@ public class FormLandingPageDTO {
     private PrimeSectionDTO primeSectionDTO;
 
     @SerializedName("grade_section")
-    HomeGradeSectionDTO homeGradeSectionDTO;
+    private HomeGradeSectionDTO homeGradeSectionDTO;
 
     @SerializedName("province_section")
-    HomeProvinceSectionDTO homeProvinceSectionDTO;
+    private HomeProvinceSectionDTO homeProvinceSectionDTO;
 
     @SerializedName("ans_key_section")
-    HomeAnsKeySectionDTO homeAnsKeySectionDTO;
+    private HomeAnsKeySectionDTO homeAnsKeySectionDTO;
 
+    @SerializedName("upcoming_section")
+    private HomeUpcomingFormDTO homeUpcomingFormDTO;
 
 }

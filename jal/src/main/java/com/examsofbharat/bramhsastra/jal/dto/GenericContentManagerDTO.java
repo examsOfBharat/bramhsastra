@@ -7,7 +7,8 @@ import java.util.Date;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ResultContentManagerDTO {
+public class GenericContentManagerDTO {
+
     private String id;
     private String formIdRef;
     private String heading;

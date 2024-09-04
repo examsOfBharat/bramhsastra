@@ -12,9 +12,7 @@ import com.examsofbharat.bramhsastra.jal.dto.*;
 import com.examsofbharat.bramhsastra.jal.dto.request.ComponentRequestDTO;
 import com.examsofbharat.bramhsastra.jal.dto.request.EligibilityCheckRequestDTO;
 import com.examsofbharat.bramhsastra.jal.dto.request.EnrichedFormDetailsDTO;
-import com.examsofbharat.bramhsastra.jal.dto.response.AdmitCardResponseDTO;
-import com.examsofbharat.bramhsastra.jal.dto.response.RelatedFormResponseDTO;
-import com.examsofbharat.bramhsastra.jal.dto.response.ResultResponseDTO;
+import com.examsofbharat.bramhsastra.jal.dto.response.*;
 import com.examsofbharat.bramhsastra.jal.enums.ComponentEnum;
 import com.examsofbharat.bramhsastra.jal.utils.StringUtil;
 import com.examsofbharat.bramhsastra.prithvi.entity.*;
@@ -143,6 +141,22 @@ public class ClientService {
             RelatedFormResponseDTO relatedFormResponseDTO = new Gson().fromJson(responseManagement.getRelatedForm(),
                     RelatedFormResponseDTO.class);
             resultResponseDTO.setRelatedFormResponseDTO(relatedFormResponseDTO);
+        }
+    }
+
+
+    /**
+     * Build ans key related form
+     * @param ansKeyResponseDTO
+     */
+    private void setTopAnsKeyList(AnsKeyResponseDTO ansKeyResponseDTO){
+
+        ResponseManagement responseManagement = dbMgmtFacade.getResponseData("ANSWER");
+
+        if(Objects.nonNull(responseManagement) && StringUtil.notEmpty(responseManagement.getRelatedForm())){
+            RelatedFormResponseDTO relatedFormResponseDTO = new Gson().fromJson(responseManagement.getRelatedForm(),
+                    RelatedFormResponseDTO.class);
+            ansKeyResponseDTO.setRelatedFormResponseDTO(relatedFormResponseDTO);
         }
     }
 
@@ -308,7 +322,7 @@ public class ClientService {
     public void buildAdmitCardResponse(AdmitCardResponseDTO admitCardResponseDTO,
                                        String admitId){
 
-        AdmitCard admitCard = dbMgmtFacade.fetchAdmitById(admitId);
+        GenericResponseV1 admitCard = dbMgmtFacade.fetchResponseV1ById(admitId);
         if(Objects.nonNull(admitCard)){
             admitCardResponseDTO.setAdmitCardIntroDTO(buildAdmitIntro(admitCard));
         }
@@ -323,6 +337,7 @@ public class ClientService {
         }
 
     }
+
 
     public void buildResultResponse(ResultResponseDTO resultResponseDTO,
                                     String resultId){
@@ -342,11 +357,38 @@ public class ClientService {
             resultResponseDTO.getResultIntroDTO().setSeoDescription(applicationSeoDetails.getDescription());
             resultResponseDTO.getResultIntroDTO().setShareLogoUrl(FormUtil.getPngLogoByName(resultDetails.getResultName()));
         }
+    }
 
+
+    /**
+     * Build ans key third page response
+     * @param ansKeyResponseDTO
+     * @param ansKeyId
+     */
+    public void buildAnsKeyResponseP3(AnsKeyResponseDTO ansKeyResponseDTO,
+                                      String ansKeyId){
+
+        GenericResponseV1 ansKeyResponse = dbMgmtFacade.fetchResponseV1ById(ansKeyId);
+        if(Objects.nonNull(ansKeyResponse)){
+            ansKeyResponseDTO.setAnsKeyIntroDTO(buildAnsKeyIntro(ansKeyResponse));
+        }
+
+        setTopAnsKeyList(ansKeyResponseDTO);
+        populateAnsKeyContent(ansKeyResponseDTO, ansKeyId);
+
+
+        //Populate SEO part
+        ApplicationSeoDetails applicationSeoDetails = dbMgmtFacade.getApplicationSeoDetails(ansKeyId);
+        if(Objects.nonNull(applicationSeoDetails)){
+            ansKeyResponseDTO.getAnsKeyIntroDTO().setSeoTitle(applicationSeoDetails.getTitle());
+            ansKeyResponseDTO.getAnsKeyIntroDTO().setSeoKeywords(applicationSeoDetails.getKeywords());
+            ansKeyResponseDTO.getAnsKeyIntroDTO().setSeoDescription(applicationSeoDetails.getDescription());
+            ansKeyResponseDTO.getAnsKeyIntroDTO().setShareLogoUrl(FormUtil.getPngLogoByName(ansKeyResponse.getTitle()));
+        }
     }
 
     public void buildAdmitCardResponseByAppId(AdmitCardResponseDTO admitCardResponseDTO, String appId){
-        AdmitCard admitCard = dbMgmtFacade.fetchAdmitByAppId(appId);
+        GenericResponseV1 admitCard = dbMgmtFacade.fetchResponseV1ByAppId(appId, "ADMIT");
 
         if(Objects.nonNull(admitCard)){
             admitCardResponseDTO.setAdmitCardIntroDTO(buildAdmitIntro(admitCard));
@@ -355,8 +397,9 @@ public class ClientService {
         populateAdmitContent(admitCardResponseDTO, admitCard.getId());
     }
 
+
     private void populateAdmitContent(AdmitCardResponseDTO admitCardResponseDTO, String admitId){
-        AdmitContentManager admitContentManager = dbMgmtFacade.fetchAdmitContent(admitId);
+        GenericContentManager admitContentManager = dbMgmtFacade.fetchGenericContent(admitId);
         if(Objects.nonNull(admitContentManager)){
             AdmitContentManagerDTO admitContentManagerDTO = objectMapper.convertValue(admitContentManager, AdmitContentManagerDTO.class);
             admitCardResponseDTO.setAdmitContentManagerDTO(admitContentManagerDTO);
@@ -364,19 +407,34 @@ public class ClientService {
     }
 
     private void populateResultContent(ResultResponseDTO resultResponseDTO, String resultId){
-        ResultContentManager resultContentManager = dbMgmtFacade.fetchResultContentById(resultId);
+        GenericContentManager resultContentManager = dbMgmtFacade.fetchGenericContent(resultId);
         if(Objects.nonNull(resultContentManager)){
             ResultContentManagerDTO resultContentManagerDTO = objectMapper.convertValue(resultContentManager, ResultContentManagerDTO.class);
             resultResponseDTO.setResultContentManagerDTO(resultContentManagerDTO);
         }
     }
 
-    private AdmitCardIntroDTO buildAdmitIntro(AdmitCard admitCard){
+
+    /**
+     * populate ans key content response
+     * @param ansKeyResponseDTO
+     * @param ansKeyId
+     */
+    private void populateAnsKeyContent(AnsKeyResponseDTO ansKeyResponseDTO, String ansKeyId){
+        GenericContentManager ansKeyContentManager = dbMgmtFacade.fetchGenericContent(ansKeyId);
+        if(Objects.nonNull(ansKeyContentManager)){
+            AnsKeyContentDTO ansKeyContentDTO = objectMapper.convertValue(ansKeyContentManager, AnsKeyContentDTO.class);
+            ansKeyResponseDTO.setAnsKeyContentDTO(ansKeyContentDTO);
+        }
+    }
+
+    private AdmitCardIntroDTO buildAdmitIntro(GenericResponseV1 admitCard){
         AdmitCardIntroDTO admitCardIntroDTO = objectMapper.convertValue(admitCard, AdmitCardIntroDTO.class);
 
         admitCardIntroDTO.setAppIdRef(admitCard.getAppIdRef());
+        admitCardIntroDTO.setAdmitCardName(admitCard.getTitle());
         admitCardIntroDTO.setReleaseDate(DateUtils.getFormatedDate1(admitCard.getDateCreated()));
-        admitCardIntroDTO.setExamDateValue(DateUtils.getFormatedDate1(admitCard.getExamDate()));
+        admitCardIntroDTO.setExamDateValue(DateUtils.getFormatedDate1(admitCard.getShowDate()));
         admitCardIntroDTO.setSubtitle("Government of India");
 
         long daysCount = DateUtils.getNoOfDaysFromToday(admitCard.getDateCreated());
@@ -385,7 +443,7 @@ public class ClientService {
         admitCardIntroDTO.setPostedOn(postedList.get(0));
         admitCardIntroDTO.setPostedOnColor(postedList.get(1));
 
-        admitCardIntroDTO.setLogoUrl(FormUtil.getLogoByName(admitCard.getAdmitCardName()));
+        admitCardIntroDTO.setLogoUrl(FormUtil.getLogoByName(admitCard.getTitle()));
 
         return admitCardIntroDTO;
     }
@@ -407,6 +465,31 @@ public class ClientService {
         resultIntroDTO.setLogoUrl(FormUtil.getLogoByName(resultDetails.getResultName()));
 
         return resultIntroDTO;
+    }
+
+
+    /**
+     * Build AnsKeyIntro Details
+     * @param ansKeyResponse
+     * @return
+     */
+    private AnsKeyIntroDTO buildAnsKeyIntro(GenericResponseV1 ansKeyResponse){
+        AnsKeyIntroDTO ansKeyIntroDTO = objectMapper.convertValue(ansKeyResponse, AnsKeyIntroDTO.class);
+
+        ansKeyIntroDTO.setAppIdRef(ansKeyResponse.getAppIdRef());
+        ansKeyIntroDTO.setAnsName(ansKeyResponse.getTitle());
+        ansKeyIntroDTO.setDownloadUrl(ansKeyResponse.getDownloadUrl());
+        ansKeyIntroDTO.setAnsDate(DateUtils.getFormatedDate1(ansKeyResponse.getUpdatedDate()));
+        ansKeyIntroDTO.setSubtitle("Government of India");
+
+        long daysCount = DateUtils.getNoOfDaysFromToday(ansKeyResponse.getUpdatedDate());
+        List<String> postedList = FormUtil.getPostedDetail(daysCount);
+
+        ansKeyIntroDTO.setPostedOn(postedList.get(0));
+        ansKeyIntroDTO.setPostedOnColor(postedList.get(1));
+        ansKeyIntroDTO.setLogoUrl(FormUtil.getLogoByName(ansKeyResponse.getTitle()));
+
+        return ansKeyIntroDTO;
     }
 
 }

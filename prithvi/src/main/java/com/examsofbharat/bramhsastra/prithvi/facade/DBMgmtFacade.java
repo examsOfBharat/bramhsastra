@@ -31,10 +31,19 @@ public class DBMgmtFacade {
     AdmitCardManagerImpl admitCardManager;
 
     @Autowired
+    GenericResponseV1ManagerImpl genericResponseV1Manager;
+
+    @Autowired
+    GenericContentManagerImpl genericContentManager;
+
+    @Autowired
     AdmitContentManagerImpl admitContentManagerImp;
 
     @Autowired
     ResultDetailsManagerImpl resultDetailsManager;
+
+    @Autowired
+    UpcomingFormsManagerImpl upcomingFormsManager;
 
     @Autowired
     ResponseManagementManagerImpl responseManagementManager;
@@ -80,6 +89,8 @@ public class DBMgmtFacade {
 
     @Autowired
     private ApplicationNameDetailsRepository applicationNameDetailsRepository;
+    @Autowired
+    private GenericContentManagerImpl genericContentManagerImpl;
 
     public UserDetails getUserDetails(String userId){
         Optional<UserDetails> userDetails = userDetailsManagerImp.findUserByUserId(userId);
@@ -123,12 +134,43 @@ public class DBMgmtFacade {
         return admitCardManager.getLatestAdmitCards(page, size, dateType);
     }
 
+    //generic response V1
+    public List<GenericResponseV1> getLatestResponseV1List(int page, int size, String dateType, String type){
+        return genericResponseV1Manager.getLatestGenericResponse(page, size, dateType,type);
+    }
+
+    public List<GenericResponseV1> getLastXDayResponseV1List(int xDays, String type){
+        return genericResponseV1Manager.getXDaysResponse(xDays,type);
+    }
+
+    public GenericResponseV1 fetchResponseV1ById(String responseId){
+        return genericResponseV1Manager.fetchResponseById(responseId);
+    }
+
+    public GenericResponseV1 fetchResponseV1ByAppId(String appId, String type){
+        return genericResponseV1Manager.fetchResponseByAppId(appId,type);
+    }
+
+    //generic content v1
+
+    public GenericContentManager fetchGenericContent(String contentId){
+        return genericContentManagerImpl.fetchGenericContentV1(contentId);
+    }
+
+
+
+
+
     public List<AdmitCard> getLastXDayAdmitCardList(int xDays){
         return admitCardManager.getXDaysAdmitCards(xDays);
     }
 
     public List<ResultDetails> getResultDetailList(int page, int size, String dateType){
         return resultDetailsManager.getLatestResultList(page, size, dateType);
+    }
+
+    public List<UpcomingForms> fetchLatestUpcomingForm(int page, int size, String dateType){
+        return upcomingFormsManager.getLatestUpcomingForm(page, size, dateType);
     }
 
     public List<ResultDetails> getLastXDaysResult(int xDays){

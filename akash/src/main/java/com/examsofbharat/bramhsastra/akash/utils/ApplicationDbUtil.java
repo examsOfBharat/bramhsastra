@@ -6,9 +6,7 @@ import com.examsofbharat.bramhsastra.jal.dto.response.WrapperSecondaryPageDataDT
 import com.examsofbharat.bramhsastra.jal.enums.FormSubTypeEnum;
 import com.examsofbharat.bramhsastra.jal.enums.FormTypeEnum;
 import com.examsofbharat.bramhsastra.jal.utils.StringUtil;
-import com.examsofbharat.bramhsastra.prithvi.entity.AdmitCard;
-import com.examsofbharat.bramhsastra.prithvi.entity.ApplicationForm;
-import com.examsofbharat.bramhsastra.prithvi.entity.ResultDetails;
+import com.examsofbharat.bramhsastra.prithvi.entity.*;
 import com.examsofbharat.bramhsastra.prithvi.facade.DBMgmtFacade;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +43,7 @@ public class ApplicationDbUtil {
         }
 
         if(formSubTypeEnum.equals(FormSubTypeEnum.ANS_KEY.name())){
-            List<SecondaryPageDataDTO> ansKeyDataList = getAnsKeyList(page, size, formSubTypeEnum);
+            List<SecondaryPageDataDTO> ansKeyDataList = getGenericSecondPageList(page, size, formSubTypeEnum,relatedForms,"ANSWER");
             wrapperSecondaryPageDataDTO.setFormList(ansKeyDataList);
             return (new Gson()).toJson(wrapperSecondaryPageDataDTO);
         }
@@ -54,6 +52,41 @@ public class ApplicationDbUtil {
         wrapperSecondaryPageDataDTO.setFormList(applicationFormDTOList);
         return  (new Gson()).toJson(wrapperSecondaryPageDataDTO);
     }
+
+
+    /**
+     * 2nd page dto build for upcoming forms
+     * fetch list from response and build here (name and date)
+     * @param page
+     * @param size
+     * @return
+     */
+    public String buildSecDataForUpcomingForm(int page, int size){
+
+
+        List<UpcomingForms> upcomingFormsList = dbMgmtFacade.fetchLatestUpcomingForm(page,size,"dateCreated");
+        List<SecondaryPageDataDTO> upcomingSecData = new ArrayList<>();
+
+        int color = 0;
+        for(UpcomingForms upcomingForms : upcomingFormsList){
+            SecondaryPageDataDTO secondaryPageDataDTO = new SecondaryPageDataDTO();
+            secondaryPageDataDTO.setTitle(upcomingForms.getAppName());
+            secondaryPageDataDTO.setReleaseDate(DateUtils.getFormatedDate1(upcomingForms.getFormDate()));
+            secondaryPageDataDTO.setCardColor(FormUtil.fetchSecCardColor(color%4));
+            color++;
+
+            upcomingSecData.add(secondaryPageDataDTO);
+        }
+
+        WrapperSecondaryPageDataDTO wrapperSecondaryPageDataDTO = new WrapperSecondaryPageDataDTO();
+        wrapperSecondaryPageDataDTO.setTitle("Upcoming Forms");
+
+        wrapperSecondaryPageDataDTO.setFormList(upcomingSecData);
+
+        return  (new Gson()).toJson(wrapperSecondaryPageDataDTO);
+    }
+
+
 
 
 
@@ -92,10 +125,10 @@ public class ApplicationDbUtil {
 
     //fetch admit card data based on page number and its record count
     public List<SecondaryPageDataDTO> getAdmitCardsList(int page, int size, String subType, List<RelatedFormDTO> relatedForms) {
-        List<AdmitCard> admitCardList = dbMgmtFacade.getLatestAdmitCardList(page, size, "dateCreated");
+        List<GenericResponseV1> admitCardList = dbMgmtFacade.getLatestResponseV1List(page, size, "dateCreated","ADMIT");
         List<SecondaryPageDataDTO> admitCardDTOList = new ArrayList<>();
         int color = 0;
-        for(AdmitCard admitCard : admitCardList) {
+        for(GenericResponseV1 admitCard : admitCardList) {
             //at the time of 0th page we will populate related form and keep in response-management
             if(relatedForms != null){
                 relatedForms.add(buildRelatedAdmit(admitCard, color));
@@ -109,12 +142,12 @@ public class ApplicationDbUtil {
 
     //return result list based on page number and record count
     public List<SecondaryPageDataDTO> getResultsList(int page, int size, String subType,List<RelatedFormDTO> relatedForms) {
-        List<ResultDetails> resultDetailsList = dbMgmtFacade.getResultDetailList(page, size, "dateCreated");
+        List<GenericResponseV1> resultDetailsList = dbMgmtFacade.getLatestResponseV1List(page, size, "dateCreated","RESULT");
 
         List<SecondaryPageDataDTO> resultDetailsDTOList = new ArrayList<>();
         int color = 0;
         int color1 = 0;
-        for(ResultDetails resultDetails : resultDetailsList) {
+        for(GenericResponseV1 resultDetails : resultDetailsList) {
             if(relatedForms != null){
                 relatedForms.add(buildRelatedResult(resultDetails, color));
                 color++;
@@ -141,14 +174,41 @@ public class ApplicationDbUtil {
     }
 
 
-    public SecondaryPageDataDTO buildAdmitSecondaryPage(AdmitCard admitCard, String subType, int i){
+    /**
+     * Build second page for admit card, result and ansKey
+     * It will be generic function for all three pageTypes
+     * @param page @mandatory
+     * @param size @mandatory
+     * @param subType @mandatory
+     * @param relatedForms @mandatory
+     * @return
+     */
+    public List<SecondaryPageDataDTO> getGenericSecondPageList(int page, int size, String subType,List<RelatedFormDTO> relatedForms, String type) {
+        List<GenericResponseV1> genericResponseList = dbMgmtFacade.getLatestResponseV1List(page, size, "dateCreated",type);
+
+        List<SecondaryPageDataDTO> secondPageDetailsList = new ArrayList<>();
+        int color = 0;
+        int color1 = 0;
+        for(GenericResponseV1 genericResponse : genericResponseList) {
+            if(relatedForms != null){
+                relatedForms.add(buildRelatedResult(genericResponse, color));
+                color++;
+            }
+            secondPageDetailsList.add(buildAnsKeySecondPage(genericResponse, subType, color1));
+            color1++;
+        }
+        return secondPageDetailsList;
+    }
+
+
+    public SecondaryPageDataDTO buildAdmitSecondaryPage(GenericResponseV1 admitCard, String subType, int i){
         SecondaryPageDataDTO secondaryPageDataDTO = new SecondaryPageDataDTO();
 
         secondaryPageDataDTO.setId(admitCard.getId());
         secondaryPageDataDTO.setPageType("admit");
-        secondaryPageDataDTO.setTitle(admitCard.getAdmitCardName());
-        secondaryPageDataDTO.setExamDate(DateUtils.getFormatedDate1(admitCard.getExamDate()));
-        secondaryPageDataDTO.setExamDateColor(FormUtil.getLastXDaysDateColor(admitCard.getExamDate()));
+        secondaryPageDataDTO.setTitle(admitCard.getTitle());
+        secondaryPageDataDTO.setExamDate(DateUtils.getFormatedDate1(admitCard.getShowDate()));
+        secondaryPageDataDTO.setExamDateColor(FormUtil.getLastXDaysDateColor(admitCard.getShowDate()));
         secondaryPageDataDTO.setReleaseDate(DateUtils.getFormatedDate1(admitCard.getDateCreated()));
         secondaryPageDataDTO.setReleaseDateColor(FormUtil.getLastXDaysDateColor(admitCard.getDateCreated()));
         secondaryPageDataDTO.setNewFlag(FormUtil.dateIsWithinXDays(admitCard.getDateCreated()));
@@ -161,20 +221,47 @@ public class ApplicationDbUtil {
         return secondaryPageDataDTO;
     }
 
-    public SecondaryPageDataDTO buildResultSecondaryPage(ResultDetails resultDetails, String subType, int color){
+    public SecondaryPageDataDTO buildResultSecondaryPage(GenericResponseV1 resultDetails, String subType, int color){
 
         SecondaryPageDataDTO secondaryPageDataDTO = new SecondaryPageDataDTO();
 
         secondaryPageDataDTO.setId(resultDetails.getId());
         secondaryPageDataDTO.setPageType("result");
-        secondaryPageDataDTO.setTitle(resultDetails.getResultName());
+        secondaryPageDataDTO.setTitle(resultDetails.getTitle());
         secondaryPageDataDTO.setCardColor(FormUtil.fetchCardColor(color%4));
 
-        secondaryPageDataDTO.setReleaseDate(DateUtils.getFormatedDate1(resultDetails.getResultDate()));
-        secondaryPageDataDTO.setReleaseDateColor(FormUtil.getLastXDaysDateColor(resultDetails.getResultDate()));
-        secondaryPageDataDTO.setNewFlag(FormUtil.dateIsWithinXDays(resultDetails.getResultDate()));
+        secondaryPageDataDTO.setReleaseDate(DateUtils.getFormatedDate1(resultDetails.getUpdatedDate()));
+        secondaryPageDataDTO.setReleaseDateColor(FormUtil.getLastXDaysDateColor(resultDetails.getUpdatedDate()));
+        secondaryPageDataDTO.setNewFlag(FormUtil.dateIsWithinXDays(resultDetails.getUpdatedDate()));
         secondaryPageDataDTO.setSubType(subType);
         if(FormUtil.dateIsWithin2Days(resultDetails.getDateCreated())){
+            secondaryPageDataDTO.setFormStatus("NEW");
+        }
+
+        return secondaryPageDataDTO;
+    }
+
+    /**
+     * Build ans key second page
+     * @param anskeyDetails
+     * @param subType
+     * @param color
+     * @return
+     */
+    public SecondaryPageDataDTO buildAnsKeySecondPage(GenericResponseV1 anskeyDetails, String subType, int color){
+
+        SecondaryPageDataDTO secondaryPageDataDTO = new SecondaryPageDataDTO();
+
+        secondaryPageDataDTO.setId(anskeyDetails.getId());
+        secondaryPageDataDTO.setPageType("anskey");
+        secondaryPageDataDTO.setTitle(anskeyDetails.getTitle());
+        secondaryPageDataDTO.setCardColor(FormUtil.fetchCardColor(color%4));
+
+        secondaryPageDataDTO.setReleaseDate(DateUtils.getFormatedDate1(anskeyDetails.getUpdatedDate()));
+        secondaryPageDataDTO.setReleaseDateColor(FormUtil.getLastXDaysDateColor(anskeyDetails.getUpdatedDate()));
+        secondaryPageDataDTO.setNewFlag(FormUtil.dateIsWithinXDays(anskeyDetails.getUpdatedDate()));
+        secondaryPageDataDTO.setSubType(subType);
+        if(FormUtil.dateIsWithin2Days(anskeyDetails.getDateCreated())){
             secondaryPageDataDTO.setFormStatus("NEW");
         }
 
@@ -251,25 +338,25 @@ public class ApplicationDbUtil {
         return relatedFormDTO;
     }
 
-    private RelatedFormDTO buildRelatedAdmit(AdmitCard admitCard, int color){
+    private RelatedFormDTO buildRelatedAdmit(GenericResponseV1 admitCard, int color){
         RelatedFormDTO relatedFormDTO = new RelatedFormDTO();
 
         relatedFormDTO.setId(admitCard.getId());
         relatedFormDTO.setPageType("admit");
-        relatedFormDTO.setName(admitCard.getAdmitCardName());
+        relatedFormDTO.setName(admitCard.getTitle());
         relatedFormDTO.setReleaseDate(DateUtils.getFormatedDate1(admitCard.getDateCreated()));
         relatedFormDTO.setCardColor(FormUtil.fetchSecCardColor(color%4));
 
         return relatedFormDTO;
     }
 
-    private RelatedFormDTO buildRelatedResult(ResultDetails resultDetails, int color){
+    private RelatedFormDTO buildRelatedResult(GenericResponseV1 resultDetails, int color){
         RelatedFormDTO relatedFormDTO = new RelatedFormDTO();
 
         relatedFormDTO.setId(resultDetails.getId());
         relatedFormDTO.setPageType("result");
-        relatedFormDTO.setName(resultDetails.getResultName());
-        relatedFormDTO.setReleaseDate(DateUtils.getFormatedDate1(resultDetails.getResultDate()));
+        relatedFormDTO.setName(resultDetails.getTitle());
+        relatedFormDTO.setReleaseDate(DateUtils.getFormatedDate1(resultDetails.getUpdatedDate()));
         relatedFormDTO.setCardColor(FormUtil.fetchSecCardColor(color%4));
 
         return relatedFormDTO;
