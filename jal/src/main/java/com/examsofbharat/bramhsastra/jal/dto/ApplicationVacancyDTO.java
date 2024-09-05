@@ -19,8 +19,14 @@ public class ApplicationVacancyDTO {
     int ews;
     int female;
     int exArmy;
+    int pwd;
     int totalVacancy;
     String information;
+
+    String qualification;
+    String ageRange;
+    String experience;
+
     int sequence;
     Date dateCreated;
     Date dateModified;

@@ -29,4 +29,5 @@ public class ApplicationFormDTO {
     Date dateCreated;
     Date dateModified;
     String qualification;
+    Date lastPaymentDate;
 }

@@ -4,6 +4,7 @@ import com.examsofbharat.bramhsastra.jal.dto.*;
 import com.examsofbharat.bramhsastra.jal.dto.request.AdmitCardRequestDTO;
 import com.examsofbharat.bramhsastra.jal.dto.request.EnrichedFormDetailsDTO;
 import com.examsofbharat.bramhsastra.jal.dto.request.ResultRequestDTO;
+import com.examsofbharat.bramhsastra.jal.dto.request.admin.AdminGenericResponseV1;
 import com.examsofbharat.bramhsastra.prithvi.entity.UserDetails;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.geom.PageSize;
@@ -37,7 +38,7 @@ public class PdfGeneratorUtil {
     private static float towHalfCol[] = {titleCol, titleCol};
     private static  Paragraph oneSep = new Paragraph("\n");
 
-    public static byte[] generatePdf(AdmitCardRequestDTO object) throws FileNotFoundException {
+    public static byte[] generatePdf(AdminGenericResponseV1 object) throws FileNotFoundException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PdfWriter writer = new PdfWriter(outputStream);
         PdfDocument pdfDocument = new PdfDocument(writer);
@@ -59,18 +60,18 @@ public class PdfGeneratorUtil {
         document.add(divider);
         document.add(oneSep);
 
-        document.add(addKeyValue("Admit card Name", object.getAdmitCardName()));
+        document.add(addKeyValue("Admit card Name", object.getTitle()));
         document.add(addKeyValue("Download Url", object.getDownloadUrl()));
         document.add(addKeyValue("Heading", object.getHeading()));
         document.add(addKeyValue("Body", object.getBody()));
-        document.add(addKeyValue("Exam Date", object.getExamDate().toString()));
+        document.add(addKeyValue("Exam Date", object.getShowDate().toString()));
 
         document.close();
 
         return outputStream.toByteArray();
     }
 
-    public static byte[] generateResultPdf(ResultRequestDTO object, UserDetails userDetails) {
+    public static byte[] generateResultPdf(AdminGenericResponseV1 object, UserDetails userDetails) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PdfWriter writer = new PdfWriter(outputStream);
         PdfDocument pdfDocument = new PdfDocument(writer);
@@ -92,11 +93,11 @@ public class PdfGeneratorUtil {
         document.add(divider);
         document.add(oneSep);
 
-        document.add(addKeyValue("Result Name", object.getResultName()));
-        document.add(addKeyValue("Result Url", object.getResultUrl()));
+        document.add(addKeyValue("Result Name", object.getTitle()));
+        document.add(addKeyValue("Result Url", object.getDownloadUrl()));
         document.add(addKeyValue("Heading", object.getHeading()));
         document.add(addKeyValue("Body", object.getBody()));
-        document.add(addKeyValue("Result Date", object.getResultDate().toString()));
+        document.add(addKeyValue("Result Date", object.getUpdateDate().toString()));
 
         document.close();
 

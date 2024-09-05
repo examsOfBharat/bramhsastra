@@ -19,6 +19,8 @@ public class ApplicationFeeDTO {
     double obc;
     double female;
     double exArmy;
+    double ews;
+    double pwd;
     String information;
     Date lastPaymentDate;
     Date dateCreated;

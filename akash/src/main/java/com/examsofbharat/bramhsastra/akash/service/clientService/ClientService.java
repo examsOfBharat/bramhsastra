@@ -388,7 +388,7 @@ public class ClientService {
     }
 
     public void buildAdmitCardResponseByAppId(AdmitCardResponseDTO admitCardResponseDTO, String appId){
-        GenericResponseV1 admitCard = dbMgmtFacade.fetchResponseV1ByAppId(appId, "ADMIT");
+        GenericResponseV1 admitCard = dbMgmtFacade.fetchResponseV1ByAppId(appId, "admit");
 
         if(Objects.nonNull(admitCard)){
             admitCardResponseDTO.setAdmitCardIntroDTO(buildAdmitIntro(admitCard));

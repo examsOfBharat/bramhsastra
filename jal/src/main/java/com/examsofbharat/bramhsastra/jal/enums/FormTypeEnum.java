@@ -9,9 +9,9 @@ public enum FormTypeEnum {
     GRADE_BASED("FORMS BASED ON GRADE"),
     FEMALE("Family"),
     PROVINCIAL_BASED("FORMS BASED ON REGION"),
-    ADMIT("ADMIT CARD"),
-    RESULT("RESULT"),
-    ANS_KEY("ANSWER KEY");
+    ADMIT("Admit Card"),
+    RESULT("Result"),
+    ANS_KEY("Answer Key");
 
     private String val;
 

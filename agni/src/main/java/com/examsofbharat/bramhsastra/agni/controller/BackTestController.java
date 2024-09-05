@@ -9,6 +9,7 @@ import com.examsofbharat.bramhsastra.akash.service.clientService.ResponseManagem
 import com.examsofbharat.bramhsastra.akash.service.clientService.SecondaryPageService;
 import com.examsofbharat.bramhsastra.akash.utils.WebUtils;
 import com.examsofbharat.bramhsastra.jal.dto.request.*;
+import com.examsofbharat.bramhsastra.jal.dto.request.admin.WrapperGenericAdminResponseV1DTO;
 import com.examsofbharat.bramhsastra.jal.utils.StringUtil;
 import com.examsofbharat.bramhsastra.prithvi.manager.ApplicationFormManagerImpl;
 import jakarta.ws.rs.core.Response;
@@ -114,7 +115,10 @@ public class BackTestController {
         return responseManagementService.fetchHomeResponse(responseType);
     }
 
-    //save details from frontend
+    /**
+     *Save details from admin (forms, admit, result, anskey and upcoming forms)
+     */
+
     @PostMapping("/save/form/detail")
     public Response saveFormDetail(@RequestBody EnrichedFormDetailsDTO formDetailsDTO){
         log.info("Save form detail request reached ::{}" ,formDetailsDTO.toString());
@@ -128,16 +132,31 @@ public class BackTestController {
     }
 
     @PostMapping("/save/admit/card")
-    public Response saveAdmitCard(@RequestBody WrapperAdmitCardRequestDTO admitCardRequestDTO){
-        log.info("Save admit card detail request reached ::{}" ,admitCardRequestDTO.toString());
-        return formAdminService.processAndSaveAdminAdmitResponse(admitCardRequestDTO);
+    public Response saveAdmitCard(@RequestBody WrapperGenericAdminResponseV1DTO wrapperGenericAdminResponseV1DTO){
+        log.info("Save admit card detail request reached ::{}" ,wrapperGenericAdminResponseV1DTO.toString());
+        return formAdminService.processAndSaveAdminAdmitResponse(wrapperGenericAdminResponseV1DTO);
     }
 
     @PostMapping("/save/result")
-    public Response saveAdmitCard(@RequestBody WrapperResultRequestDTO wrapperResultRequestDTO){
-        log.info("Save result detail request reached ::{}" ,wrapperResultRequestDTO.toString());
-        return formAdminService.processAndSaveAdminResultResponse(wrapperResultRequestDTO);
+    public Response saveResult(@RequestBody WrapperGenericAdminResponseV1DTO wrapperGenericAdminResponseV1DTO){
+        log.info("Save result detail request reached ::{}" ,wrapperGenericAdminResponseV1DTO.toString());
+        return formAdminService.processAndSaveAdminResultResponse(wrapperGenericAdminResponseV1DTO);
     }
+
+    @PostMapping("/save/anskey")
+    public Response saveAnsKey(@RequestBody WrapperGenericAdminResponseV1DTO wrapperGenericAdminResponseV1DTO){
+        log.info("Save result detail request reached ::{}" ,wrapperGenericAdminResponseV1DTO.toString());
+        return formAdminService.processAndSaveGenericResV1(wrapperGenericAdminResponseV1DTO,"anskey");
+    }
+
+    @PostMapping("/save/upcoming/forms")
+    public Response saveUpcomingForms(@RequestBody WrapperGenericAdminResponseV1DTO wrapperGenericAdminResponseV1DTO){
+        log.info("Save result detail request reached ::{}" ,wrapperGenericAdminResponseV1DTO.toString());
+        return formAdminService.processAndSaveGenericResV1(wrapperGenericAdminResponseV1DTO,"upcoming");
+    }
+
+
+
 
 
     @GetMapping("/get/form/details")
@@ -164,7 +183,7 @@ public class BackTestController {
             return Response.status(401).build();
         }
         log.info("Request reached for admit card userId :: {}", appId);
-        return clientFacade.buildAndGetAdmitCard(appId,utmSource,"admit-card");
+        return clientFacade.buildAndGetAdmitCard(appId,utmSource,"admit");
     }
 
     @GetMapping("/get/result/details")
@@ -193,7 +212,7 @@ public class BackTestController {
             return Response.status(401).build();
         }
         log.info("Request reached for ans key card userId :: {}", appId);
-        return clientFacade.buildAndGetAnsKeyData(appId, utmSource, "answer");
+        return clientFacade.buildAndGetAnsKeyData(appId, utmSource, "anskey");
     }
 
 

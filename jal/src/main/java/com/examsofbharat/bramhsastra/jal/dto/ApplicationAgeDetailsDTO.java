@@ -20,6 +20,8 @@ public class ApplicationAgeDetailsDTO {
     int obcAge;
     int femaleAge;
     int exArmy;
+    int ews;
+    int pwd;
     String information;
     private Date maxNormalDob;
     private Date minNormalDob;

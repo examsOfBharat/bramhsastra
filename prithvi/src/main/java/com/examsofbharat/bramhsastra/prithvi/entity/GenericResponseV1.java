@@ -17,8 +17,8 @@ import java.util.Date;
 @Table(name= "generic_response")
 public class GenericResponseV1 {
     @Id
-    @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name ="system-uuid", strategy = "uuid")
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name ="uuid", strategy = "assigned")
     private String id;
 
     @Column(name = "app_id_ref")

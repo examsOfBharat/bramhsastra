@@ -151,11 +151,23 @@ public class DBMgmtFacade {
         return genericResponseV1Manager.fetchResponseByAppId(appId,type);
     }
 
+    //saving generic response v1
+
+    public void saveGenericResponseV1(GenericResponseV1 genericResponseV1){
+        genericResponseV1Manager.save(genericResponseV1);
+    }
+
     //generic content v1
 
     public GenericContentManager fetchGenericContent(String contentId){
         return genericContentManagerImpl.fetchGenericContentV1(contentId);
     }
+
+    public void saveGenericContentV1(GenericContentManager genericContentManager){
+        genericContentManagerImpl.save(genericContentManager);
+    }
+
+
 
 
 
@@ -171,6 +183,10 @@ public class DBMgmtFacade {
 
     public List<UpcomingForms> fetchLatestUpcomingForm(int page, int size, String dateType){
         return upcomingFormsManager.getLatestUpcomingForm(page, size, dateType);
+    }
+
+    public void saveUpcomingForms(UpcomingForms upcomingForms){
+        upcomingFormsManager.save(upcomingForms);
     }
 
     public List<ResultDetails> getLastXDaysResult(int xDays){

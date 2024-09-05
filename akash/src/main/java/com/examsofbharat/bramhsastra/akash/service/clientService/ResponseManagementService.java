@@ -101,7 +101,7 @@ public class ResponseManagementService {
     private void updateUpcomingForm(FormLandingPageDTO formLandingPageDTO){
         HomeUpcomingFormDTO homeUpcomingFormDTO = new HomeUpcomingFormDTO();
 
-        homeUpcomingFormDTO.setTitle("Upcoming form");
+        homeUpcomingFormDTO.setTitle("Upcoming Form");
         homeUpcomingFormDTO.setPageType("UPCOMING");
 
         formLandingPageDTO.setHomeUpcomingFormDTO(homeUpcomingFormDTO);
