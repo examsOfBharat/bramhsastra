@@ -1,4 +1,4 @@
-package com.examsofbharat.bramhsastra.akash.service;
+package com.examsofbharat.bramhsastra.akash.service.mailService;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

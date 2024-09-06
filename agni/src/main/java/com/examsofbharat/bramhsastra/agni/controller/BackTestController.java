@@ -125,34 +125,18 @@ public class BackTestController {
         return formAdminService.processAndSaveAdminFormResponse(formDetailsDTO);
     }
 
-    @PostMapping("/save/test/form/detail")
-    public Response saveTestFormDetail(@RequestBody EnrichedFormDetailsDTO formDetailsDTO) throws FileNotFoundException, IllegalAccessException {
-        log.info("Save form detail request reached ::{}" ,formDetailsDTO.toString());
-        return formAdminService.saveFormPDF(formDetailsDTO);
-    }
 
-    @PostMapping("/save/admit/card")
-    public Response saveAdmitCard(@RequestBody WrapperGenericAdminResponseV1DTO wrapperGenericAdminResponseV1DTO){
-        log.info("Save admit card detail request reached ::{}" ,wrapperGenericAdminResponseV1DTO.toString());
-        return formAdminService.processAndSaveAdminAdmitResponse(wrapperGenericAdminResponseV1DTO);
-    }
-
+    //Generic API for admit, result and anskey
     @PostMapping("/save/result")
     public Response saveResult(@RequestBody WrapperGenericAdminResponseV1DTO wrapperGenericAdminResponseV1DTO){
         log.info("Save result detail request reached ::{}" ,wrapperGenericAdminResponseV1DTO.toString());
-        return formAdminService.processAndSaveAdminResultResponse(wrapperGenericAdminResponseV1DTO);
-    }
-
-    @PostMapping("/save/anskey")
-    public Response saveAnsKey(@RequestBody WrapperGenericAdminResponseV1DTO wrapperGenericAdminResponseV1DTO){
-        log.info("Save result detail request reached ::{}" ,wrapperGenericAdminResponseV1DTO.toString());
-        return formAdminService.processAndSaveGenericResV1(wrapperGenericAdminResponseV1DTO,"anskey");
+        return formAdminService.processAndSaveGenericResV1(wrapperGenericAdminResponseV1DTO);
     }
 
     @PostMapping("/save/upcoming/forms")
     public Response saveUpcomingForms(@RequestBody WrapperGenericAdminResponseV1DTO wrapperGenericAdminResponseV1DTO){
         log.info("Save result detail request reached ::{}" ,wrapperGenericAdminResponseV1DTO.toString());
-        return formAdminService.processAndSaveGenericResV1(wrapperGenericAdminResponseV1DTO,"upcoming");
+        return formAdminService.processAndSaveGenericResV1(wrapperGenericAdminResponseV1DTO);
     }
 
 

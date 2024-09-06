@@ -49,7 +49,7 @@ public class AdminController {
     @PostMapping("/save/form/detail")
     public Response saveFormDetail(@RequestBody EnrichedFormDetailsDTO formDetailsDTO){
         log.info("Save form detail request reached ::{}" ,formDetailsDTO.toString());
-        return formAdminService.saveForm(formDetailsDTO);
+        return formAdminService.saveFormToDb(formDetailsDTO);
     }
 
 //    @PostMapping("/save/admit/card")

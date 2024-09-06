@@ -14,6 +14,7 @@ public class AdminGenericResponseV1 {
     private Date showDate;
     private String downloadUrl;
     private Date updateDate;
+    private String pageType;
 
     //content section
     private String heading;
