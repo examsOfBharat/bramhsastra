@@ -27,5 +27,7 @@ public class SystemPropertyProperties {
     public static final String DEFAULT_IMG_URL = "https://res.cloudinary.com/djfi8sqip/image/upload/v1720000518/grade_bg_12_iyx5hw.jpg";
     public static final String HOME_PAGE_COMPONENT = "home.page.component";
 
+    public static final String THIRD_PAGE_COLOR = "third.page.card.color";
+
 
 }

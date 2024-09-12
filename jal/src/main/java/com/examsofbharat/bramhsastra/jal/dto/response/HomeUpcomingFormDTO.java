@@ -8,4 +8,6 @@ import lombok.Data;
 public class HomeUpcomingFormDTO {
     private String title;
     private String pageType;
+    private String cardColor;
+    private String lastReleasedCount;
 }

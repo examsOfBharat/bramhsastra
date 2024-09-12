@@ -247,7 +247,7 @@ public class FormUtil {
 
     public void initSecondPageSeo(){
         SecondPageSeoDetailsDTO latesFormSeo = new SecondPageSeoDetailsDTO();
-        latesFormSeo.setTitle("Latest Form 2024 - Sarkari naukri");
+        latesFormSeo.setTitle("Latest Form 2024");
         latesFormSeo.setKeywords("Latest Government Job Forms 2024,Sarkari Naukri Application Form,Latest Sarkari Job Forms,Latest Govt Exam Forms,Latest Sarkari Form Updates,New Sarkari Form");
         latesFormSeo.setDescription("Stay updated with the latest government job application forms for 2024. Find forms for Sarkari Naukri, entrance exams, and more at Exams of Bharat. Filter by qualification, region, and category to apply for the right job easily.");
         secondPageSeoMap.put(LATEST_FORMS.name(), latesFormSeo);
@@ -513,6 +513,11 @@ public class FormUtil {
     public static void vacancyComparator(List<ApplicationVacancyDTO> list){
         // Sorting the list based on the sequence field
         Collections.sort(list, Comparator.comparingInt(ApplicationVacancyDTO::getSequence));
+    }
+
+    public static int genRandomNo(){
+        Random random = new Random();
+        return random.nextInt(10);
     }
 
 

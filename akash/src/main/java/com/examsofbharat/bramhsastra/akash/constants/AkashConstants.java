@@ -19,4 +19,11 @@ AkashConstants {
     public static final String BLUE_COLOR_CODE = "#0000FF";
     public static final String RUPEE_SYMBOL = "₹";
     public static final String YEAR_SYMBOL = " yrs";
+
+    public static final String ADMIT_KEY = "ADMIT";
+    public static final String ADMIT_TYPE = "admit";
+
+    public static final String RESULT_KEY = "RESULT";
+    public static final String RESULT_TYPE = "result";
+
 }

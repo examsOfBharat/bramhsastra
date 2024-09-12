@@ -143,6 +143,10 @@ public class DBMgmtFacade {
         return genericResponseV1Manager.getXDaysResponse(xDays,type);
     }
 
+    public List<UpcomingForms> getXDaysResponse(int xDays){
+        return upcomingFormsManager.getXDaysResponse(xDays);
+    }
+
     public GenericResponseV1 fetchResponseV1ById(String responseId){
         return genericResponseV1Manager.fetchResponseById(responseId);
     }

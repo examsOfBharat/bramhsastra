@@ -36,6 +36,7 @@ public class EobInitilizer {
     private static String homeSubtitle;
     private static String homeBgImageUrl;
     private List<String> approverIdList = new ArrayList<>();
+    private static List<String> thirdPageColor = new ArrayList<>();
     public static Map<String, String> logoMap = new HashMap<>();
     public static Map<String,String> pngLogoMap = new HashMap<>();
     public static List<String> homePageComponent = new ArrayList<>();
@@ -101,6 +102,12 @@ public class EobInitilizer {
                 .map(Arrays::asList)
                 .orElse(new ArrayList<>());
 
+        thirdPageColor = Optional.ofNullable(dbMgmtFacade.getSystemProperty(SystemPropertyProperties.THIRD_PAGE_COLOR))
+                .map(SystemProperty::getValue)
+                .map(ids -> ids.split(AkashConstants.COMMA_DELIMETER))
+                .map(Arrays::asList)
+                .orElse(new ArrayList<>());
+
         homePageComponent = Optional.ofNullable(dbMgmtFacade.getSystemProperty(SystemPropertyProperties.HOME_PAGE_COMPONENT))
                 .map(SystemProperty::getValue)
                 .map(ids -> ids.split(AkashConstants.COMMA_DELIMETER))
@@ -134,6 +141,8 @@ public class EobInitilizer {
     public String getHomeSubtitle(){ return homeSubtitle; }
 
     public List<String> getApproverIdList() { return approverIdList; }
+
+    public static List<String> getThirdPageColor(){ return thirdPageColor; }
 
     public static String getLogoByName(String name){
         if(logoMap.containsKey(name.toLowerCase())){

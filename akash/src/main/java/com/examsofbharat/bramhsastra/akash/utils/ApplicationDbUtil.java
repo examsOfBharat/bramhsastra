@@ -43,9 +43,13 @@ public class ApplicationDbUtil {
         }
 
         if(formSubTypeEnum.equals(FormSubTypeEnum.ANS_KEY.name())){
-            List<SecondaryPageDataDTO> ansKeyDataList = getGenericSecondPageList(page, size, formSubTypeEnum,relatedForms,"ANSWER");
+            List<SecondaryPageDataDTO> ansKeyDataList = getGenericSecondPageList(page, size, formSubTypeEnum,relatedForms,"ANSKEY");
             wrapperSecondaryPageDataDTO.setFormList(ansKeyDataList);
             return (new Gson()).toJson(wrapperSecondaryPageDataDTO);
+        }
+
+        if(formSubTypeEnum.equals("UPCOMING")){
+            return buildSecDataForUpcomingForm(page, size);
         }
 
         List<SecondaryPageDataDTO> applicationFormDTOList = getApplicationsList(page,size, formSubTypeEnum, relatedForms);
@@ -190,7 +194,7 @@ public class ApplicationDbUtil {
         int color = 0;
         int color1 = 0;
         for(GenericResponseV1 genericResponse : genericResponseList) {
-            if(relatedForms != null){
+            if (relatedForms != null) {
                 relatedForms.add(buildRelatedResult(genericResponse, color));
                 color++;
             }
@@ -310,13 +314,14 @@ public class ApplicationDbUtil {
         secondaryPageDataDTO.setLastDateColor(FormUtil.getExpiryDateColor(applicationForm.getEndDate()));
         secondaryPageDataDTO.setNewFlag(FormUtil.dateIsWithinXDays(applicationForm.getStartDate()));
 
+        //form status banner condition
         if(applicationForm.getDateModified().compareTo(DateUtils.addDays(applicationForm.getDateCreated(), 5)) > 0){
             secondaryPageDataDTO.setFormStatus("UPDATES");
-            secondaryPageDataDTO.setReleaseDateColor(RED_COLOR);
+            secondaryPageDataDTO.setReleaseDateColor(BLUE_COLOR_CODE);
         }else if(new Date().after(applicationForm.getEndDate())){
             secondaryPageDataDTO.setFormStatus("EXPIRED");
             secondaryPageDataDTO.setReleaseDateColor(RED_COLOR);
-        }else if (FormUtil.dateIsWithinXDays(applicationForm.getStartDate())){
+        }else if(FormUtil.dateIsWithinXDays(applicationForm.getStartDate())){
             secondaryPageDataDTO.setFormStatus("NEW");
             secondaryPageDataDTO.setReleaseDateColor(GREEN_COLOR);
         }else{

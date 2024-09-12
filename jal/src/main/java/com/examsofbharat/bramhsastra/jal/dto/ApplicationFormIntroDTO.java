@@ -22,6 +22,7 @@ public class ApplicationFormIntroDTO {
     String applyUrl;
     String registerUrl;
     String ageRange;
+    String cardColor;
     private boolean checkEligibility;
     UrlsDetailsDTO urlsDetailsDto;
     String qualificationKey;

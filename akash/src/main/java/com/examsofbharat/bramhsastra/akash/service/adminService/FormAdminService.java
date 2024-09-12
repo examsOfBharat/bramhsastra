@@ -114,6 +114,39 @@ public class FormAdminService {
         return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.SERVER_ERROR);
     }
 
+    /**
+     * Once we receive ADMIT/RESULT/ANS KEY, put it in temporary table
+     * send mail for review along with pdf page
+     * @param wrapperGenericAdminResponseV1DTO @mandatory
+     */
+    public Response processAndSaveUpcomingForm(WrapperGenericAdminResponseV1DTO wrapperGenericAdminResponseV1DTO){
+        if(Objects.isNull(wrapperGenericAdminResponseV1DTO) ||
+                Objects.isNull(wrapperGenericAdminResponseV1DTO.getAdminUserDetailsDTO()) ||
+                Objects.isNull(wrapperGenericAdminResponseV1DTO.getUpcomingFormsAdminResDTO())){
+
+            log.info("Invalid save upcoming request");
+            return webUtils.invalidRequest();
+        }
+
+        try{
+            String response = new Gson().toJson(wrapperGenericAdminResponseV1DTO);
+
+            UserDetails userDetails = dbMgmtFacade.findUserByUserId(wrapperGenericAdminResponseV1DTO.
+                    getAdminUserDetailsDTO().getUserId());
+
+            AdminResponseManager adminResponseManager = buildAdminResponse(response, userDetails,
+                    wrapperGenericAdminResponseV1DTO.getUpcomingFormsAdminResDTO().getType());
+
+            dbMgmtFacade.saveAdminResponse(adminResponseManager);
+
+//            buildResultPdfAndSendMail(wrapperAnsKeyAdminResDTO.getAdminUserDetailsDTO(), userDetails);
+            return Response.ok().build();
+        }catch (Exception e){
+            log.info("Exception occurred while submitting form",e);
+        }
+        return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.SERVER_ERROR);
+    }
+
 
     /**
      * Once reviewer will approve the admin submitted form.
@@ -356,6 +389,10 @@ public class FormAdminService {
 
         buildAndSaveAdminGenContent(adminGenericResponseV1, formId);
 
+        if(Objects.nonNull(wrapperGenericAdminResponseV1DTO.getApplicationSeoDetailsDTO())){
+            saveSeoDetails(wrapperGenericAdminResponseV1DTO.getApplicationSeoDetailsDTO(), formId);
+        }
+
         saveAppNameDetails(formId, adminGenericResponseV1.getTitle(), new Date(), pageType);
 
 
@@ -456,7 +493,7 @@ public class FormAdminService {
      * Approver approve the final submission of form after review
      * once it will be submitted, respective data will be pushed to db
      * it will also trigger refresh data api.
-     * @param approverRequestDTO
+     * @param approverRequestDTO @mandatory
      * @return
      */
     public Response updateApproverResponse(ApproverRequestDTO approverRequestDTO){

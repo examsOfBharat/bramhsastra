@@ -32,7 +32,7 @@ public class ApplicationFormManagerImpl extends GenericManager<ApplicationForm, 
     public List<ApplicationForm> getLatestFormBasedOnFormType(int page, int size, String subType, FormTypeEnum formTypeEnum) {
         // Assuming AdmitCardRepository has method to fetch latest admit cards
         // sorted by creation date
-        String dateType = "startDate";
+        String dateType = "dateModified";
         Pageable pageable = PageRequest.of(page, size, Sort.by(dateType).descending());
         Page<ApplicationForm> pageResult = fetchFormBasedOnFormTypes(formTypeEnum, subType, pageable);
         return pageResult.getContent();

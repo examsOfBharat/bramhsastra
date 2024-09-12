@@ -13,5 +13,7 @@ public class HomeAnsKeySectionDTO {
     private String subTitle;
     private String ansKeyType;
     private String lastResultReleaseCount;
+    private String updatedDate;
+    private String cardColor;
     private List<String> resultNameList = new ArrayList<>();
 }

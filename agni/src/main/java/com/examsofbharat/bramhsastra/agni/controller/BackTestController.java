@@ -135,8 +135,8 @@ public class BackTestController {
 
     @PostMapping("/save/upcoming/forms")
     public Response saveUpcomingForms(@RequestBody WrapperGenericAdminResponseV1DTO wrapperGenericAdminResponseV1DTO){
-        log.info("Save result detail request reached ::{}" ,wrapperGenericAdminResponseV1DTO.toString());
-        return formAdminService.processAndSaveGenericResV1(wrapperGenericAdminResponseV1DTO);
+        log.info("Save upcoming detail request reached ::{}" ,wrapperGenericAdminResponseV1DTO.toString());
+        return formAdminService.processAndSaveUpcomingForm(wrapperGenericAdminResponseV1DTO);
     }
 
 

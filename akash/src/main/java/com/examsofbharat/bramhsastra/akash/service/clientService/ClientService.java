@@ -342,9 +342,9 @@ public class ClientService {
     public void buildResultResponse(ResultResponseDTO resultResponseDTO,
                                     String resultId){
 
-        ResultDetails resultDetails = dbMgmtFacade.fetchResultById(resultId);
-        if(Objects.nonNull(resultDetails)){
-            resultResponseDTO.setResultIntroDTO(buildResultIntro(resultDetails));
+        GenericResponseV1 resultResponse = dbMgmtFacade.fetchResponseV1ById(resultId);
+        if(Objects.nonNull(resultResponse)){
+            resultResponseDTO.setResultIntroDTO(buildResultIntro(resultResponse));
         }
 
         setTopResultList(resultResponseDTO);
@@ -355,7 +355,7 @@ public class ClientService {
             resultResponseDTO.getResultIntroDTO().setSeoTitle(applicationSeoDetails.getTitle());
             resultResponseDTO.getResultIntroDTO().setSeoKeywords(applicationSeoDetails.getKeywords());
             resultResponseDTO.getResultIntroDTO().setSeoDescription(applicationSeoDetails.getDescription());
-            resultResponseDTO.getResultIntroDTO().setShareLogoUrl(FormUtil.getPngLogoByName(resultDetails.getResultName()));
+            resultResponseDTO.getResultIntroDTO().setShareLogoUrl(FormUtil.getPngLogoByName(resultResponse.getTitle()));
         }
     }
 
@@ -448,21 +448,22 @@ public class ClientService {
         return admitCardIntroDTO;
     }
 
-    private ResultIntroDTO buildResultIntro(ResultDetails resultDetails){
+    private ResultIntroDTO buildResultIntro(GenericResponseV1 resultDetails){
         ResultIntroDTO resultIntroDTO = objectMapper.convertValue(resultDetails, ResultIntroDTO.class);
 
         resultIntroDTO.setAppIdRef(resultDetails.getAppIdRef());
-        resultIntroDTO.setDownloadUrl(resultDetails.getResultUrl());
-        resultIntroDTO.setResultDate(DateUtils.getFormatedDate1(resultDetails.getResultDate()));
+        resultIntroDTO.setDownloadUrl(resultDetails.getDownloadUrl());
+        resultIntroDTO.setResultName(resultDetails.getTitle());
+        resultIntroDTO.setResultDate(DateUtils.getFormatedDate1(resultDetails.getUpdatedDate()));
         resultIntroDTO.setSubtitle("Government of India");
 
-        long daysCount = DateUtils.getNoOfDaysFromToday(resultDetails.getResultDate());
+        long daysCount = DateUtils.getNoOfDaysFromToday(resultDetails.getUpdatedDate());
         List<String> postedList = FormUtil.getPostedDetail(daysCount);
 
         resultIntroDTO.setPostedOn(postedList.get(0));
         resultIntroDTO.setPostedOnColor(postedList.get(1));
 
-        resultIntroDTO.setLogoUrl(FormUtil.getLogoByName(resultDetails.getResultName()));
+        resultIntroDTO.setLogoUrl(FormUtil.getLogoByName(resultDetails.getTitle()));
 
         return resultIntroDTO;
     }

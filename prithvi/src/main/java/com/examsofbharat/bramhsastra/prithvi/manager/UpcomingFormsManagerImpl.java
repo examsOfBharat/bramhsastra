@@ -4,6 +4,7 @@ import com.examsofbharat.bramhsastra.prithvi.dao.UpcomingFormsRepository;
 import com.examsofbharat.bramhsastra.prithvi.entity.GenericResponseV1;
 import com.examsofbharat.bramhsastra.prithvi.entity.UpcomingForms;
 import com.examsofbharat.bramhsastra.prithvi.sql.GenericManager;
+import com.examsofbharat.bramhsastra.prithvi.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -30,5 +32,12 @@ public class UpcomingFormsManagerImpl extends GenericManager<UpcomingForms, Stri
         Pageable pageable = PageRequest.of(page, size, Sort.by(dateType).descending());
         Page<UpcomingForms> pageResult = upcomingFormsRepository.findAll(pageable);
         return pageResult.getContent();
+    }
+
+    public List<UpcomingForms> getXDaysResponse(int daysGap) {
+        // Assuming AdmitCardRepository has method to fetch latest admit cards
+        // sorted by creation date
+        Date dateCriteria = DateUtils.addDays(new Date(), -daysGap);
+        return upcomingFormsRepository.findByDateCreatedAfterOrderByDateCreatedDesc(dateCriteria);
     }
 }

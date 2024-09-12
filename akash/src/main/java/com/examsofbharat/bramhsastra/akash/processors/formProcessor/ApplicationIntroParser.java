@@ -2,6 +2,7 @@ package com.examsofbharat.bramhsastra.akash.processors.formProcessor;
 
 import com.examsofbharat.bramhsastra.akash.factory.componentParser.BaseContentParser;
 import com.examsofbharat.bramhsastra.akash.utils.DateUtils;
+import com.examsofbharat.bramhsastra.akash.utils.EobInitilizer;
 import com.examsofbharat.bramhsastra.akash.utils.FormUtil;
 import com.examsofbharat.bramhsastra.jal.dto.ApplicationFormDTO;
 import com.examsofbharat.bramhsastra.jal.dto.ApplicationFormIntroDTO;
@@ -30,6 +31,9 @@ public class ApplicationIntroParser extends BaseContentParser {
 
             ApplicationFormIntroDTO applicationFormIntroDTO = new ApplicationFormIntroDTO();
             applicationFormIntroDTO.setAppId(enrichedFormDetailsDTO.getApplicationFormDTO().getId());
+            applicationFormIntroDTO.setCardColor(EobInitilizer.getThirdPageColor().get(
+                    FormUtil.genRandomNo()
+            ));
 
             if (Objects.nonNull(enrichedFormDetailsDTO.getApplicationAgeDetailsDTO()) &&
                     enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getMinAge() > 0 &&
