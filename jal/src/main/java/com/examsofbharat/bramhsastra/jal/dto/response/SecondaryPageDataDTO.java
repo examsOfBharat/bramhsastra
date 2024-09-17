@@ -9,6 +9,7 @@ public class SecondaryPageDataDTO {
     private String cardColor;
     private String id;
     private String title;
+    private String urlTitle;
     private String titleColor;
     private String subType;
     private String appIdRef;

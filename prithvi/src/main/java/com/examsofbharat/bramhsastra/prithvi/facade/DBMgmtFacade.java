@@ -1,9 +1,6 @@
 package com.examsofbharat.bramhsastra.prithvi.facade;
 
-import com.examsofbharat.bramhsastra.jal.dto.ApplicationSeoDetailsDTO;
 import com.examsofbharat.bramhsastra.jal.enums.FormTypeEnum;
-import com.examsofbharat.bramhsastra.prithvi.dao.AdmitContentManagerRepository;
-import com.examsofbharat.bramhsastra.prithvi.dao.ApplicationEligibilityRepository;
 import com.examsofbharat.bramhsastra.prithvi.dao.ApplicationNameDetailsRepository;
 import com.examsofbharat.bramhsastra.prithvi.entity.*;
 import com.examsofbharat.bramhsastra.prithvi.manager.*;
@@ -28,19 +25,10 @@ public class DBMgmtFacade {
     ExamMetaDataManagerImp examMetaDataManagerImp;
 
     @Autowired
-    AdmitCardManagerImpl admitCardManager;
-
-    @Autowired
     GenericResponseV1ManagerImpl genericResponseV1Manager;
 
     @Autowired
     GenericContentManagerImpl genericContentManager;
-
-    @Autowired
-    AdmitContentManagerImpl admitContentManagerImp;
-
-    @Autowired
-    ResultDetailsManagerImpl resultDetailsManager;
 
     @Autowired
     UpcomingFormsManagerImpl upcomingFormsManager;
@@ -77,9 +65,6 @@ public class DBMgmtFacade {
 
     @Autowired
     ApplicationNameDetailsManagerImpl applicationNameDetailsManagerImpl;
-
-    @Autowired
-    ResultContentManagerImpl resultContentManagerImpl;
 
     @Autowired
     LogoUrlManagerImpl logoUrlManager;
@@ -129,11 +114,6 @@ public class DBMgmtFacade {
         return examMetaDataManagerImp.getExamMetaData();
     }
 
-
-    public List<AdmitCard> getLatestAdmitCardList(int page, int size, String dateType){
-        return admitCardManager.getLatestAdmitCards(page, size, dateType);
-    }
-
     //generic response V1
     public List<GenericResponseV1> getLatestResponseV1List(int page, int size, String dateType, String type){
         return genericResponseV1Manager.getLatestGenericResponse(page, size, dateType,type);
@@ -172,29 +152,12 @@ public class DBMgmtFacade {
     }
 
 
-
-
-
-
-
-    public List<AdmitCard> getLastXDayAdmitCardList(int xDays){
-        return admitCardManager.getXDaysAdmitCards(xDays);
-    }
-
-    public List<ResultDetails> getResultDetailList(int page, int size, String dateType){
-        return resultDetailsManager.getLatestResultList(page, size, dateType);
-    }
-
     public List<UpcomingForms> fetchLatestUpcomingForm(int page, int size, String dateType){
         return upcomingFormsManager.getLatestUpcomingForm(page, size, dateType);
     }
 
     public void saveUpcomingForms(UpcomingForms upcomingForms){
         upcomingFormsManager.save(upcomingForms);
-    }
-
-    public List<ResultDetails> getLastXDaysResult(int xDays){
-        return resultDetailsManager.getXDaysAdmitCards(xDays);
     }
 
     public void saveResponseData(ResponseManagement responseManagement){
@@ -285,30 +248,7 @@ public class DBMgmtFacade {
     public void saveExamMetaData(ExamMetaData examMetaData){
         examMetaDataManagerImp.save(examMetaData);
     }
-    public void saveAdmitCard(AdmitCard admitCard){
-        admitCardManager.save(admitCard);
-    }
 
-    public void saveAdmitContent(AdmitContentManager admitContentManager){
-        admitContentManagerImp.save(admitContentManager);
-    }
-
-    public void saveResultDetail(ResultDetails resultDetail){
-        resultDetailsManager.save(resultDetail);
-    }
-
-    public void saveResultContent(ResultContentManager resultContentManager){
-        resultContentManagerImpl.save(resultContentManager);
-    }
-
-    public ResultDetails fetchResultById(String resultId){
-        Optional<ResultDetails> resultDetails = resultDetailsManager.findById(resultId);
-        return resultDetails.orElse(null);
-    }
-
-    public ResultContentManager fetchResultContentById(String resultId){
-        return resultContentManagerImpl.fetchResultContentById(resultId);
-    }
 
     public List<ApplicationNameDetails> fetchAllAppNames(){
         return applicationNameDetailsManagerImpl.fetchAllAppName();
@@ -333,18 +273,6 @@ public class DBMgmtFacade {
         logoList.forEach(logpUrlList::add);
 
         return logpUrlList;
-    }
-
-    public AdmitCard fetchAdmitById(String admitId){
-        return admitCardManager.fetchAdmitCardById(admitId);
-    }
-
-    public AdmitCard fetchAdmitByAppId(String appId){
-        return admitCardManager.fetchAdmitByAppId(appId);
-    }
-
-    public AdmitContentManager fetchAdmitContent(String admitId){
-        return admitContentManagerImp.fetchAdmitCardContent(admitId);
     }
 
     public List<ApplicationForm> fetchAllLatestApp(int page, int size){

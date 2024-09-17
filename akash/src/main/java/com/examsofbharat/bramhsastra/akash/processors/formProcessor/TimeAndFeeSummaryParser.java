@@ -106,6 +106,8 @@ public class TimeAndFeeSummaryParser extends BaseContentParser {
     private void addRupeeSymbolInFee(AppFeeDetailsDTO appFeeDetailsDTO) {
         appFeeDetailsDTO.setSc(isValidValue(appFeeDetailsDTO.getSc())
                 ? RUPEE_SYMBOL + appFeeDetailsDTO.getSc() : null);
+        appFeeDetailsDTO.setPwd(isValidValue(appFeeDetailsDTO.getPwd())
+                ? RUPEE_SYMBOL + appFeeDetailsDTO.getPwd() : null);
         appFeeDetailsDTO.setSt(isValidValue(appFeeDetailsDTO.getSt())
                 ? RUPEE_SYMBOL + appFeeDetailsDTO.getSt() : null);
         appFeeDetailsDTO.setFemale(isValidValue(appFeeDetailsDTO.getFemale())

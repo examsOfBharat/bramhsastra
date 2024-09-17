@@ -222,6 +222,10 @@ public class ApplicationDbUtil {
         }
         secondaryPageDataDTO.setCardColor(FormUtil.fetchCardColor(i%4));
 
+        //TODO try to get sort title from admin if possible
+        //convert title into url title
+        secondaryPageDataDTO.setUrlTitle(FormUtil.getUrlTitle(admitCard.getTitle()));
+
         return secondaryPageDataDTO;
     }
 
@@ -241,6 +245,9 @@ public class ApplicationDbUtil {
         if(FormUtil.dateIsWithin2Days(resultDetails.getDateCreated())){
             secondaryPageDataDTO.setFormStatus("NEW");
         }
+
+        //convert title into url title
+        secondaryPageDataDTO.setUrlTitle(FormUtil.getUrlTitle(resultDetails.getTitle()));
 
         return secondaryPageDataDTO;
     }
@@ -268,6 +275,9 @@ public class ApplicationDbUtil {
         if(FormUtil.dateIsWithin2Days(anskeyDetails.getDateCreated())){
             secondaryPageDataDTO.setFormStatus("NEW");
         }
+
+        //convert title into url title
+        secondaryPageDataDTO.setUrlTitle(FormUtil.getUrlTitle(anskeyDetails.getTitle()));
 
         return secondaryPageDataDTO;
     }
@@ -327,6 +337,9 @@ public class ApplicationDbUtil {
         }else{
             secondaryPageDataDTO.setReleaseDateColor(BLUE_COLOR_CODE);
         }
+
+        //convert title into url title
+        secondaryPageDataDTO.setUrlTitle(FormUtil.getUrlTitle(applicationForm.getExamName()));
 
         return secondaryPageDataDTO;
     }

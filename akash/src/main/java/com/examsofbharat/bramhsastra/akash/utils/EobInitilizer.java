@@ -23,6 +23,7 @@ public class EobInitilizer {
     Integer otpExpiryTime = 5;
     Integer otpMaxAttempts = 3;
     Integer secPageItemCount = 10;
+    private static Integer thirdPageColorValue = 10;
 
     private static String otpSub;
     private static String siginBody;
@@ -46,6 +47,7 @@ public class EobInitilizer {
 
         initSystemProperties();
         initLogoUrl();
+        thirdPageColorValue = thirdPageColor.size();
     }
 
     private void initSystemProperties() {
@@ -157,6 +159,8 @@ public class EobInitilizer {
         }
         return null;
     }
+
+    public static int getColorCount = thirdPageColorValue;
 
     public static List<String> getHomeComponent(){
         return homePageComponent;

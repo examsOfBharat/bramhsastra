@@ -40,6 +40,9 @@ public class ApplicationFeeDatails {
     @Column(name = "obc")
     private Double obc;
 
+    @Column(name = "pwd")
+    private Double pwd;
+
     @Column(name = "female")
     private Double female;
 

@@ -4,9 +4,7 @@ import com.examsofbharat.bramhsastra.jal.dto.request.EligibilityCheckRequestDTO;
 import com.examsofbharat.bramhsastra.jal.dto.request.EnrichedFormDetailsDTO;
 import com.examsofbharat.bramhsastra.jal.dto.request.SecondaryPageRequestDTO;
 import com.examsofbharat.bramhsastra.jal.utils.StringUtil;
-import org.hibernate.engine.internal.AbstractEntityEntry;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.Objects;
 
