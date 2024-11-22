@@ -24,11 +24,17 @@ public class UpcomingForms {
     @Column(name = "app_name")
     private String appName;
 
+    @Column(name = "exp_date")
+    private String expDate;
+
+    @Column(name = "exp_vacancy")
+    private String expVacancy;
+
+    @Column(name = "qualification")
+    private String qualification;
+
     @Column(name = "app_type")
     private String appType;
-
-    @Column(name = "form_date")
-    private Date formDate;
 
     @Column(name = "date_created")
     private Date dateCreated;

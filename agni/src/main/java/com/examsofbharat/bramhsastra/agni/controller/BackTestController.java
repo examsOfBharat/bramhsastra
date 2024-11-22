@@ -93,7 +93,7 @@ public class BackTestController {
         return credService.updateUserStatus(ownerLandingRequestDTO);
     }
 
-    @PostMapping("/update/landing/page")
+    @GetMapping("/update/landing/page")
     public Response updateLandingPage(){
         log.info("Request reached for update landing page");
         return responseManagementService.buildAndUpdateClientHomePage();
@@ -118,7 +118,6 @@ public class BackTestController {
     /**
      *Save details from admin (forms, admit, result, anskey and upcoming forms)
      */
-
     @PostMapping("/save/form/detail")
     public Response saveFormDetail(@RequestBody EnrichedFormDetailsDTO formDetailsDTO){
         log.info("Save form detail request reached ::{}" ,formDetailsDTO.toString());
@@ -148,11 +147,10 @@ public class BackTestController {
                                    @RequestHeader(value = "utm_source", required = false) String utmSource,
                                    @RequestParam String appId){
 
-        log.info("get form details request reached ::{}" ,utmSource);
+        log.info("get form details request reached source::{} formId::{}" ,utmSource,appId);
         if(StringUtil.isEmpty(app_Id) || !"abcd".equals(app_Id)){
             return Response.status(401).build();
         }
-        log.info("Request reached for form details userId :: {}", appId);
         return clientFacade.buildAndGetApplicationForm(appId, utmSource, "form");
     }
 
@@ -162,11 +160,10 @@ public class BackTestController {
                                     @RequestHeader(value = "utm_source", required = false) String utmSource,
                                     @RequestParam String appId){
 
-        log.info("get form details request reached ::{}" ,utmSource);
+        log.info("get admit card details request reached source::{} admitCardId::{}" ,utmSource,appId);
         if(StringUtil.isEmpty(app_Id) || !"abcd".equals(app_Id)){
             return Response.status(401).build();
         }
-        log.info("Request reached for admit card userId :: {}", appId);
         return clientFacade.buildAndGetAdmitCard(appId,utmSource,"admit");
     }
 
@@ -175,11 +172,10 @@ public class BackTestController {
                                      @RequestHeader(value = "utm_source", required = false) String utmSource,
                                      @RequestParam String appId){
 
-        log.info("get form details request reached ::{}" ,utmSource);
+        log.info("get result details request reached source::{} resultId::{}" ,utmSource,appId);
         if(StringUtil.isEmpty(app_Id) || !"abcd".equals(app_Id)){
             return Response.status(401).build();
         }
-        log.info("Request reached for result card userId :: {}", appId);
         return clientFacade.buildAndGetResult(appId, utmSource, "result");
     }
 
@@ -191,11 +187,10 @@ public class BackTestController {
                                      @RequestHeader(value = "utm_source", required = false) String utmSource,
                                      @RequestParam String appId){
 
-        log.info("get ansKey details request reached ::{}" ,utmSource);
+        log.info("get ansKey details request reached source::{} ansKeyId::{}" ,utmSource,appId);
         if(StringUtil.isEmpty(app_Id) || !"abcd".equals(app_Id)){
             return Response.status(401).build();
         }
-        log.info("Request reached for ans key card userId :: {}", appId);
         return clientFacade.buildAndGetAnsKeyData(appId, utmSource, "anskey");
     }
 
@@ -266,6 +261,16 @@ public class BackTestController {
     public Response updateApproverResponse(@RequestBody ApproverRequestDTO approverRequestDTO){
         log.info("Reached approver request {}",approverRequestDTO.toString());
         return formAdminService.updateApproverResponse(approverRequestDTO);
+    }
+
+
+
+    @GetMapping("/save/event")
+    public Response saveTrackingEvent(@RequestParam String pageType){
+
+        log.info("Event details request reached ::{}" ,pageType);
+
+        return clientFacade.saveEventResponse(pageType);
     }
 
 }

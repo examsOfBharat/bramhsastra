@@ -10,6 +10,9 @@ import java.util.Date;
 public class UpcomingFormsAdminResDTO {
     private String title;
     private String type;
-    private Date comingDate;
+    private String comingDate;
     private String appIdRef;
+    private String qualificationList;
+    private String expVacancy;
+
 }

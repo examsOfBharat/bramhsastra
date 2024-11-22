@@ -3,6 +3,8 @@ package com.examsofbharat.bramhsastra.jal.dto.response;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SecondaryPageDataDTO {
@@ -21,7 +23,7 @@ public class SecondaryPageDataDTO {
     private String examDateColor;
     private double totalApplication;
     private String applicationColor;
-    private double totalVacancy;
+    private String totalVacancy;
     private String vacancyColor;
     private String extraField;
     private String pageType;
@@ -29,4 +31,7 @@ public class SecondaryPageDataDTO {
     private String imageUrl;
     private boolean newFlag;
     private String formStatus;
+    private List<String> qualificationList;
+    private String expVacancy;
+    private String logoUrl;
 }

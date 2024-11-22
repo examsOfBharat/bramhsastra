@@ -52,7 +52,10 @@ public class TimeAndFeeSummaryParser extends BaseContentParser {
 
         int maxAge = enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getMaxAge();
         ageRelaxationDTO.setTitle(AkashConstants.AGE_RELAXATION_TITLE);
+
         ageRelaxationDTO.setCardColor(FormUtil.fetchCardColor(0));
+        ageRelaxationDTO.setUpdates(enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getUpdates());
+        ageRelaxationDTO.setUpdatesDate(enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getDateModified());
         addYearSymbolInAge(ageRelaxationDTO, maxAge);
         ageRelaxationDTO.setInformation("Above age is based on relaxation");
 
@@ -76,6 +79,16 @@ public class TimeAndFeeSummaryParser extends BaseContentParser {
         populateDateDetails(dateDetailsDTOList, "Last Pay Date ", DateUtils.getFormatedDate1(enrichedFormDetailsDTO.getApplicationFeeDTO().getLastPaymentDate()),
                 FormUtil.getLastXDaysDateColor(enrichedFormDetailsDTO.getApplicationFeeDTO().getLastPaymentDate()));
 
+        if(StringUtil.notEmpty(enrichedFormDetailsDTO.getApplicationFeeDTO().getCorrectionDate())){
+            populateDateDetails(dateDetailsDTOList, "Correction Date ", enrichedFormDetailsDTO.getApplicationFeeDTO().getCorrectionDate(),
+                    GREEN_COLOR);
+        }
+
+        if(StringUtil.notEmpty(enrichedFormDetailsDTO.getApplicationFeeDTO().getExamDate())){
+            populateDateDetails(dateDetailsDTOList, "Exam Date ", enrichedFormDetailsDTO.getApplicationFeeDTO().getExamDate(),
+                    GREEN_COLOR);
+        }
+
         buildExtraDate(dateDetailsDTOList,
                 enrichedFormDetailsDTO.getApplicationAgeDetailsDTO().getExtraDateDetails());
 
@@ -96,6 +109,8 @@ public class TimeAndFeeSummaryParser extends BaseContentParser {
     }
 
     private AppFeeDetailsDTO buildFeeDetails(EnrichedFormDetailsDTO enrichedFormDetailsDTO){
+        if(Objects.isNull(enrichedFormDetailsDTO.getApplicationFeeDTO())) return null;
+
         AppFeeDetailsDTO appFeeDetailsDTO = mapper.convertValue(enrichedFormDetailsDTO.getApplicationFeeDTO(), AppFeeDetailsDTO.class);
         appFeeDetailsDTO.setTitle(AkashConstants.FEE_TITLE);
         addRupeeSymbolInFee(appFeeDetailsDTO);

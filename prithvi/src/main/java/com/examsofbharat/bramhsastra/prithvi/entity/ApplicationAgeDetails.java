@@ -62,6 +62,9 @@ public class ApplicationAgeDetails {
     @Column(name = "extra_date_details")
     private String extraDateDetails;
 
+    @Column(name = "updates")
+    private String updates;
+
     @Column(name = "date_created")
     private Date dateCreated;
 

@@ -138,6 +138,7 @@ public class FormUtil {
         formSubTypeMap.put(STATE_EXAM.name(), SECTOR_BASED);
         formSubTypeMap.put(TEACHING.name(), SECTOR_BASED);
         formSubTypeMap.put(APPRENTICES.name(), SECTOR_BASED);
+        formSubTypeMap.put(ENTRANCE_EXAM.name(), SECTOR_BASED);
         formSubTypeMap.put(OTHERS.name(),SECTOR_BASED);
 
 
@@ -236,6 +237,7 @@ public class FormUtil {
         sectorFormTypeList.add(STATE_EXAM.name());
         sectorFormTypeList.add(TEACHING.name());
         sectorFormTypeList.add(APPRENTICES.name());
+        sectorFormTypeList.add(ENTRANCE_EXAM.name());
         sectorFormTypeList.add(OTHERS.name());
     }
 
@@ -305,6 +307,7 @@ public class FormUtil {
         secondPageTitleMap.put(STATE_EXAM.name(), "All State exams");
         secondPageTitleMap.put(TEACHING.name(), "All Teacher Exam");
         secondPageTitleMap.put(APPRENTICES.name(), "All latest Apprentices");
+        secondPageTitleMap.put(ENTRANCE_EXAM.name(), "All Entrance Exams");
         secondPageTitleMap.put(OTHERS.name(), "Other recent forms");
 
 

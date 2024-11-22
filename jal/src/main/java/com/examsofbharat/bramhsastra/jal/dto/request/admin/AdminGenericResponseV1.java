@@ -11,7 +11,7 @@ public class AdminGenericResponseV1 {
 
     private String appIdRef;
     private String title;
-    private Date showDate;
+    private String showDate;
     private String downloadUrl;
     private Date updateDate;
     private String pageType;

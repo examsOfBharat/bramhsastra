@@ -75,11 +75,14 @@ public class ClientService {
     }
 
     public void updateLatestFormInCache(){
+
+        //TODO need to put threshold of 1 month
         List<ApplicationNameDetails> appNameList = dbMgmtFacade.fetchAllAppNames();
         if(CollectionUtils.isEmpty(appNameList)){
             return;
         }
 
+        //TODO Below can done in async mode
         for(ApplicationNameDetails applicationNameDetails : appNameList){
             //fetch form detail from db
             EnrichedFormDetailsDTO enrichedFormDetailsDTO = getEnrichedFormDetails(
@@ -434,7 +437,7 @@ public class ClientService {
         admitCardIntroDTO.setAppIdRef(admitCard.getAppIdRef());
         admitCardIntroDTO.setAdmitCardName(admitCard.getTitle());
         admitCardIntroDTO.setReleaseDate(DateUtils.getFormatedDate1(admitCard.getDateCreated()));
-        admitCardIntroDTO.setExamDateValue(DateUtils.getFormatedDate1(admitCard.getShowDate()));
+        admitCardIntroDTO.setExamDateValue(admitCard.getShowDate());
         admitCardIntroDTO.setSubtitle("Government of India");
 
         long daysCount = DateUtils.getNoOfDaysFromToday(admitCard.getDateCreated());
@@ -444,6 +447,8 @@ public class ClientService {
         admitCardIntroDTO.setPostedOnColor(postedList.get(1));
 
         admitCardIntroDTO.setLogoUrl(FormUtil.getLogoByName(admitCard.getTitle()));
+
+        admitCardIntroDTO.setShareLogoUrl(FormUtil.getPngLogoByName(admitCard.getTitle()));
 
         return admitCardIntroDTO;
     }

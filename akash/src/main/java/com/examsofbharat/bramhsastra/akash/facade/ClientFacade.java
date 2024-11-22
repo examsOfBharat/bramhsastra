@@ -32,6 +32,18 @@ public class ClientFacade {
     @Autowired
     WebUtils webUtils;
 
+    public Response saveEventResponse(String event){
+        if(StringUtil.isEmpty(event)){
+            return webUtils.invalidRequest();
+        }
+
+        //save source async
+        FormExecutorService.mailExecutorService.submit(()->
+                clientService.saveApiRequestLog("organic", null, event));
+
+        return webUtils.buildSuccessResponse("SUCCESS");
+    }
+
     /**
      * Fetch application form details from cache
      * if data not present in cache then call service layer for fresh fetch

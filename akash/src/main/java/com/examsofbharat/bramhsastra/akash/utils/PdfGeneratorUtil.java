@@ -64,7 +64,7 @@ public class PdfGeneratorUtil {
         document.add(addKeyValue("Download Url", object.getDownloadUrl()));
         document.add(addKeyValue("Heading", object.getHeading()));
         document.add(addKeyValue("Body", object.getBody()));
-        document.add(addKeyValue("Exam Date", object.getShowDate().toString()));
+        document.add(addKeyValue("Exam Date", object.getShowDate()));
 
         document.close();
 

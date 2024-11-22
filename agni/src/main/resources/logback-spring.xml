@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <property name="LOGS" value="/usr/share/tomcat8/logs"/>
+    <property name="LOGS" value="/opt/tomcat/logs"/>
     <property name="LOGS" value="/Users/bibhubhushan/Desktop/logs" />
     <appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOGS}/agni.log</file>
@@ -12,7 +12,7 @@
         <rollingPolicy
                 class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- rollover daily and when the file reaches 10 MegaBytes -->
-            <fileNamePattern>${LOGS}/archived/agni-%d{yyyy-MM-dd}.%i.log.gz
+            <fileNamePattern>${LOGS}/archived/agni_test-%d{yyyy-MM-dd}.%i.log.gz
             </fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy
                     class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">

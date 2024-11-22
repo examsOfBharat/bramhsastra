@@ -1,7 +1,6 @@
 package com.examsofbharat.bramhsastra.jal.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.Date;
@@ -23,6 +22,8 @@ public class ApplicationFeeDTO {
     double pwd;
     String information;
     Date lastPaymentDate;
+    String correctionDate;
+    String examDate;
     Date dateCreated;
     Date dateModified;
 }

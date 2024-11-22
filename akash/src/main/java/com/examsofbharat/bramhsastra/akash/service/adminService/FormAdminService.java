@@ -14,6 +14,7 @@ import com.examsofbharat.bramhsastra.jal.dto.request.admin.WrapperGenericAdminRe
 import com.examsofbharat.bramhsastra.jal.dto.response.AdminResponseDataDTO;
 import com.examsofbharat.bramhsastra.jal.enums.FormSubTypeEnum;
 import com.examsofbharat.bramhsastra.jal.enums.StatusEnum;
+import com.examsofbharat.bramhsastra.jal.utils.StringUtil;
 import com.examsofbharat.bramhsastra.prithvi.entity.*;
 import com.examsofbharat.bramhsastra.prithvi.facade.DBMgmtFacade;
 import com.examsofbharat.bramhsastra.prithvi.manager.ApplicationNameDetailsManagerImpl;
@@ -449,9 +450,11 @@ public class FormAdminService {
         UpcomingForms upcomingForms = new UpcomingForms();
         upcomingForms.setAppName(upcomingFormsAdminResDTO.getTitle());
         upcomingForms.setId(ansId);
+        upcomingForms.setQualification(upcomingFormsAdminResDTO.getQualificationList());
+        upcomingForms.setExpDate(upcomingFormsAdminResDTO.getComingDate());
+        upcomingForms.setExpVacancy(upcomingFormsAdminResDTO.getExpVacancy());
         upcomingForms.setDateCreated(new Date());
         upcomingForms.setDateModified(new Date());
-        upcomingForms.setFormDate(upcomingFormsAdminResDTO.getComingDate());
 
         dbMgmtFacade.saveUpcomingForms(upcomingForms);
 
@@ -510,7 +513,13 @@ public class FormAdminService {
                     EnrichedFormDetailsDTO.class);
             response = pushAppFormToDb(enrichedFormDetailsDTO);
 
-        } else if (adminResponseManager.getResponseType().equalsIgnoreCase("upcoming")) {
+        } else if(adminResponseManager.getResponseType().equalsIgnoreCase("formUpdate")) {
+            WrapperGenericAdminResponseV1DTO wrapperGenericAdminResponseV1DTO = new Gson().
+                    fromJson(adminResponseManager.getResponse(), WrapperGenericAdminResponseV1DTO.class);
+            response = saveFormUpdates(wrapperGenericAdminResponseV1DTO);
+
+        }
+        else if (adminResponseManager.getResponseType().equalsIgnoreCase("upcoming")) {
             WrapperGenericAdminResponseV1DTO wrapperGenericAdminResponseV1DTO = new Gson().
                     fromJson(adminResponseManager.getResponse(), WrapperGenericAdminResponseV1DTO.class);
             response = pushUpcomingFormsToDb(wrapperGenericAdminResponseV1DTO);
@@ -527,6 +536,52 @@ public class FormAdminService {
             }
         }
         return response;
+    }
+
+    private Response saveFormUpdates(WrapperGenericAdminResponseV1DTO wrapperGenericAdminResponseV1DTO){
+
+        if(Objects.isNull(wrapperGenericAdminResponseV1DTO) ||
+            Objects.isNull(wrapperGenericAdminResponseV1DTO.getAdminGenericResponseV1())){
+            return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.SERVER_ERROR);
+        }
+
+        AdminGenericResponseV1 adminGenericResponseV1 = wrapperGenericAdminResponseV1DTO.getAdminGenericResponseV1();
+
+        ApplicationForm applicationForm = dbMgmtFacade.getApplicationForm(adminGenericResponseV1.getAppIdRef());
+        if(Objects.isNull(applicationForm)){
+            return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.SERVER_ERROR);
+        }
+
+        if(StringUtil.notEmpty(adminGenericResponseV1.getTitle())) {
+            applicationForm.setExamName(adminGenericResponseV1.getTitle());
+        }
+        applicationForm.setDateModified(new Date());
+        if(Objects.nonNull(adminGenericResponseV1.getUpdateDate())) {
+            applicationForm.setEndDate(adminGenericResponseV1.getUpdateDate());
+        }
+        dbMgmtFacade.saveApplicationForm(applicationForm);
+
+        if(StringUtil.notEmpty(adminGenericResponseV1.getBody())){
+            ApplicationAgeDetails applicationAgeDetails =
+                    dbMgmtFacade.getApplicationAgeDetails(adminGenericResponseV1.getAppIdRef());
+
+            if(Objects.isNull(applicationAgeDetails)) return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.SERVER_ERROR);;
+
+            if(StringUtil.isEmpty(adminGenericResponseV1.getBody())) return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.SERVER_ERROR);
+            String finalUpdate;
+            String update = applicationAgeDetails.getUpdates();
+            if(StringUtil.isEmpty(update))
+                finalUpdate = adminGenericResponseV1.getBody();
+            else
+                finalUpdate = update + "<br>" + adminGenericResponseV1.getBody();
+
+            applicationAgeDetails.setUpdates(finalUpdate);
+            applicationAgeDetails.setDateModified(new Date());
+
+            dbMgmtFacade.saveApplicationAgeDetail(applicationAgeDetails);
+        }
+
+        return webUtils.buildSuccessResponse("SUCCESS");
     }
 
 

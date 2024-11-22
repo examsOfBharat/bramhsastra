@@ -37,7 +37,7 @@ public class GenericResponseV1 {
     private Date dateModified;
 
     @Column(name = "show_date")
-    private Date showDate;
+    private String showDate;
 
     @Column(name = "updated_date")
     private Date updatedDate;

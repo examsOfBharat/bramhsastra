@@ -55,6 +55,12 @@ public class ApplicationFeeDatails {
     @Column(name = "last_payment_date")
     private Date lastPaymentDate;
 
+    @Column(name = "correction_date")
+    private String correctionDate;
+
+    @Column(name = "exam_date")
+    private String examDate;
+
     @Column(name = "date_created")
     private Date dateCreated;
 

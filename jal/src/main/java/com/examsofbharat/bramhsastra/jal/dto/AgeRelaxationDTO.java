@@ -4,6 +4,8 @@ package com.examsofbharat.bramhsastra.jal.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AgeRelaxationDTO {
@@ -16,4 +18,6 @@ public class AgeRelaxationDTO {
     String exArmy;
     String information;
     String cardColor;
+    String updates;
+    Date updatesDate;
 }

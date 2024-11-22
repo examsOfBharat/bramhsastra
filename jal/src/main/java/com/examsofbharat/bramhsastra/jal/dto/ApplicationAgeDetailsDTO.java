@@ -22,6 +22,7 @@ public class ApplicationAgeDetailsDTO {
     int exArmy;
     int ews;
     int pwd;
+    String updates;
     String information;
     private Date maxNormalDob;
     private Date minNormalDob;

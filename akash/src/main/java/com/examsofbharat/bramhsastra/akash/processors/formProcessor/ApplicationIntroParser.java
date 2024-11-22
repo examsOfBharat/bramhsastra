@@ -95,7 +95,7 @@ public class ApplicationIntroParser extends BaseContentParser {
             }
 
             //remove apply and register button for expired form
-            if(new Date().before(applicationFormDTO.getEndDate())) {
+            if(DateUtils.addDays(new Date(),-1).before(applicationFormDTO.getEndDate())) {
                 applicationFormIntroDTO.setApplyUrl(componentRequestDTO.getEnrichedFormDetailsDTO().getApplicationUrlsDTO().getApply());
                 applicationFormIntroDTO.setRegisterUrl(componentRequestDTO.getEnrichedFormDetailsDTO().getApplicationUrlsDTO().getRegister());
             }
@@ -109,7 +109,7 @@ public class ApplicationIntroParser extends BaseContentParser {
             //form status banner condition
             if(applicationFormDTO.getDateModified().compareTo(DateUtils.addDays(applicationFormDTO.getDateCreated(), 5)) > 0){
                 applicationFormIntroDTO.setFormStatus("UPDATES");
-            }else if(new Date().after(applicationFormDTO.getEndDate())){
+            }else if(DateUtils.addDays(new Date(),-1).after(applicationFormDTO.getEndDate())){
                 applicationFormIntroDTO.setFormStatus("EXPIRED");
             }else if(FormUtil.dateIsWithinXDays(applicationFormDTO.getStartDate())){
                 applicationFormIntroDTO.setFormStatus("NEW");

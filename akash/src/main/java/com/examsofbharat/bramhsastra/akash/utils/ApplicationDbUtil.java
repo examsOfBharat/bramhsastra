@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -75,7 +76,13 @@ public class ApplicationDbUtil {
         for(UpcomingForms upcomingForms : upcomingFormsList){
             SecondaryPageDataDTO secondaryPageDataDTO = new SecondaryPageDataDTO();
             secondaryPageDataDTO.setTitle(upcomingForms.getAppName());
-            secondaryPageDataDTO.setReleaseDate(DateUtils.getFormatedDate1(upcomingForms.getFormDate()));
+            secondaryPageDataDTO.setReleaseDate(upcomingForms.getExpDate());
+
+            secondaryPageDataDTO.setQualificationList(Arrays.stream(
+                    upcomingForms.getQualification().split(",")).toList());
+
+            secondaryPageDataDTO.setExpVacancy(upcomingForms.getExpVacancy());
+            secondaryPageDataDTO.setLogoUrl(FormUtil.getLogoByName(upcomingForms.getAppName()));
             secondaryPageDataDTO.setCardColor(FormUtil.fetchSecCardColor(color%4));
             color++;
 
@@ -211,10 +218,10 @@ public class ApplicationDbUtil {
         secondaryPageDataDTO.setId(admitCard.getId());
         secondaryPageDataDTO.setPageType("admit");
         secondaryPageDataDTO.setTitle(admitCard.getTitle());
-        secondaryPageDataDTO.setExamDate(DateUtils.getFormatedDate1(admitCard.getShowDate()));
-        secondaryPageDataDTO.setExamDateColor(FormUtil.getLastXDaysDateColor(admitCard.getShowDate()));
+        secondaryPageDataDTO.setExamDate(admitCard.getShowDate());
+        secondaryPageDataDTO.setExamDateColor(GREEN_COLOR);
         secondaryPageDataDTO.setReleaseDate(DateUtils.getFormatedDate1(admitCard.getDateCreated()));
-        secondaryPageDataDTO.setReleaseDateColor(FormUtil.getLastXDaysDateColor(admitCard.getDateCreated()));
+        secondaryPageDataDTO.setReleaseDateColor(GREEN_COLOR);
         secondaryPageDataDTO.setNewFlag(FormUtil.dateIsWithinXDays(admitCard.getDateCreated()));
         secondaryPageDataDTO.setSubType(subType);
         if(FormUtil.dateIsWithin2Days(admitCard.getDateCreated())){
@@ -308,7 +315,11 @@ public class ApplicationDbUtil {
         secondaryPageDataDTO.setReleaseDate(DateUtils.getFormatedDate1(applicationForm.getDateCreated()));
 //        secondaryPageDataDTO.setReleaseDateColor(FormUtil.getLastXDaysDateColor(applicationForm.getStartDate()));
 
-        secondaryPageDataDTO.setTotalVacancy(applicationForm.getTotalVacancy());
+        if(applicationForm.getTotalVacancy() > 0) {
+            secondaryPageDataDTO.setTotalVacancy(FormUtil.formatIntoIndianNumSystem(applicationForm.getTotalVacancy()));
+        }else{
+            secondaryPageDataDTO.setTotalVacancy("Not Available");
+        }
 
         if(StringUtil.notEmpty(applicationForm.getResultId())){
             secondaryPageDataDTO.setStatus("Result out");
