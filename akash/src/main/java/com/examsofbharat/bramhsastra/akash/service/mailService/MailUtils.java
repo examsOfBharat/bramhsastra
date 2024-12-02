@@ -56,14 +56,14 @@ public class MailUtils {
         log.info("PDF generated");
 
         String to = "bibhu.bhushan0403@gmail.com";
-        String subject = "ExamsOfBharat admin form submitted";
+        String subject = enrichedFormDetailsDTO.getApplicationFormDTO().getExamName();
         String body = FormUtil.buildEmailHtml("Approver", userDetails.getFirstName(),
                 enrichedFormDetailsDTO.getApplicationFormDTO().getExamName());
         String attachmentName = DateUtils.getDateFileName("form", "pdf");
         emailService.sendEmailWithPDFAttachment(to, subject, body, pdfBytes, attachmentName);
 
         String to1 = userDetails.getEmailId();
-        String subject1 = "ExamsOfBharat admin form submitted";
+        String subject1 = enrichedFormDetailsDTO.getApplicationFormDTO().getExamName();
         String body1 = FormUtil.buildEmailHtml("Admin", userDetails.getFirstName(),
                 enrichedFormDetailsDTO.getApplicationFormDTO().getExamName());
         String attachmentName1 = DateUtils.getDateFileName("form", "pdf");

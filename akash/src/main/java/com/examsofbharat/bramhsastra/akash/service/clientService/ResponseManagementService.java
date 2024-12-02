@@ -301,6 +301,7 @@ public class ResponseManagementService {
             LandingSubSectionDTO landingSubSectionDTO = new LandingSubSectionDTO();
 
             landingSubSectionDTO.setExamId(applicationForm.getId());
+            landingSubSectionDTO.setUrlTitle(FormUtil.getUrlTitle(applicationForm.getExamName()));
             landingSubSectionDTO.setFormType("form");
             landingSubSectionDTO.setKey(LATEST_FORMS.name());
             landingSubSectionDTO.setTitle(applicationForm.getExamName());

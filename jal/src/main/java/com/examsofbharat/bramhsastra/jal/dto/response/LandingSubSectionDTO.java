@@ -30,4 +30,5 @@ public class LandingSubSectionDTO {
     private String extraField;
     private String formLogoUrl;
     private String formStatus;
+    private String urlTitle;
 }
