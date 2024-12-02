@@ -45,6 +45,9 @@ public class ApplicationUrl {
     @Column(name = "others")
     private String others;
 
+    @Column(name = "cutOffUrl")
+    private String cutOffUrl;
+
     @Column(name = "date_created")
     private Date dateCreated;
 

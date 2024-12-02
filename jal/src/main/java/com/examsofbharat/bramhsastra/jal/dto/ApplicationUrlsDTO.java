@@ -1,10 +1,11 @@
 package com.examsofbharat.bramhsastra.jal.dto;
 
+import com.examsofbharat.bramhsastra.jal.dto.response.UrlManagerDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -18,7 +19,7 @@ public class ApplicationUrlsDTO {
     String register;
     String syllabus;
     String ansKey;
-    String others;
+    List<UrlManagerDTO> urlList;
     Date dateCreated;
     Date dateModified;
 }

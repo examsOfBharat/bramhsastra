@@ -255,6 +255,13 @@ public class ClientService {
 
         ApplicationUrl applicationUrl = dbMgmtFacade.getApplicationUrl(appId);
         enrichedFormDetailsDTO.setApplicationUrlsDTO(objectMapper.convertValue(applicationUrl, ApplicationUrlsDTO.class));
+        if(Objects.nonNull(applicationUrl) && Objects.nonNull(applicationUrl.getOthers())) {
+            List<UrlManagerDTO> urlManagerDTOList = objectMapper.convertValue(applicationUrl.getOthers(),
+                    objectMapper.getTypeFactory().constructCollectionType(List.class, UrlManagerDTO.class));
+
+            enrichedFormDetailsDTO.getApplicationUrlsDTO().setUrlList(urlManagerDTOList);
+        }
+
 
         List<ApplicationEligibilityDetails> applicationEligibilityDetails = dbMgmtFacade.fetchAllEligibility(appId);
         List<ApplicationEligibilityDTO> applicationEligibilityDTOList = new ArrayList<>();
