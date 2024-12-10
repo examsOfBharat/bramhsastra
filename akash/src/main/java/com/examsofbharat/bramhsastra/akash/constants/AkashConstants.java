@@ -1,5 +1,12 @@
 package com.examsofbharat.bramhsastra.akash.constants;
 
+import com.examsofbharat.bramhsastra.jal.dto.response.UrlManagerDTO;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class
 AkashConstants {
     public static final String COMMA_DELIMETER = ",";
@@ -25,5 +32,28 @@ AkashConstants {
 
     public static final String RESULT_KEY = "RESULT";
     public static final String RESULT_TYPE = "result";
+
+    public static void main(String[] args) throws JsonProcessingException {
+        UrlManagerDTO urlManagerDTO = new UrlManagerDTO();
+        urlManagerDTO.setKey("Bibhu");
+        urlManagerDTO.setValue("google.com");
+
+        UrlManagerDTO urlManagerDTO1 = new UrlManagerDTO();
+        urlManagerDTO1.setKey("Bibhu");
+        urlManagerDTO1.setValue("google.com");
+
+        List<UrlManagerDTO> list = new ArrayList<>();
+        list.add(urlManagerDTO);
+        list.add(urlManagerDTO1);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String data = objectMapper.writeValueAsString(list);
+        System.out.println(objectMapper.writeValueAsString(list));
+
+        List<UrlManagerDTO> urlManagerDTOList = objectMapper.readValue(data,
+                objectMapper.getTypeFactory().constructCollectionType(List.class, UrlManagerDTO.class));
+
+        System.out.println(urlManagerDTOList);
+    }
 
 }

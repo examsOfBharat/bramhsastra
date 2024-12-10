@@ -5,6 +5,7 @@ import com.examsofbharat.bramhsastra.jal.dto.ApplicationEligibilityDTO;
 import com.examsofbharat.bramhsastra.jal.dto.ApplicationVacancyDTO;
 import com.examsofbharat.bramhsastra.jal.dto.SecondPageSeoDetailsDTO;
 import com.examsofbharat.bramhsastra.jal.dto.response.EligibilityCheckResponseDTO;
+import com.examsofbharat.bramhsastra.jal.dto.response.UrlManagerDTO;
 import com.examsofbharat.bramhsastra.jal.enums.FormSubTypeEnum;
 import com.examsofbharat.bramhsastra.jal.enums.FormTypeEnum;
 import com.examsofbharat.bramhsastra.jal.utils.StringUtil;
@@ -530,6 +531,16 @@ public class FormUtil {
                 replace("   "," ").
                 replace("  "," ").
                 replace(" ","-");
+    }
+
+    // Helper method to add URLs safely to the list
+    public static void addUrlToList(List<UrlManagerDTO> urlList, String key, String value) {
+        if (StringUtil.notEmpty(value)) {
+            UrlManagerDTO urlManagerDTO = new UrlManagerDTO();
+            urlManagerDTO.setKey(key);
+            urlManagerDTO.setValue(value);
+            urlList.add(urlManagerDTO);
+        }
     }
 
 

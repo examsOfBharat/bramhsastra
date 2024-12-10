@@ -97,7 +97,11 @@ public class ResponseManagementService {
         //update second page and related form parallel
         buildAndSaveSecAndRelatedData();
 
-        clientService.updateLatestFormInCache();
+        try {
+            clientService.updateLatestFormInCache();
+        }catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
 
         return webUtils.buildSuccessResponse("SUCCESS");
     }

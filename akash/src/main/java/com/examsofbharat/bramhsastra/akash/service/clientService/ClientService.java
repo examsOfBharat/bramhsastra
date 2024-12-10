@@ -17,6 +17,7 @@ import com.examsofbharat.bramhsastra.jal.enums.ComponentEnum;
 import com.examsofbharat.bramhsastra.jal.utils.StringUtil;
 import com.examsofbharat.bramhsastra.prithvi.entity.*;
 import com.examsofbharat.bramhsastra.prithvi.facade.DBMgmtFacade;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import jakarta.ws.rs.core.Response;
@@ -54,13 +55,18 @@ public class ClientService {
     public Response buildAndGetApplication(String appId){
 
         //fetch form detail from db
-        EnrichedFormDetailsDTO enrichedFormDetailsDTO = getEnrichedFormDetails(appId);
-        if(Objects.isNull(enrichedFormDetailsDTO)){
-            return webUtils.buildErrorMessage(WebConstants.ERROR, DATA_NOT_FOUND);
-        }
+        try {
+            EnrichedFormDetailsDTO enrichedFormDetailsDTO = getEnrichedFormDetails(appId);
+            if (Objects.isNull(enrichedFormDetailsDTO)) {
+                return webUtils.buildErrorMessage(WebConstants.ERROR, DATA_NOT_FOUND);
+            }
 
-        String formResponse = buildFormViewRes(enrichedFormDetailsDTO);
-        return Response.ok(formResponse).build();
+            String formResponse = buildFormViewRes(enrichedFormDetailsDTO);
+            return Response.ok(formResponse).build();
+        }catch (Exception e){
+            log.error(e.getMessage());
+        }
+        return webUtils.buildErrorMessage(WebConstants.ERROR, DATA_NOT_FOUND);
     }
 
     public void saveApiRequestLog(String utmSource, String appId, String pageType){
@@ -74,7 +80,7 @@ public class ClientService {
         dbMgmtFacade.saveRequestLog(apiRequestLog);
     }
 
-    public void updateLatestFormInCache(){
+    public void updateLatestFormInCache() throws JsonProcessingException {
 
         //TODO need to put threshold of 1 month
         List<ApplicationNameDetails> appNameList = dbMgmtFacade.fetchAllAppNames();
@@ -204,7 +210,7 @@ public class ClientService {
                 .parseResponse(componentRequestDTO, formViewResponseDTO, sortIndex);
     }
 
-    public EnrichedFormDetailsDTO getEnrichedFormDetails(String appId) {
+    public EnrichedFormDetailsDTO getEnrichedFormDetails(String appId) throws JsonProcessingException {
 
         ApplicationForm applicationForm = dbMgmtFacade.getApplicationForm(appId);
 
@@ -220,7 +226,7 @@ public class ClientService {
     }
 
 
-    public EnrichedFormDetailsDTO enrich(ApplicationForm applicationForm, String appId) {
+    public EnrichedFormDetailsDTO enrich(ApplicationForm applicationForm, String appId) throws JsonProcessingException {
         EnrichedFormDetailsDTO enrichedFormDetailsDTO = new EnrichedFormDetailsDTO();
 
         enrichedFormDetailsDTO.setApplicationFormDTO(objectMapper.convertValue(applicationForm, ApplicationFormDTO.class));
@@ -254,13 +260,16 @@ public class ClientService {
         enrichedFormDetailsDTO.setApplicationContentManagerDTO(applicationContentManagerDTOList);
 
         ApplicationUrl applicationUrl = dbMgmtFacade.getApplicationUrl(appId);
-        enrichedFormDetailsDTO.setApplicationUrlsDTO(objectMapper.convertValue(applicationUrl, ApplicationUrlsDTO.class));
-        if(Objects.nonNull(applicationUrl) && Objects.nonNull(applicationUrl.getOthers())) {
-            List<UrlManagerDTO> urlManagerDTOList = objectMapper.convertValue(applicationUrl.getOthers(),
-                    objectMapper.getTypeFactory().constructCollectionType(List.class, UrlManagerDTO.class));
 
-            enrichedFormDetailsDTO.getApplicationUrlsDTO().setUrlList(urlManagerDTOList);
+        List<UrlManagerDTO> urlManagerDTOList = null;
+        if(Objects.nonNull(applicationUrl) && StringUtil.notEmpty(applicationUrl.getOthers())) {
+            log.info("URL: {}", applicationUrl.getOthers());
+            urlManagerDTOList = objectMapper.readValue(applicationUrl.getOthers(),
+                    objectMapper.getTypeFactory().constructCollectionType(List.class, UrlManagerDTO.class));
         }
+
+        enrichedFormDetailsDTO.setApplicationUrlsDTO(objectMapper.convertValue(applicationUrl, ApplicationUrlsDTO.class));
+        enrichedFormDetailsDTO.getApplicationUrlsDTO().setUrlList(urlManagerDTOList);
 
 
         List<ApplicationEligibilityDetails> applicationEligibilityDetails = dbMgmtFacade.fetchAllEligibility(appId);

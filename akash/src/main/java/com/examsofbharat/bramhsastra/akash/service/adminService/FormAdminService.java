@@ -390,6 +390,18 @@ public class FormAdminService {
 
         buildAndSaveAdminGenContent(adminGenericResponseV1, formId);
 
+        //update application form for admit card and result
+        if(StringUtil.notEmpty(adminGenericResponseV1.getAppIdRef())){
+            ApplicationForm applicationForm = dbMgmtFacade.getApplicationForm(adminGenericResponseV1.getAppIdRef());
+            if(Objects.nonNull(applicationForm)){
+                if(pageType.equalsIgnoreCase("admit"))
+                    applicationForm.setAdmitId(formId);
+                else if(pageType.equalsIgnoreCase("result"))
+                    applicationForm.setResultId(formId);
+            }
+            dbMgmtFacade.saveApplicationForm(applicationForm);
+        }
+
         if(Objects.nonNull(wrapperGenericAdminResponseV1DTO.getApplicationSeoDetailsDTO())){
             saveSeoDetails(wrapperGenericAdminResponseV1DTO.getApplicationSeoDetailsDTO(), formId);
         }
