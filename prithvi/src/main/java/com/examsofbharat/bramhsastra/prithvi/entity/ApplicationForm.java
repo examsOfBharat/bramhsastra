@@ -25,6 +25,9 @@ public class ApplicationForm {
     @Column(name = "exam_name")
     private String examName;
 
+    @Column(name = "sort_name")
+    private String sortName;
+
     @Column(name = "min_qualification")
     private String minQualification;
 

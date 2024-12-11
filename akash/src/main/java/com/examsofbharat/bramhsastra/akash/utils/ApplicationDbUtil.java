@@ -350,7 +350,7 @@ public class ApplicationDbUtil {
         }
 
         //convert title into url title
-        secondaryPageDataDTO.setUrlTitle(FormUtil.getUrlTitle(applicationForm.getExamName()));
+        secondaryPageDataDTO.setUrlTitle(FormUtil.getUrlTitle(FormUtil.getUrlTitle(applicationForm)));
 
         return secondaryPageDataDTO;
     }

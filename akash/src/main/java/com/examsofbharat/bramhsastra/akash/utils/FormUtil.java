@@ -11,6 +11,7 @@ import com.examsofbharat.bramhsastra.jal.enums.FormTypeEnum;
 import com.examsofbharat.bramhsastra.jal.utils.StringUtil;
 import com.examsofbharat.bramhsastra.prithvi.entity.ApplicationAgeDetails;
 //import com.ibm.icu.text.NumberFormat;
+import com.examsofbharat.bramhsastra.prithvi.entity.ApplicationForm;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -405,6 +406,12 @@ public class FormUtil {
             }
         }
         return EobInitilizer.getPngLogoByName("default");
+    }
+
+    public static String getUrlTitle(ApplicationForm applicationForm){
+        return StringUtil.notEmpty(applicationForm.getSortName()) ?
+                applicationForm.getSortName() :
+                applicationForm.getExamName();
     }
 
 

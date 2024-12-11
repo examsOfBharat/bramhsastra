@@ -12,6 +12,7 @@ public class ApplicationFormDTO {
     String id;
     String appIdRef;
     String examName;
+    String sortName;
     Date startDate;
     Date endDate;
     int minAge;

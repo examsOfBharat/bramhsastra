@@ -305,21 +305,23 @@ public class ResponseManagementService {
             LandingSubSectionDTO landingSubSectionDTO = new LandingSubSectionDTO();
 
             landingSubSectionDTO.setExamId(applicationForm.getId());
-            landingSubSectionDTO.setUrlTitle(FormUtil.getUrlTitle(applicationForm.getExamName()));
+            landingSubSectionDTO.setUrlTitle(FormUtil.getUrlTitle(FormUtil.getUrlTitle(applicationForm)));
             landingSubSectionDTO.setFormType("form");
             landingSubSectionDTO.setKey(LATEST_FORMS.name());
             landingSubSectionDTO.setTitle(applicationForm.getExamName());
             landingSubSectionDTO.setCardColor(FormUtil.fetchCardColor(i%4));
             landingSubSectionDTO.setLogoUrl(FormUtil.getLogoByName(applicationForm.getExamName()));
 
+            Date fiveDaysAfter = DateUtils.addDays(applicationForm.getDateCreated(), 5);
+
             //form status banner condition
-            if(applicationForm.getDateModified().compareTo(DateUtils.addDays(applicationForm.getDateCreated(), 5)) > 0){
+            if(applicationForm.getDateModified().compareTo(fiveDaysAfter) > 0){
                 landingSubSectionDTO.setFormStatus("UPDATES");
             }else if(FormUtil.dateIsWithinXDays(applicationForm.getStartDate())){
                 landingSubSectionDTO.setFormStatus("NEW");
             }
 
-            if(applicationForm.getDateModified().compareTo(DateUtils.addDays(applicationForm.getDateCreated(), 5)) > 0){
+            if(applicationForm.getDateModified().compareTo(fiveDaysAfter) > 0){
                 landingSubSectionDTO.setShowDateTitle("Updated On");
                 landingSubSectionDTO.setShowDateColor("#4A235A");
             }else{
@@ -330,11 +332,12 @@ public class ResponseManagementService {
             landingSubSectionDTO.setShowDate(DateUtils.getFormatedDate1(applicationForm.getDateModified()));
             landingSubSectionDTO.setSortDate(applicationForm.getDateModified());
             landingSubSectionDTO.setVacancyTitle("Vacancy");
-            if(applicationForm.getTotalVacancy() > 0) {
-                landingSubSectionDTO.setTotalVacancy(FormUtil.formatIntoIndianNumSystem(applicationForm.getTotalVacancy()));
-            }else{
-                landingSubSectionDTO.setTotalVacancy("Not Available");
-            }
+
+            String totalVacancy = applicationForm.getTotalVacancy() > 0
+                    ? FormUtil.formatIntoIndianNumSystem(applicationForm.getTotalVacancy())
+                    : "Not Available";
+            landingSubSectionDTO.setTotalVacancy(totalVacancy);
+
             landingSubSectionDTO.setFormLogoUrl(FormUtil.getLogoByName(applicationForm.getExamName()));
             i++;
 
@@ -342,6 +345,7 @@ public class ResponseManagementService {
         }
         landingSectionDTO.setSubSections(landingSubSectionDTOS);
     }
+
 
     private void buildAllOlderForms(LandingSectionDTO landingSectionDTO){
         List<LandingSubSectionDTO> landingSubSectionDTOS = new ArrayList<>();

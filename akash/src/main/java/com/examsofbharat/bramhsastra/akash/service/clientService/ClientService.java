@@ -263,7 +263,6 @@ public class ClientService {
 
         List<UrlManagerDTO> urlManagerDTOList = null;
         if(Objects.nonNull(applicationUrl) && StringUtil.notEmpty(applicationUrl.getOthers())) {
-            log.info("URL: {}", applicationUrl.getOthers());
             urlManagerDTOList = objectMapper.readValue(applicationUrl.getOthers(),
                     objectMapper.getTypeFactory().constructCollectionType(List.class, UrlManagerDTO.class));
         }
