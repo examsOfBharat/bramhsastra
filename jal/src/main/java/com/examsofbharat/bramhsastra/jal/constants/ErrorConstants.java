@@ -27,6 +27,7 @@ public class ErrorConstants {
     public static final String OTP_MAX_ATTEMPTS = "OTP_MAX_ATTEMPTS";
     public static final String SIGNUP_INCOMPLETE = "SIGNUP_INCOMPLETE";
     public static final String DATA_NOT_FOUND = "DATA_NOT_FIND";
+    public static final String MAPPING_ERROR = "DATA_NOT_FIND";
 
 
     public static final Map<String, String> getErrorMsgMap(){
@@ -45,6 +46,7 @@ public class ErrorConstants {
         errorMessage.put(OTP_MAX_ATTEMPTS, "OTP max attempts exceeded, please after 5 min");
         errorMessage.put(SIGNUP_INCOMPLETE, "Your Signup was incomplete, please complete your signup first");
         errorMessage.put(DATA_NOT_FOUND, "Data not found!");
+        errorMessage.put(MAPPING_ERROR, "Not able to Map");
 
         return errorMessage;
 

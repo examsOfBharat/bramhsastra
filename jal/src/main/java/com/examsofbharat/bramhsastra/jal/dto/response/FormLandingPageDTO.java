@@ -23,6 +23,9 @@ public class FormLandingPageDTO {
     @SerializedName("sub_prime_section")
     private SubPrimeSectionDTO subPrimeSectionDTO;
 
+    @SerializedName("update_section")
+    private UpdatesSectionDTO updatesSectionDTO;
+
     @SerializedName("prime_section")
     private PrimeSectionDTO primeSectionDTO;
 

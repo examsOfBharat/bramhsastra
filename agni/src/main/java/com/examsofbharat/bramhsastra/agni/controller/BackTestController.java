@@ -99,6 +99,19 @@ public class BackTestController {
         return responseManagementService.buildAndUpdateClientHomePage();
     }
 
+    @GetMapping("/refresh")
+    public Response getLandingResponse(@RequestParam String pageType){
+        log.info("Request reached to refresh landing page");
+        return responseManagementService.refreshIndividualSection(pageType);
+    }
+
+    //Refresh Home Update section
+    @GetMapping("/update/home/updates")
+    public Response updateHomeUpdateSection(){
+        log.info("Request reached for refresh Home updates section");
+        return responseManagementService.refreshUpdateSection();
+    }
+
 
     /**
      * Fetch HOME page

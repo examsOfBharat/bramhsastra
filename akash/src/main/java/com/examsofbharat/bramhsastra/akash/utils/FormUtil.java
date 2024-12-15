@@ -5,6 +5,7 @@ import com.examsofbharat.bramhsastra.jal.dto.ApplicationEligibilityDTO;
 import com.examsofbharat.bramhsastra.jal.dto.ApplicationVacancyDTO;
 import com.examsofbharat.bramhsastra.jal.dto.SecondPageSeoDetailsDTO;
 import com.examsofbharat.bramhsastra.jal.dto.response.EligibilityCheckResponseDTO;
+import com.examsofbharat.bramhsastra.jal.dto.response.LandingSectionDTO;
 import com.examsofbharat.bramhsastra.jal.dto.response.UrlManagerDTO;
 import com.examsofbharat.bramhsastra.jal.enums.FormSubTypeEnum;
 import com.examsofbharat.bramhsastra.jal.enums.FormTypeEnum;
@@ -252,22 +253,28 @@ public class FormUtil {
 
     public void initSecondPageSeo(){
         SecondPageSeoDetailsDTO latesFormSeo = new SecondPageSeoDetailsDTO();
-        latesFormSeo.setTitle("Latest Form 2024");
-        latesFormSeo.setKeywords("Latest Government Job Forms 2024,Sarkari Naukri Application Form,Latest Sarkari Job Forms,Latest Govt Exam Forms,Latest Sarkari Form Updates,New Sarkari Form");
-        latesFormSeo.setDescription("Stay updated with the latest government job application forms for 2024. Find forms for Sarkari Naukri, entrance exams, and more at Exams of Bharat. Filter by qualification, region, and category to apply for the right job easily.");
+        latesFormSeo.setTitle("Latest Form 2025");
+        latesFormSeo.setKeywords("Latest Government Job Forms 2025,Sarkari Naukri Application Form,Latest Sarkari Job Forms,Latest Govt Exam Forms,Latest Sarkari Form Updates,New Sarkari Form");
+        latesFormSeo.setDescription("Stay updated with the latest government job application forms for 2025. Find forms for Sarkari Naukri, entrance exams, and more at Exams of Bharat. Filter by qualification, region, and category to apply for the right job easily.");
         secondPageSeoMap.put(LATEST_FORMS.name(), latesFormSeo);
 
         SecondPageSeoDetailsDTO admitCardSeo = new SecondPageSeoDetailsDTO();
-        admitCardSeo.setTitle("Latest Admit card 2024 - examsofbharat");
-        admitCardSeo.setKeywords("Latest Government admit card 2024,Sarkari Naukri admit card,Latest admit card,admit card examsofbharat,examsofbharat admitcard Updates,New Sarkari admit card");
-        admitCardSeo.setDescription("Stay updated with the latest government job admit card for 2024. Find admit card for Sarkari Naukri, entrance exams, and more at Exams of Bharat.");
+        admitCardSeo.setTitle("Latest Admit card 2025 - examsofbharat");
+        admitCardSeo.setKeywords("Latest Government admit card 2025,Sarkari Naukri admit card,Latest admit card,admit card examsofbharat,examsofbharat admitcard Updates,New Sarkari admit card");
+        admitCardSeo.setDescription("Stay updated with the latest government job admit card for 2025. Find admit card for Sarkari Naukri, entrance exams, and more at Exams of Bharat.");
         secondPageSeoMap.put(ADMIT.name(), admitCardSeo);
 
         SecondPageSeoDetailsDTO resultSeo = new SecondPageSeoDetailsDTO();
-        resultSeo.setTitle("Latest Result 2024");
-        resultSeo.setKeywords("Latest Government Job result 2024,Sarkari Naukri result,Latest result,Latest Govt Exam result,ssc result,upsc result, bpsc result, new result");
-        resultSeo.setDescription("Stay updated with the latest government job result for 2024. Find result for Sarkari Naukri, entrance exams, and more at Exams of Bharat.");
+        resultSeo.setTitle("Latest Result 2025");
+        resultSeo.setKeywords("Latest Government Job result 2025,Sarkari Naukri result,Latest result,Latest Govt Exam result,ssc result,upsc result, bpsc result, new result");
+        resultSeo.setDescription("Stay updated with the latest government job result for 2025. Find result for Sarkari Naukri, entrance exams, and more at Exams of Bharat.");
         secondPageSeoMap.put(RESULT.name(), resultSeo);
+
+        SecondPageSeoDetailsDTO upcoming = new SecondPageSeoDetailsDTO();
+        upcoming.setTitle("Latest Upcoming Vacancy 2025");
+        upcoming.setKeywords("Upcoming Government Job 2025,Sarkari Naukri upcoming,new upcoming forms,upcoming Govt Exam,ssc upcoming forms,upsc upcoming vacancy,upcoming vacancy, new upcoming vacancy");
+        upcoming.setDescription("Discover all upcoming government job vacancies for 2025 on ExamsofBharat.com. Browse the latest and expected Sarkari Naukri opportunities across various departments and sectors. Stay informed about important dates, eligibility, and job prospects to plan your next career move effectively!");
+        secondPageSeoMap.put("UPCOMING", upcoming);
 
         SecondPageSeoDetailsDTO defaultSeo = new SecondPageSeoDetailsDTO();
         defaultSeo.setTitle("Forms Details");
@@ -548,6 +555,26 @@ public class FormUtil {
             urlManagerDTO.setValue(value);
             urlList.add(urlManagerDTO);
         }
+    }
+
+    public static LandingSectionDTO populateBasicLandingSection(FormTypeEnum formTypeEnum){
+        boolean viewAll = (formTypeEnum.equals(FormTypeEnum.ADMIT) ||
+                formTypeEnum.equals(FormTypeEnum.RESULT) ||
+                formTypeEnum.equals(LATEST_FORMS) ||
+                formTypeEnum.equals(OLDER_FORMS));
+
+        return buildSections(0, formTypeEnum, viewAll);
+    }
+
+    public static LandingSectionDTO buildSections(int sortIndex, FormTypeEnum formTypeEnum, boolean viewALl) {
+
+        LandingSectionDTO landingSectionDTO = new LandingSectionDTO();
+        landingSectionDTO.setType(formTypeEnum);
+        landingSectionDTO.setTitle(formTypeEnum.getVal());
+        landingSectionDTO.setSortIndex(sortIndex);
+        landingSectionDTO.setViewAll(viewALl);
+
+        return landingSectionDTO;
     }
 
 

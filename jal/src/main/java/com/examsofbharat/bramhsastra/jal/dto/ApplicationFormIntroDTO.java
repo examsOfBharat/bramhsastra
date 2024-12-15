@@ -11,6 +11,7 @@ public class ApplicationFormIntroDTO {
     String appId;
     String type;
     String logoUrl;
+    String seenCount;
     String lastDate;
     String lastDateColor;
     String releaseDateTitle;

@@ -3,6 +3,7 @@ package com.examsofbharat.bramhsastra.akash.service.clientService;
 import com.examsofbharat.bramhsastra.akash.constants.AkashConstants;
 import com.examsofbharat.bramhsastra.akash.executor.FormExecutorService;
 import com.examsofbharat.bramhsastra.akash.utils.*;
+import com.examsofbharat.bramhsastra.akash.utils.mapper.MapperUtils;
 import com.examsofbharat.bramhsastra.jal.constants.ErrorConstants;
 import com.examsofbharat.bramhsastra.jal.constants.WebConstants;
 import com.examsofbharat.bramhsastra.jal.dto.HomePageCountDataDTO;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -106,6 +108,55 @@ public class ResponseManagementService {
         return webUtils.buildSuccessResponse("SUCCESS");
     }
 
+    public Response refreshIndividualSection(String formType){
+
+        String response = FormUtil.cacheData.get("HOME_PAGE");
+        if(StringUtil.isEmpty(response)){
+            return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.DATA_NOT_FOUND);
+        }
+
+        FormLandingPageDTO formLandingPageDTO = gson.fromJson(response, FormLandingPageDTO.class);
+        if(Objects.isNull(formLandingPageDTO)){
+            return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.MAPPING_ERROR);
+        }
+
+        List<ExamMetaData> examMetaDataList = dbMgmtFacade.getExamMetaData();
+
+        List<ExamMetaData> examList = examMetaDataList.stream()
+                .filter(examMetaData -> examMetaData.getExamCategory().equalsIgnoreCase(formType))
+                .collect(Collectors.toList());
+
+        buildAndParse(examList, FormTypeEnum.valueOf(formType), 0, formLandingPageDTO);
+
+        return webUtils.buildSuccessResponse("SUCCESS");
+    }
+
+    public void refreshSectionBasedOnType(String pageType){
+
+    }
+
+    //Refresh HomeUpdate section
+    public Response refreshUpdateSection(){
+
+        String response = FormUtil.cacheData.get("HOME_PAGE");
+        if(StringUtil.isEmpty(response)){
+            return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.DATA_NOT_FOUND);
+        }
+
+        FormLandingPageDTO formLandingPageDTO = gson.fromJson(response, FormLandingPageDTO.class);
+        if(Objects.isNull(formLandingPageDTO)){
+            return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.MAPPING_ERROR);
+        }
+
+        buildHomeUpdatesDetails(formLandingPageDTO);
+        String finalResponse = gson.toJson(formLandingPageDTO);
+        //push data to cache
+        FormUtil.cacheData.put("HOME_PAGE", finalResponse);
+
+        return webUtils.buildSuccessResponse("SUCCESS");
+    }
+
+
     private void prepareLandingPage(List<ExamMetaData> examMetaDataList, FormTypeEnum formType,
                                     int sortIndex, FormLandingPageDTO formLandingPageDTO){
         List<ExamMetaData> examList = examMetaDataList.stream()
@@ -174,18 +225,14 @@ public class ResponseManagementService {
                                            int sortIndex,
                                            FormLandingPageDTO formLandingPageDTO) {
 
-        boolean viewAll = (formTypeEnum.equals(FormTypeEnum.ADMIT) ||
-                formTypeEnum.equals(FormTypeEnum.RESULT) ||
-                formTypeEnum.equals(LATEST_FORMS) ||
-                formTypeEnum.equals(OLDER_FORMS));
-
-        LandingSectionDTO landingSectionDTO = buildSections(sortIndex, formTypeEnum, viewAll);
+        LandingSectionDTO landingSectionDTO = FormUtil.populateBasicLandingSection(formTypeEnum);
 
         switch (formTypeEnum){
             case OLDER_FORMS -> buildHomeOlderData(landingSectionDTO, formLandingPageDTO);
             case LATEST_FORMS -> buildHomeLatestData(landingSectionDTO, formLandingPageDTO);
             case ADMIT -> buildHomeAdmitDetails(landingSectionDTO, formLandingPageDTO);
             case RESULT -> buildHomeResultDetails(landingSectionDTO, formLandingPageDTO);
+            case UPDATES -> buildHomeUpdatesDetails(formLandingPageDTO);
             case ANS_KEY -> buildHomeAnsKeyDetails(formLandingPageDTO);
             case GRADE_BASED -> buildHomeGradeSection(formLandingPageDTO, landingSectionDTO, examMetaDataList);
             case PROVINCIAL_BASED -> buildHomeProvince(formLandingPageDTO, landingSectionDTO, examMetaDataList);
@@ -468,6 +515,21 @@ public class ResponseManagementService {
         formLandingPageDTO.setHomeAnsKeySectionDTO(homeAnsKeySectionDTO);
     }
 
+    //prepare update section for form
+    private void buildHomeUpdatesDetails(FormLandingPageDTO formLandingPageDTO){
+        UpdatesSectionDTO updatesSectionDTO = new UpdatesSectionDTO();
+
+        List<GenericResponseV1DTO> updateSectionDTOList =
+                dbMgmtFacade.getLatestResponseV1List(0, 10, AkashConstants.DATE_MODIFIED, "UPDATES")
+                        .stream()
+                        .map(MapperUtils::toUpdateSectionDTO) // Map each entity to DTO
+                        .toList();
+        updatesSectionDTO.setUpdateList(updateSectionDTOList);
+        updatesSectionDTO.setTitle(UPDATES.getVal());
+
+        formLandingPageDTO.setUpdatesSectionDTO(updatesSectionDTO);
+    }
+
     private void buildAndCacheTodayUpdate(FormLandingPageDTO formLandingPageDTO){
         String dateType = "dateCreated";
         Date startDate = com.examsofbharat.bramhsastra.prithvi.util.DateUtils.getStartOfDay(new Date());
@@ -551,5 +613,9 @@ public class ResponseManagementService {
         String relatedResponse = gson.toJson(relatedFormResponseDTO);
 
         saveResponseToDb(formSubType, responseRes, relatedResponse);
+    }
+
+    private void  loadLatestUpdatesData(){
+
     }
 }

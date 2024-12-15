@@ -15,6 +15,8 @@ public class GenericResponseV1DTO {
     private String downloadUrl;
     private Date dateCreated;
     private Date dateModified;
-    private Date showDate;
+    private String showDate;
+    private int rating;
+    private int seenValue;
     private Date updatedDate;
 }

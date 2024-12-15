@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 @Slf4j
 @Component
@@ -62,6 +63,13 @@ public class ApplicationIntroParser extends BaseContentParser {
 
             //main form logo
             applicationFormIntroDTO.setLogoUrl(FormUtil.getLogoByName(applicationFormDTO.getExamName()));
+
+            Random random = new Random();
+            int val1 = 5000 + random.nextInt(20000);
+            double val2 = ((double) val1 /1000);
+            String seenCount = String.format("%.1f", val2) + "k";
+
+            applicationFormIntroDTO.setSeenCount(seenCount);
 
             //logo for sharing url
             applicationFormIntroDTO.setShareLogoUrl(FormUtil.getPngLogoByName(applicationFormDTO.getExamName()));

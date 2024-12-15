@@ -91,6 +91,7 @@ public class ApplicationDbUtil {
 
         WrapperSecondaryPageDataDTO wrapperSecondaryPageDataDTO = new WrapperSecondaryPageDataDTO();
         wrapperSecondaryPageDataDTO.setTitle("Upcoming Forms");
+        wrapperSecondaryPageDataDTO.setSeoDetailsDTO(FormUtil.getSecondPageSeo("UPCOMING"));
 
         wrapperSecondaryPageDataDTO.setFormList(upcomingSecData);
 
