@@ -27,6 +27,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import static com.examsofbharat.bramhsastra.akash.constants.AkashConstants.*;
@@ -100,11 +103,26 @@ public class ResponseManagementService {
         buildAndSaveSecAndRelatedData();
 
         try {
-            clientService.updateLatestFormInCache();
+            //refresh in async
+            Future<?> future = FormExecutorService.genResCacheService.submit(()->
+            {
+                clientService.updateLatestFormInCache();
+            });
+            Future<?> future1 = FormExecutorService.genResCacheService.submit(()->
+            {
+                clientService.cacheGenResponse();
+            });
+
+            try {
+                future.get();
+                future1.get();// This will block until the task completes
+            } catch (ExecutionException | InterruptedException | CancellationException e) {
+                e.printStackTrace();
+            }
+            log.info("******Loading data has been completed! *******");
         }catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-
         return webUtils.buildSuccessResponse("SUCCESS");
     }
 
@@ -129,10 +147,6 @@ public class ResponseManagementService {
         buildAndParse(examList, FormTypeEnum.valueOf(formType), 0, formLandingPageDTO);
 
         return webUtils.buildSuccessResponse("SUCCESS");
-    }
-
-    public void refreshSectionBasedOnType(String pageType){
-
     }
 
     //Refresh HomeUpdate section

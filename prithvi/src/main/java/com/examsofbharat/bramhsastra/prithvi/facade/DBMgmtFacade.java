@@ -123,6 +123,10 @@ public class DBMgmtFacade {
         return genericResponseV1Manager.getXDaysResponse(xDays,type);
     }
 
+    public List<GenericResponseV1> fetchGenResponse(int days){
+        return genericResponseV1Manager.fetchResponseBasedOnDays(days);
+    }
+
     public List<UpcomingForms> getXDaysResponse(int xDays){
         return upcomingFormsManager.getXDaysResponse(xDays);
     }
@@ -305,6 +309,10 @@ public class DBMgmtFacade {
 
     public void saveRequestLog(ApiRequestLog apiRequestLog){
         apiRequestLogManagerImpl.save(apiRequestLog);
+    }
+
+    public List<ApplicationForm> getAppByDay(int days){
+        return applicationFormManager.getAllFormOnDate(days);
     }
 
 }

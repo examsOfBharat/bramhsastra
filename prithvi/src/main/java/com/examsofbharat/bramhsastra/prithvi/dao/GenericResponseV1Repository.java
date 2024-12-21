@@ -20,4 +20,6 @@ public interface GenericResponseV1Repository extends CrudRepository<GenericRespo
 
     List<GenericResponseV1> findByTypeAndDateCreatedAfterOrderByDateCreatedDesc(String type, Date admitDate);
 
+    List<GenericResponseV1> findAllByDateCreatedAfterOrderByDateCreatedDesc(Date dateCriteria);
+
 }

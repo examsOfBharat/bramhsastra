@@ -189,7 +189,7 @@ public class BackTestController {
         if(StringUtil.isEmpty(app_Id) || !"abcd".equals(app_Id)){
             return Response.status(401).build();
         }
-        return clientFacade.buildAndGetResult(appId, utmSource, "result");
+        return clientFacade.buildAndGetAdmitCard(appId, utmSource, "result");
     }
 
     /**
@@ -204,7 +204,7 @@ public class BackTestController {
         if(StringUtil.isEmpty(app_Id) || !"abcd".equals(app_Id)){
             return Response.status(401).build();
         }
-        return clientFacade.buildAndGetAnsKeyData(appId, utmSource, "anskey");
+        return clientFacade.buildAndGetAdmitCard(appId, utmSource, "anskey");
     }
 
 

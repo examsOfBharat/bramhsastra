@@ -41,6 +41,12 @@ public class GenericResponseV1ManagerImpl extends GenericManager<GenericResponse
         return genericResponseV1Repository.findByTypeAndDateCreatedAfterOrderByDateCreatedDesc(type, dateCriteria);
     }
 
+    public List<GenericResponseV1> fetchResponseBasedOnDays(int days){
+
+        Date dateCriteria  = DateUtils.addDays(new Date(), -days);
+        return genericResponseV1Repository.findAllByDateCreatedAfterOrderByDateCreatedDesc(dateCriteria);
+    }
+
     public GenericResponseV1 fetchResponseById(String admitId){
         Optional<GenericResponseV1> admitCard = genericResponseV1Repository.findById(admitId);
         return admitCard.orElse(null);

@@ -22,6 +22,7 @@ import java.text.Format;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.examsofbharat.bramhsastra.akash.constants.AkashConstants.*;
 import static com.examsofbharat.bramhsastra.jal.enums.FormSubTypeEnum.*;
@@ -46,7 +47,8 @@ public class FormUtil {
     public static Map<String, String> qualificationName = new HashMap<>();
 
     public static Map<String,String> cacheData = new HashMap<>();
-    public static Map<String, String> formCache = new HashMap<>();
+    public static Map<String, String> formCache = new ConcurrentHashMap<>();
+    public static Map<String, String> genericResCache = new ConcurrentHashMap<>();
 
 
     @PostConstruct

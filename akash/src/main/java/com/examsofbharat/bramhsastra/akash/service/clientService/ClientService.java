@@ -28,10 +28,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -56,7 +53,9 @@ public class ClientService {
 
         //fetch form detail from db
         try {
-            EnrichedFormDetailsDTO enrichedFormDetailsDTO = getEnrichedFormDetails(appId);
+            ApplicationForm applicationForm = dbMgmtFacade.getApplicationForm(appId);
+
+            EnrichedFormDetailsDTO enrichedFormDetailsDTO = getEnrichedFormDetails(applicationForm);
             if (Objects.isNull(enrichedFormDetailsDTO)) {
                 return webUtils.buildErrorMessage(WebConstants.ERROR, DATA_NOT_FOUND);
             }
@@ -80,27 +79,34 @@ public class ClientService {
         dbMgmtFacade.saveRequestLog(apiRequestLog);
     }
 
-    public void updateLatestFormInCache() throws JsonProcessingException {
+    public void updateLatestFormInCache() {
 
-        //TODO need to put threshold of 1 month
-        List<ApplicationNameDetails> appNameList = dbMgmtFacade.fetchAllAppNames();
-        if(CollectionUtils.isEmpty(appNameList)){
+        List<ApplicationForm> appList = dbMgmtFacade.getAppByDay(30);
+        if(CollectionUtils.isEmpty(appList)){
             return;
         }
 
         //TODO Below can done in async mode
-        for(ApplicationNameDetails applicationNameDetails : appNameList){
+        for(ApplicationForm applicationForm : appList){
             //fetch form detail from db
-            EnrichedFormDetailsDTO enrichedFormDetailsDTO = getEnrichedFormDetails(
-                    applicationNameDetails.getAppIdRef());
-
-            if(Objects.isNull(enrichedFormDetailsDTO)){
-                continue;
-            }
-
-            FormUtil.formCache.put(applicationNameDetails.getAppIdRef(),
-                    buildFormViewRes(enrichedFormDetailsDTO));
+            FormExecutorService.appCacheService.submit(()->
+            {
+                try {
+                    buildLatestAppCache(applicationForm);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }});
         }
+    }
+
+    private void buildLatestAppCache(ApplicationForm applicationForm) throws JsonProcessingException {
+        EnrichedFormDetailsDTO enrichedFormDetailsDTO = getEnrichedFormDetails(applicationForm);
+
+        if(Objects.isNull(enrichedFormDetailsDTO)){
+            return;
+        }
+        FormUtil.formCache.put(applicationForm.getId(),
+                buildFormViewRes(enrichedFormDetailsDTO));
     }
 
     private String buildFormViewRes(EnrichedFormDetailsDTO enrichedFormDetailsDTO){
@@ -210,14 +216,12 @@ public class ClientService {
                 .parseResponse(componentRequestDTO, formViewResponseDTO, sortIndex);
     }
 
-    public EnrichedFormDetailsDTO getEnrichedFormDetails(String appId) throws JsonProcessingException {
-
-        ApplicationForm applicationForm = dbMgmtFacade.getApplicationForm(appId);
+    public EnrichedFormDetailsDTO getEnrichedFormDetails(ApplicationForm applicationForm) throws JsonProcessingException {
 
         EnrichedFormDetailsDTO enrichedFormDetailsDTO;
         if(Objects.nonNull(applicationForm)){
-            log.info("Populating enriched form details appId::{}", appId);
-            enrichedFormDetailsDTO = enrich(applicationForm, appId);
+            log.info("Loading enriched form details appId::{}", applicationForm.getId());
+            enrichedFormDetailsDTO = enrich(applicationForm, applicationForm.getId());
             if(Objects.nonNull(enrichedFormDetailsDTO)) {
                 return enrichedFormDetailsDTO;
             }
@@ -336,73 +340,106 @@ public class ClientService {
         return Response.ok(FormUtil.eligibilityFailedByMinAge(period.getYears(), period.getMonths(), period.getDays())).build();
     }
 
+    public void cacheGenResponse(){
+        List<GenericResponseV1> genResList = dbMgmtFacade.fetchGenResponse(30);
 
-    public void buildAdmitCardResponse(AdmitCardResponseDTO admitCardResponseDTO,
-                                       String admitId){
+        if(CollectionUtils.isEmpty(genResList)){
+            return;
+        }
 
-        GenericResponseV1 admitCard = dbMgmtFacade.fetchResponseV1ById(admitId);
+        for(GenericResponseV1 genRes: genResList){
+            //build genResponse async
+            FormExecutorService.genResCacheService.submit(()->
+            {
+                FormUtil.genericResCache.put(genRes.getId(),buildGenericResponse(genRes));
+            });
+
+        }
+    }
+
+    public String buildGenericResponse(GenericResponseV1 genResponse){
+
+        if(Objects.isNull(genResponse)){ return null; }
+
+        log.info("Loading .....{}--ID::{}",genResponse.getType(), genResponse.getId());
+
+        if("admit".equalsIgnoreCase(genResponse.getType())){
+            AdmitCardResponseDTO admitCardResponseDTO = buildAdmitCardResponse(genResponse);
+            return new Gson().toJson(admitCardResponseDTO);
+        }else if("result".equalsIgnoreCase(genResponse.getType())){
+            ResultResponseDTO resultResponseDTO = buildResultResponse(genResponse);
+            return new Gson().toJson(resultResponseDTO);
+        }else if("anskey".equalsIgnoreCase(genResponse.getType())){
+            AnsKeyResponseDTO ansKeyResponseDTO =buildAnsKeyResponseP3(genResponse);
+            return new Gson().toJson(ansKeyResponseDTO);
+        }
+        return null;
+    }
+
+
+    public AdmitCardResponseDTO buildAdmitCardResponse(GenericResponseV1 admitCard){
+
+        AdmitCardResponseDTO admitCardResponseDTO = new AdmitCardResponseDTO();
         if(Objects.nonNull(admitCard)){
             admitCardResponseDTO.setAdmitCardIntroDTO(buildAdmitIntro(admitCard));
         }
         setTopAdmitCardList(admitCardResponseDTO);
-        populateAdmitContent(admitCardResponseDTO, admitId);
+        populateAdmitContent(admitCardResponseDTO, admitCard.getId());
 
-        ApplicationSeoDetails applicationSeoDetails = dbMgmtFacade.getApplicationSeoDetails(admitId);
+        ApplicationSeoDetails applicationSeoDetails = dbMgmtFacade.getApplicationSeoDetails(admitCard.getId());
         if(Objects.nonNull(applicationSeoDetails)){
             admitCardResponseDTO.getAdmitCardIntroDTO().setSeoTitle(applicationSeoDetails.getTitle());
             admitCardResponseDTO.getAdmitCardIntroDTO().setSeoKeywords(applicationSeoDetails.getKeywords());
             admitCardResponseDTO.getAdmitCardIntroDTO().setSeoDescription(applicationSeoDetails.getDescription());
         }
-
+        return admitCardResponseDTO;
     }
 
 
-    public void buildResultResponse(ResultResponseDTO resultResponseDTO,
-                                    String resultId){
+    public ResultResponseDTO buildResultResponse(GenericResponseV1 resultResponse){
 
-        GenericResponseV1 resultResponse = dbMgmtFacade.fetchResponseV1ById(resultId);
+        ResultResponseDTO resultResponseDTO = new ResultResponseDTO();
         if(Objects.nonNull(resultResponse)){
             resultResponseDTO.setResultIntroDTO(buildResultIntro(resultResponse));
         }
 
         setTopResultList(resultResponseDTO);
-        populateResultContent(resultResponseDTO, resultId);
+        populateResultContent(resultResponseDTO, resultResponse.getId());
 
-        ApplicationSeoDetails applicationSeoDetails = dbMgmtFacade.getApplicationSeoDetails(resultId);
+        ApplicationSeoDetails applicationSeoDetails = dbMgmtFacade.getApplicationSeoDetails(resultResponse.getId());
         if(Objects.nonNull(applicationSeoDetails)){
             resultResponseDTO.getResultIntroDTO().setSeoTitle(applicationSeoDetails.getTitle());
             resultResponseDTO.getResultIntroDTO().setSeoKeywords(applicationSeoDetails.getKeywords());
             resultResponseDTO.getResultIntroDTO().setSeoDescription(applicationSeoDetails.getDescription());
             resultResponseDTO.getResultIntroDTO().setShareLogoUrl(FormUtil.getPngLogoByName(resultResponse.getTitle()));
         }
+        return resultResponseDTO;
     }
 
 
     /**
      * Build ans key third page response
-     * @param ansKeyResponseDTO
-     * @param ansKeyId
+     * @param ansKeyResponse
      */
-    public void buildAnsKeyResponseP3(AnsKeyResponseDTO ansKeyResponseDTO,
-                                      String ansKeyId){
+    public AnsKeyResponseDTO buildAnsKeyResponseP3(GenericResponseV1 ansKeyResponse){
 
-        GenericResponseV1 ansKeyResponse = dbMgmtFacade.fetchResponseV1ById(ansKeyId);
+        AnsKeyResponseDTO ansKeyResponseDTO = new AnsKeyResponseDTO();
         if(Objects.nonNull(ansKeyResponse)){
             ansKeyResponseDTO.setAnsKeyIntroDTO(buildAnsKeyIntro(ansKeyResponse));
         }
 
         setTopAnsKeyList(ansKeyResponseDTO);
-        populateAnsKeyContent(ansKeyResponseDTO, ansKeyId);
-
+        populateAnsKeyContent(ansKeyResponseDTO, ansKeyResponse.getId());
 
         //Populate SEO part
-        ApplicationSeoDetails applicationSeoDetails = dbMgmtFacade.getApplicationSeoDetails(ansKeyId);
+        ApplicationSeoDetails applicationSeoDetails = dbMgmtFacade.getApplicationSeoDetails(ansKeyResponse.getId());
         if(Objects.nonNull(applicationSeoDetails)){
             ansKeyResponseDTO.getAnsKeyIntroDTO().setSeoTitle(applicationSeoDetails.getTitle());
             ansKeyResponseDTO.getAnsKeyIntroDTO().setSeoKeywords(applicationSeoDetails.getKeywords());
             ansKeyResponseDTO.getAnsKeyIntroDTO().setSeoDescription(applicationSeoDetails.getDescription());
             ansKeyResponseDTO.getAnsKeyIntroDTO().setShareLogoUrl(FormUtil.getPngLogoByName(ansKeyResponse.getTitle()));
         }
+        return ansKeyResponseDTO;
     }
 
     public void buildAdmitCardResponseByAppId(AdmitCardResponseDTO admitCardResponseDTO, String appId){

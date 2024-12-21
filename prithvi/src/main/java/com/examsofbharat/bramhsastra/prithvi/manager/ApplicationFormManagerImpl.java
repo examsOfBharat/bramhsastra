@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class ApplicationFormManagerImpl extends GenericManager<ApplicationForm, String> {
@@ -84,5 +85,10 @@ public class ApplicationFormManagerImpl extends GenericManager<ApplicationForm, 
         Pageable pageable = PageRequest.of(page, size, Sort.by(dateType).descending());
         Page<ApplicationForm> pageResult = applicationFormRepository.findByDateCreatedAfter(startDate, pageable);
         return pageResult.getContent();
+    }
+
+    public List<ApplicationForm> getAllFormOnDate(int days){
+        Date endDate = DateUtils.addDays(new Date(), -days);
+        return applicationFormRepository.findAllOrderByDateCreatedAfter(endDate);
     }
 }
