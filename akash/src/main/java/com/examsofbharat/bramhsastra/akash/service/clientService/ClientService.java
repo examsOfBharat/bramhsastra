@@ -61,6 +61,7 @@ public class ClientService {
             }
 
             String formResponse = buildFormViewRes(enrichedFormDetailsDTO);
+            FormUtil.formCache.put(appId, formResponse);
             return Response.ok(formResponse).build();
         }catch (Exception e){
             log.error(e.getMessage());

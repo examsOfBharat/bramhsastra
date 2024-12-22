@@ -70,7 +70,6 @@ public class ClientFacade {
             log.info("Form returned from cache id::{}", appId);
             return Response.ok(formResponse).build();
         }
-
         //if data is not present in cache
         return clientService.buildAndGetApplication(appId);
     }
@@ -97,65 +96,12 @@ public class ClientFacade {
         GenericResponseV1 genericResponseV1 = dbMgmtFacade.fetchResponseV1ById(responseId);
         response = clientService.buildGenericResponse(genericResponseV1);
         if(StringUtil.notEmpty(response)){
+            FormUtil.genericResCache.put(responseId, response);
             return  Response.ok(response).build();
         }
 
         return webUtils.buildErrorMessage(WebConstants.ERROR, DATA_NOT_FOUND);
     }
-
-//    public Response buildAndGetResult(String resultId, String utmSource, String pageType){
-//
-//        if(StringUtil.isEmpty(resultId)){
-//            return webUtils.invalidRequest();
-//        }
-//
-//        //save source async
-//        FormExecutorService.mailExecutorService.submit(()->
-//                clientService.saveApiRequestLog(utmSource, resultId, pageType));
-//
-//        //IN case cache do not contain data
-//        GenericResponseV1 genericResponseV1 = dbMgmtFacade.fetchResponseV1ById(resultId);
-//
-//        clientService.buildGenericResponse(genericResponseV1);
-//
-//        String response = new Gson().toJson(resultResponseDTO);
-//
-//        if(Objects.nonNull(resultResponseDTO.getResultIntroDTO())){
-//            return  Response.ok(response).build();
-//        }
-//        return webUtils.buildErrorMessage(WebConstants.ERROR, DATA_NOT_FOUND);
-//    }
-
-
-    /**
-     * Build ans key third page response
-     * @param ansKeyId
-     * @param utmSource
-     * @param pageType
-     * @return
-     */
-//    public Response buildAndGetAnsKeyData(String ansKeyId, String utmSource, String pageType){
-//
-//        if(StringUtil.isEmpty(ansKeyId)){
-//            return webUtils.invalidRequest();
-//        }
-//
-//        //save source async
-//        FormExecutorService.mailExecutorService.submit(()->
-//                clientService.saveApiRequestLog(utmSource, ansKeyId, pageType));
-//
-//        AnsKeyResponseDTO ansKeyResponseDTO = new AnsKeyResponseDTO();
-//
-//        clientService.buildAnsKeyResponseP3(ansKeyResponseDTO, ansKeyId);
-//
-//        //convert to string
-//        String response = new Gson().toJson(ansKeyResponseDTO);
-//
-//        if(Objects.nonNull(ansKeyResponseDTO.getAnsKeyIntroDTO())){
-//            return  Response.ok(response).build();
-//        }
-//        return webUtils.buildErrorMessage(WebConstants.ERROR, DATA_NOT_FOUND);
-//    }
 
 
     public Response fetchAdmitByAppId(String appId){
@@ -171,6 +117,5 @@ public class ClientFacade {
             return  Response.ok(admitCardResponseDTO).build();
         }
         return webUtils.buildErrorMessage(WebConstants.ERROR, DATA_NOT_FOUND);
-
     }
 }
