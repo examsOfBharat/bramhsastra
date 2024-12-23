@@ -82,7 +82,7 @@ public class VacancyEligibilitySummaryParser extends BaseContentParser {
     }
 
     private String getSubTitle(String subTitle){
-        return subTitle + " : " + subT;
+        return subTitle + " :- " + subT;
     }
 
     public VacancyEligibilityDataDTO buildVEData(ApplicationVacancyDTO applicationVacancyDTO,

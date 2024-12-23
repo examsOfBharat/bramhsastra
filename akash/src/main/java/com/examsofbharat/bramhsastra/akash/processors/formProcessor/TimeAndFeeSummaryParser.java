@@ -37,7 +37,7 @@ public class TimeAndFeeSummaryParser extends BaseContentParser {
                     getSubTitle()) ? componentRequestDTO.
                     getEnrichedFormDetailsDTO().
                     getApplicationAgeDetailsDTO().
-                    getSubTitle() + subT : subT;
+                    getSubTitle() + " :- " + subT : subT;
 
             appTimeLineAndFeeDTO.setHeading(subTitle);
             appTimeLineAndFeeDTO.setAgeRelaxationDTO(buildAgeRelaxation(componentRequestDTO.getEnrichedFormDetailsDTO()));
