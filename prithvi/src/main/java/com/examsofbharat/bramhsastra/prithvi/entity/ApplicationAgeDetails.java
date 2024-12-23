@@ -26,6 +26,9 @@ public class ApplicationAgeDetails {
     @Column(name = "app_id_ref")
     private String appIdRef;
 
+    @Column(name = "sub_title")
+    private String subTitle;
+
     @Column(name = "min_age")
     private Integer minAge;
 

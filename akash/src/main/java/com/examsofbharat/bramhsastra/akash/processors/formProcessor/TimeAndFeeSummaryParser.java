@@ -22,6 +22,8 @@ import static com.examsofbharat.bramhsastra.akash.constants.AkashConstants.*;
 @Slf4j
 public class TimeAndFeeSummaryParser extends BaseContentParser {
 
+    final String subT = "Important dates and Fee";
+
     private static final ObjectMapper mapper = new ObjectMapper();
 
     @Override
@@ -29,7 +31,15 @@ public class TimeAndFeeSummaryParser extends BaseContentParser {
         try {
             AppTimeLineAndFeeDTO appTimeLineAndFeeDTO = new AppTimeLineAndFeeDTO();
 
-            appTimeLineAndFeeDTO.setHeading("Important dates and Fee Details");
+            String subTitle = StringUtil.notEmpty(componentRequestDTO.
+                    getEnrichedFormDetailsDTO().
+                    getApplicationAgeDetailsDTO().
+                    getSubTitle()) ? componentRequestDTO.
+                    getEnrichedFormDetailsDTO().
+                    getApplicationAgeDetailsDTO().
+                    getSubTitle() + subT : subT;
+
+            appTimeLineAndFeeDTO.setHeading(subTitle);
             appTimeLineAndFeeDTO.setAgeRelaxationDTO(buildAgeRelaxation(componentRequestDTO.getEnrichedFormDetailsDTO()));
             appTimeLineAndFeeDTO.setImportantDatesDto(buildsFormDates(componentRequestDTO.getEnrichedFormDetailsDTO()));
             appTimeLineAndFeeDTO.setAppFeeDetailsDto(buildFeeDetails(componentRequestDTO.getEnrichedFormDetailsDTO()));

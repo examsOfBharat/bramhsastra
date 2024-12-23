@@ -5,6 +5,7 @@ import com.examsofbharat.bramhsastra.akash.utils.FormUtil;
 import com.examsofbharat.bramhsastra.jal.dto.*;
 import com.examsofbharat.bramhsastra.jal.dto.request.ComponentRequestDTO;
 import com.examsofbharat.bramhsastra.jal.dto.request.EnrichedFormDetailsDTO;
+import com.examsofbharat.bramhsastra.jal.utils.StringUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,12 +20,13 @@ public class VacancyEligibilitySummaryParser extends BaseContentParser {
 
     private static final ObjectMapper mapper = new ObjectMapper();
     private static final Logger log = LoggerFactory.getLogger(VacancyEligibilitySummaryParser.class);
+    final String subT = "Vacancy and Eligibility";
 
     @Override
     public void parseComponentParser(ComponentRequestDTO componentRequestDTO, FormViewResponseDTO formViewResponseDTO, int sortIndex) {
         try {
             VacancyEligibilityCardDetailsDTO vacancyEligibilityCardDetailsDTO = new VacancyEligibilityCardDetailsDTO();
-            vacancyEligibilityCardDetailsDTO.setTitle("Vacancy and Eligibility details");
+
             vacancyEligibilityCardDetailsDTO.setSortIndex(sortIndex);
             buildEligibilityData(vacancyEligibilityCardDetailsDTO, componentRequestDTO.getEnrichedFormDetailsDTO());
 
@@ -62,15 +64,25 @@ public class VacancyEligibilitySummaryParser extends BaseContentParser {
         FormUtil.vacancyComparator(vacancyDTOS);
 
 
+        String subTitle = subT;
+
         for(int i = 0; i < enrichedFormDetailsDTO.getApplicationVacancyDTOS().size(); i++){
 
+            if(StringUtil.notEmpty(enrichedFormDetailsDTO.getApplicationVacancyDTOS().get(i).getSubTitle())){
+                subTitle = getSubTitle(enrichedFormDetailsDTO.getApplicationVacancyDTOS().get(i).getSubTitle());
+            }
             VacancyEligibilityDataDTO vacancyEligibilityDataDTO = buildVEData(enrichedFormDetailsDTO.getApplicationVacancyDTOS().get(i),
                     enrichedFormDetailsDTO.getApplicationEligibilityDTOS().get(i));
             vacancyEligibilityDataDTO.setCardColor(FormUtil.fetchCardColor(i%4));
             vedList.add(vacancyEligibilityDataDTO);
         }
 
+        vacancyEligibilityData.setTitle(subTitle);
         vacancyEligibilityData.setVacancyEligibilityDataList(vedList);
+    }
+
+    private String getSubTitle(String subTitle){
+        return subTitle + " : " + subT;
     }
 
     public VacancyEligibilityDataDTO buildVEData(ApplicationVacancyDTO applicationVacancyDTO,

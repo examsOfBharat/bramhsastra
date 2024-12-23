@@ -12,6 +12,7 @@ public class ApplicationAgeDetailsDTO {
 
     String id;
     String appIdRef;
+    private String subTitle;
     int minAge;
     int maxAge;
     int generalAge;

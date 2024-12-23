@@ -26,6 +26,9 @@ public class ApplicationVacancyDetails {
     @Column(name = "app_id_ref")
     private String appIdRef;
 
+    @Column(name = "sub_title")
+    private String subTitle;
+
     @Column(name = "department")
     private String department;
 

@@ -11,6 +11,7 @@ public class ApplicationVacancyDTO {
 
     String id;
     String appIdRef;
+    private String subTitle;
     String department;
     int general;
     int st;
