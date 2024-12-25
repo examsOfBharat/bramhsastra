@@ -28,6 +28,8 @@ public enum FormSubTypeEnum {
     TEACHING("Teacher exam"),
     APPRENTICES("APPRENTICES"),
     ENTRANCE_EXAM("Entrance Exams"),
+    HEATH_PARAMEDIC("Health And Paramedical"),
+    ENGINEERING("Engineering"),
     OTHERS("Others"),
 
     STATE("State Government Job"),
