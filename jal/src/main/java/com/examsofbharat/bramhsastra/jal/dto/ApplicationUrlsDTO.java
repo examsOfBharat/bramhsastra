@@ -19,6 +19,7 @@ public class ApplicationUrlsDTO {
     String register;
     String syllabus;
     String ansKey;
+    String extra;
     List<UrlManagerDTO> urlList;
     Date dateCreated;
     Date dateModified;

@@ -244,10 +244,10 @@ public class ResponseManagementService {
         switch (formTypeEnum){
             case OLDER_FORMS -> buildHomeOlderData(landingSectionDTO, formLandingPageDTO);
             case LATEST_FORMS -> buildHomeLatestData(landingSectionDTO, formLandingPageDTO);
-            case ADMIT -> buildHomeAdmitDetails(landingSectionDTO, formLandingPageDTO);
-            case RESULT -> buildHomeResultDetails(landingSectionDTO, formLandingPageDTO);
+            case ADMIT -> buildHomeAdmitDetails(landingSectionDTO, formLandingPageDTO, examMetaDataList);
+            case RESULT -> buildHomeResultDetails(landingSectionDTO, formLandingPageDTO, examMetaDataList);
             case UPDATES -> buildHomeUpdatesDetails(formLandingPageDTO);
-            case ANS_KEY -> buildHomeAnsKeyDetails(formLandingPageDTO);
+            case ANS_KEY -> buildHomeAnsKeyDetails(formLandingPageDTO, examMetaDataList);
             case GRADE_BASED -> buildHomeGradeSection(formLandingPageDTO, landingSectionDTO, examMetaDataList);
             case PROVINCIAL_BASED -> buildHomeProvince(formLandingPageDTO, landingSectionDTO, examMetaDataList);
             default ->  buildOtherFormDetails(formLandingPageDTO,landingSectionDTO, examMetaDataList);
@@ -273,7 +273,7 @@ public class ResponseManagementService {
     }
 
     private void buildHomeAdmitDetails(LandingSectionDTO landingSectionDTO,
-                                       FormLandingPageDTO formLandingPageDTO){
+                                       FormLandingPageDTO formLandingPageDTO, List<ExamMetaData> examMetaDataList){
 
         buildGenericV1Sections(landingSectionDTO, ADMIT_KEY, ADMIT_TYPE);
         HomeAdmitCardSection homeAdmitCardSection = new HomeAdmitCardSection();
@@ -283,7 +283,9 @@ public class ResponseManagementService {
         if(Objects.nonNull(admitCardList)){
             homeAdmitCardSection.setLastAdmitReleaseCount(String.valueOf(admitCardList.size()));
         }
-
+        if(!CollectionUtils.isEmpty(examMetaDataList)){
+            homeAdmitCardSection.setTotalApplication(examMetaDataList.get(0).getTotalForm());
+        }
         homeAdmitCardSection.setTitle(FormTypeEnum.ADMIT.getVal());
         homeAdmitCardSection.setType(ADMIT_KEY);
         homeAdmitCardSection.getLandingSectionDTOS().add(landingSectionDTO);
@@ -291,7 +293,7 @@ public class ResponseManagementService {
     }
 
     private void buildHomeResultDetails(LandingSectionDTO landingSectionDTO,
-                                        FormLandingPageDTO formLandingPageDTO){
+                                        FormLandingPageDTO formLandingPageDTO, List<ExamMetaData> examMetaDataList){
         buildGenericV1Sections(landingSectionDTO,RESULT_KEY, RESULT_TYPE);
         HomeResultDetailsDTO homeResultDetailsDTO = new HomeResultDetailsDTO();
         //Checking if we have any new admit card in last 2 days
@@ -299,7 +301,9 @@ public class ResponseManagementService {
         if(Objects.nonNull(resultDetailsList)){
             homeResultDetailsDTO.setLastResultReleaseCount(String.valueOf(resultDetailsList.size()));
         }
-
+        if(!CollectionUtils.isEmpty(examMetaDataList)){
+            homeResultDetailsDTO.setTotalApplication(examMetaDataList.get(0).getTotalForm());
+        }
         homeResultDetailsDTO.setCardColor(FormUtil.fetchCardColor(1));
         homeResultDetailsDTO.setTitle(FormTypeEnum.RESULT.getVal());
         homeResultDetailsDTO.setType(RESULT_KEY);
@@ -507,7 +511,7 @@ public class ResponseManagementService {
     }
 
 
-    private void buildHomeAnsKeyDetails(FormLandingPageDTO formLandingPageDTO){
+    private void buildHomeAnsKeyDetails(FormLandingPageDTO formLandingPageDTO, List<ExamMetaData> examMetaDataList){
         HomeAnsKeySectionDTO homeAnsKeySectionDTO = new HomeAnsKeySectionDTO();
         homeAnsKeySectionDTO.setTitle(FormTypeEnum.ANS_KEY.getVal());
         homeAnsKeySectionDTO.setAnsKeyType(ANS_KEY.name());
@@ -518,6 +522,10 @@ public class ResponseManagementService {
         List<GenericResponseV1> ansKeyList = dbMgmtFacade.getLatestResponseV1List(0,5, AkashConstants.DATE_MODIFIED,"ANSKEY");
         ansKeyList.forEach(genericResponseV1 -> ansNameList.add(genericResponseV1.getTitle()));
         homeAnsKeySectionDTO.setResultNameList(ansNameList);
+
+        if(!CollectionUtils.isEmpty(examMetaDataList)){
+            homeAnsKeySectionDTO.setTotalApplication(examMetaDataList.get(0).getTotalForm());
+        }
 
         //Checking if we have any new admit card in last 2 days
         List<GenericResponseV1> answerDetailsList = dbMgmtFacade.getLastXDayResponseV1List(2,"ANSKEY");

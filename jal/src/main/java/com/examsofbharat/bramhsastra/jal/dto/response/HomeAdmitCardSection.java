@@ -12,6 +12,7 @@ public class HomeAdmitCardSection {
     private String title;
     private String cardColor;
     private String lastUpdate;
+    private int totalApplication;
     private String updateDateColor;
     private String lastReleaseCountTitle;
     private String lastAdmitReleaseCount;

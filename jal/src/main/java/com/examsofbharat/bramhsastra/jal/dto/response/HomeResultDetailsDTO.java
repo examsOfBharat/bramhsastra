@@ -13,6 +13,7 @@ public class HomeResultDetailsDTO {
     private String cardColor;
     private String lastUpdate;
     private String updateDateColor;
+    private int totalApplication;
     private String lastReleaseCountTitle;
     private String lastResultReleaseCount;
     private String type;

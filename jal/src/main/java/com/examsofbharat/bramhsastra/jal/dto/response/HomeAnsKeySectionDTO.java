@@ -12,6 +12,7 @@ public class HomeAnsKeySectionDTO {
     private String title;
     private String subTitle;
     private String ansKeyType;
+    private int totalApplication;
     private String lastResultReleaseCount;
     private String updatedDate;
     private String cardColor;

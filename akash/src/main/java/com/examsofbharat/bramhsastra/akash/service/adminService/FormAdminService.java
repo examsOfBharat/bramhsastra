@@ -13,6 +13,7 @@ import com.examsofbharat.bramhsastra.jal.dto.request.admin.AdminGenericResponseV
 import com.examsofbharat.bramhsastra.jal.dto.request.admin.WrapperGenericAdminResponseV1DTO;
 import com.examsofbharat.bramhsastra.jal.dto.response.AdminResponseDataDTO;
 import com.examsofbharat.bramhsastra.jal.enums.FormSubTypeEnum;
+import com.examsofbharat.bramhsastra.jal.enums.FormTypeEnum;
 import com.examsofbharat.bramhsastra.jal.enums.StatusEnum;
 import com.examsofbharat.bramhsastra.jal.utils.StringUtil;
 import com.examsofbharat.bramhsastra.prithvi.entity.*;
@@ -199,7 +200,10 @@ public class FormAdminService {
         applicationUrlsDTO.setAppIdRef(examId);
         applicationUrlsDTO.setDateCreated(dateCreated);
         applicationUrlsDTO.setDateModified(dateCreated);
-        dbMgmtFacade.saveApplicationUrl(mapper.convertValue(applicationUrlsDTO, ApplicationUrl.class));
+
+        ApplicationUrl applicationUrl = mapper.convertValue(applicationUrlsDTO, ApplicationUrl.class);
+        applicationUrl.setOthers(applicationUrlsDTO.getExtra());
+        dbMgmtFacade.saveApplicationUrl(applicationUrl);
 
 
         List<ApplicationContentManagerDTO> applicationContentManagerDTOList = enrichedFormDetailsDTO.getApplicationContentManagerDTO();
@@ -408,7 +412,23 @@ public class FormAdminService {
 
         saveAppNameDetails(formId, adminGenericResponseV1.getTitle(), new Date(), pageType);
 
+        //update meta-data table
+        //TODO need to make unique key through out the project
+        //one place admit, other place enum ADMIT so we need to make it single as ADMIT
+        String pageSubType = null;
+        if(pageType.equalsIgnoreCase("admit"))
+            pageSubType = FormSubTypeEnum.ADMIT.name();
+        else if(pageType.equalsIgnoreCase("result"))
+            pageSubType = FormSubTypeEnum.RESULT.name();
+        else if(pageType.equalsIgnoreCase("anskey"))
+            pageSubType = FormSubTypeEnum.ANS_KEY.name();
 
+        if(StringUtil.notEmpty(pageSubType)){
+            log.info("Updating meta-data for ::{}", pageSubType);
+            updateMetaData(pageSubType);
+        }else{
+            log.info("Not able to Update meta-data for ::{}", pageSubType);
+        }
         return webUtils.buildSuccessResponse("SUCCESS");
     }
 
@@ -469,6 +489,8 @@ public class FormAdminService {
         upcomingForms.setDateModified(new Date());
 
         dbMgmtFacade.saveUpcomingForms(upcomingForms);
+
+        updateMetaData("UPCOMING");
 
         return webUtils.buildSuccessResponse("SUCCESS");
     }
@@ -620,6 +642,7 @@ public class FormAdminService {
 
             return buildAndSaveUpcomingData(wrapperGenericAdminResponseV1DTO);
         }
+
         return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.SERVER_ERROR);
     }
 

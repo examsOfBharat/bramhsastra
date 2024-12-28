@@ -39,8 +39,8 @@ public class ClientFacade {
         }
 
         //save source async
-        FormExecutorService.mailExecutorService.submit(()->
-                clientService.saveApiRequestLog("organic", null, event));
+//        FormExecutorService.mailExecutorService.submit(()->
+//                clientService.saveApiRequestLog("organic", null, event));
 
         return webUtils.buildSuccessResponse("SUCCESS");
     }
@@ -61,8 +61,8 @@ public class ClientFacade {
         }
 
         //save source async
-        FormExecutorService.mailExecutorService.submit(()->
-                clientService.saveApiRequestLog(utmSource, appId, pageType));
+//        FormExecutorService.mailExecutorService.submit(()->
+//                clientService.saveApiRequestLog(utmSource, appId, pageType));
 
         String  formResponse = FormUtil.formCache.get(appId);
 
@@ -82,8 +82,8 @@ public class ClientFacade {
         }
 
         //save source async
-        FormExecutorService.mailExecutorService.submit(()->
-                clientService.saveApiRequestLog(utmSource, responseId, pageType));
+//        FormExecutorService.mailExecutorService.submit(()->
+//                clientService.saveApiRequestLog(utmSource, responseId, pageType));
 
         String response = null;
 
