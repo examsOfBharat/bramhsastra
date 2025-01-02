@@ -3,6 +3,7 @@ package com.examsofbharat.bramhsastra.akash.utils;
 import com.examsofbharat.bramhsastra.akash.constants.AkashConstants;
 import com.examsofbharat.bramhsastra.jal.dto.ApplicationEligibilityDTO;
 import com.examsofbharat.bramhsastra.jal.dto.ApplicationVacancyDTO;
+import com.examsofbharat.bramhsastra.jal.dto.BlogHeaderDTO;
 import com.examsofbharat.bramhsastra.jal.dto.SecondPageSeoDetailsDTO;
 import com.examsofbharat.bramhsastra.jal.dto.response.EligibilityCheckResponseDTO;
 import com.examsofbharat.bramhsastra.jal.dto.response.LandingSectionDTO;
@@ -49,6 +50,7 @@ public class FormUtil {
     public static Map<String,String> cacheData = new HashMap<>();
     public static Map<String, String> formCache = new ConcurrentHashMap<>();
     public static Map<String, String> genericResCache = new ConcurrentHashMap<>();
+    public static Map<String, BlogHeaderDTO> blogCache = new ConcurrentHashMap<>();
 
 
     @PostConstruct

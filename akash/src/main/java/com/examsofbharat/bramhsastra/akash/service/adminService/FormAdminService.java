@@ -1,9 +1,12 @@
 package com.examsofbharat.bramhsastra.akash.service.adminService;
 
+import com.examsofbharat.bramhsastra.akash.constants.EobPageType;
 import com.examsofbharat.bramhsastra.akash.service.mailService.EmailService;
 import com.examsofbharat.bramhsastra.akash.service.clientService.ResponseManagementService;
 import com.examsofbharat.bramhsastra.akash.service.mailService.MailUtils;
 import com.examsofbharat.bramhsastra.akash.utils.*;
+import com.examsofbharat.bramhsastra.akash.utils.mapper.BlogHeaderMapper;
+import com.examsofbharat.bramhsastra.akash.utils.mapper.BlogUpdatesMapper;
 import com.examsofbharat.bramhsastra.akash.validator.FormValidator;
 import com.examsofbharat.bramhsastra.jal.constants.ErrorConstants;
 import com.examsofbharat.bramhsastra.jal.constants.WebConstants;
@@ -12,8 +15,8 @@ import com.examsofbharat.bramhsastra.jal.dto.request.*;
 import com.examsofbharat.bramhsastra.jal.dto.request.admin.AdminGenericResponseV1;
 import com.examsofbharat.bramhsastra.jal.dto.request.admin.WrapperGenericAdminResponseV1DTO;
 import com.examsofbharat.bramhsastra.jal.dto.response.AdminResponseDataDTO;
+import com.examsofbharat.bramhsastra.jal.dto.response.BlogAdminResponse;
 import com.examsofbharat.bramhsastra.jal.enums.FormSubTypeEnum;
-import com.examsofbharat.bramhsastra.jal.enums.FormTypeEnum;
 import com.examsofbharat.bramhsastra.jal.enums.StatusEnum;
 import com.examsofbharat.bramhsastra.jal.utils.StringUtil;
 import com.examsofbharat.bramhsastra.prithvi.entity.*;
@@ -81,74 +84,6 @@ public class FormAdminService {
         }
         return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.SERVER_ERROR);
     }
-
-
-    /**
-     * Once we receive ADMIT/RESULT/ANS KEY, put it in temporary table
-     * send mail for review along with pdf page
-     * @param wrapperGenericAdminResponseV1DTO @mandatory
-     */
-    public Response processAndSaveGenericResV1(WrapperGenericAdminResponseV1DTO wrapperGenericAdminResponseV1DTO){
-        if(Objects.isNull(wrapperGenericAdminResponseV1DTO) ||
-                Objects.isNull(wrapperGenericAdminResponseV1DTO.getAdminUserDetailsDTO()) ||
-                Objects.isNull(wrapperGenericAdminResponseV1DTO.getAdminGenericResponseV1())){
-
-            log.info("Invalid save admit card request");
-            return webUtils.invalidRequest();
-        }
-
-        try{
-            String response = new Gson().toJson(wrapperGenericAdminResponseV1DTO);
-
-            UserDetails userDetails = dbMgmtFacade.findUserByUserId(wrapperGenericAdminResponseV1DTO.
-                    getAdminUserDetailsDTO().getUserId());
-
-            AdminResponseManager adminResponseManager = buildAdminResponse(response, userDetails,
-                    wrapperGenericAdminResponseV1DTO.getAdminGenericResponseV1().getPageType());
-
-            dbMgmtFacade.saveAdminResponse(adminResponseManager);
-
-//            buildResultPdfAndSendMail(wrapperAnsKeyAdminResDTO.getAdminUserDetailsDTO(), userDetails);
-            return Response.ok().build();
-        }catch (Exception e){
-            log.info("Exception occurred while submitting form",e);
-        }
-        return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.SERVER_ERROR);
-    }
-
-    /**
-     * Once we receive ADMIT/RESULT/ANS KEY, put it in temporary table
-     * send mail for review along with pdf page
-     * @param wrapperGenericAdminResponseV1DTO @mandatory
-     */
-    public Response processAndSaveUpcomingForm(WrapperGenericAdminResponseV1DTO wrapperGenericAdminResponseV1DTO){
-        if(Objects.isNull(wrapperGenericAdminResponseV1DTO) ||
-                Objects.isNull(wrapperGenericAdminResponseV1DTO.getAdminUserDetailsDTO()) ||
-                Objects.isNull(wrapperGenericAdminResponseV1DTO.getUpcomingFormsAdminResDTO())){
-
-            log.info("Invalid save upcoming request");
-            return webUtils.invalidRequest();
-        }
-
-        try{
-            String response = new Gson().toJson(wrapperGenericAdminResponseV1DTO);
-
-            UserDetails userDetails = dbMgmtFacade.findUserByUserId(wrapperGenericAdminResponseV1DTO.
-                    getAdminUserDetailsDTO().getUserId());
-
-            AdminResponseManager adminResponseManager = buildAdminResponse(response, userDetails,
-                    wrapperGenericAdminResponseV1DTO.getUpcomingFormsAdminResDTO().getType());
-
-            dbMgmtFacade.saveAdminResponse(adminResponseManager);
-
-//            buildResultPdfAndSendMail(wrapperAnsKeyAdminResDTO.getAdminUserDetailsDTO(), userDetails);
-            return Response.ok().build();
-        }catch (Exception e){
-            log.info("Exception occurred while submitting form",e);
-        }
-        return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.SERVER_ERROR);
-    }
-
 
     /**
      * Once reviewer will approve the admin submitted form.
@@ -243,6 +178,154 @@ public class FormAdminService {
         saveOrUpdateApplicationMetaData(applicationFormDTO, applicationVacancyDTOList);
 
         return Response.ok().build();
+    }
+
+    /**
+     * Once we receive ADMIT/RESULT/ANS KEY, put it in temporary table
+     * send mail for review along with pdf page
+     * @param wrapperGenericAdminResponseV1DTO @mandatory
+     */
+    public Response processAndSaveGenericResV1(WrapperGenericAdminResponseV1DTO wrapperGenericAdminResponseV1DTO){
+        if(Objects.isNull(wrapperGenericAdminResponseV1DTO) ||
+                Objects.isNull(wrapperGenericAdminResponseV1DTO.getAdminUserDetailsDTO()) ||
+                Objects.isNull(wrapperGenericAdminResponseV1DTO.getAdminGenericResponseV1())){
+
+            log.info("Invalid save admit card request");
+            return webUtils.invalidRequest();
+        }
+
+        try{
+            String response = new Gson().toJson(wrapperGenericAdminResponseV1DTO);
+
+            UserDetails userDetails = dbMgmtFacade.findUserByUserId(wrapperGenericAdminResponseV1DTO.
+                    getAdminUserDetailsDTO().getUserId());
+
+            AdminResponseManager adminResponseManager = buildAdminResponse(response, userDetails,
+                    wrapperGenericAdminResponseV1DTO.getAdminGenericResponseV1().getPageType());
+
+            dbMgmtFacade.saveAdminResponse(adminResponseManager);
+
+//            buildResultPdfAndSendMail(wrapperAnsKeyAdminResDTO.getAdminUserDetailsDTO(), userDetails);
+            return Response.ok().build();
+        }catch (Exception e){
+            log.info("Exception occurred while submitting form",e);
+        }
+        return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.SERVER_ERROR);
+    }
+
+    /**
+     * Once we receive ADMIT/RESULT/ANS KEY, put it in temporary table
+     * send mail for review along with pdf page
+     * @param wrapperGenericAdminResponseV1DTO @mandatory
+     */
+    public Response processAndSaveUpcomingForm(WrapperGenericAdminResponseV1DTO wrapperGenericAdminResponseV1DTO){
+        if(Objects.isNull(wrapperGenericAdminResponseV1DTO) ||
+                Objects.isNull(wrapperGenericAdminResponseV1DTO.getAdminUserDetailsDTO()) ||
+                Objects.isNull(wrapperGenericAdminResponseV1DTO.getUpcomingFormsAdminResDTO())){
+
+            log.info("Invalid save upcoming request");
+            return webUtils.invalidRequest();
+        }
+
+        try{
+            String response = new Gson().toJson(wrapperGenericAdminResponseV1DTO);
+
+            UserDetails userDetails = dbMgmtFacade.findUserByUserId(wrapperGenericAdminResponseV1DTO.
+                    getAdminUserDetailsDTO().getUserId());
+
+            AdminResponseManager adminResponseManager = buildAdminResponse(response, userDetails,
+                    wrapperGenericAdminResponseV1DTO.getUpcomingFormsAdminResDTO().getType());
+
+            dbMgmtFacade.saveAdminResponse(adminResponseManager);
+
+//            buildResultPdfAndSendMail(wrapperAnsKeyAdminResDTO.getAdminUserDetailsDTO(), userDetails);
+            return Response.ok().build();
+        }catch (Exception e){
+            log.info("Exception occurred while submitting form",e);
+        }
+        return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.SERVER_ERROR);
+    }
+
+    /**
+     * Once Approver approves, blog response will be saved into respective tables
+     * Uisng cutome UUID to connect all table
+     * @param blogAdminResponse
+     * @return
+     */
+    public Response processAndSaveBlogData(BlogAdminResponse blogAdminResponse){
+
+        if(Objects.isNull(blogAdminResponse)){
+            return webUtils.invalidRequest();
+        }
+        final String blogId = UUIDUtil.generateUUID();
+        Date dateCreated = new Date();
+
+        if(Objects.nonNull(blogAdminResponse.getBlogHeader())){
+            BlogHeader blogHeader = BlogHeaderMapper.INSTANCE.toBlogHeader(blogAdminResponse.getBlogHeader());
+            blogHeader.setId(blogId);
+            blogHeader.setDateCreated(dateCreated);
+            blogHeader.setDateModified(dateCreated);
+            dbMgmtFacade.saveBlogHeadData(blogHeader);
+        }
+
+        if(!CollectionUtils.isEmpty(blogAdminResponse.getBlogUpdatesList())){
+            List<BlogUpdates> blogUpdatesList = new ArrayList<>();
+            for(BlogUpdatesDTO blogUpdatesDTO : blogAdminResponse.getBlogUpdatesList()){
+                BlogUpdates blogUpdates = BlogUpdatesMapper.INSTANCE.toBlogDTO(blogUpdatesDTO);
+                blogUpdates.setRefId(blogId);
+                blogUpdates.setDateCreated(dateCreated);
+                blogUpdates.setDateModified(dateCreated);
+                if(StringUtil.notEmpty(blogUpdates.getValue()))
+                    blogUpdates.setUrlFlag(1);
+                else
+                    blogUpdates.setUrlFlag(0);
+                blogUpdatesList.add(blogUpdates);
+            }
+            dbMgmtFacade.saveBlogUpdates(blogUpdatesList);
+        }
+
+        if(!CollectionUtils.isEmpty(blogAdminResponse.getContentManagerDTOList())){
+            List<ApplicationContentManager> applicationContentManagersList = new ArrayList<>();
+            for(ApplicationContentManagerDTO applicationContentManagerDTO : blogAdminResponse.getContentManagerDTOList()){
+                ApplicationContentManager applicationContentManager = mapper.convertValue(applicationContentManagerDTO, ApplicationContentManager.class);
+                applicationContentManager.setAppIdRef(blogId);
+                applicationContentManager.setDateCreated(dateCreated);
+                applicationContentManager.setDateModified(dateCreated);
+                applicationContentManagersList.add(applicationContentManager);
+            }
+            dbMgmtFacade.saveApplicationContent(applicationContentManagersList);
+        }
+
+        //save application name and type
+        saveAppNameDetails(blogId, blogAdminResponse.getBlogHeader().getTitle(),dateCreated, EobPageType.BLOG);
+
+        return Response.ok().build();
+    }
+
+    /**
+     * Saving blog data into admin response
+     * @param blogAdminResponse @mandatory
+     * @return
+     */
+    public Response saveBlogAdminResponse(BlogAdminResponse blogAdminResponse){
+        if(Objects.isNull(blogAdminResponse) ||
+                Objects.isNull(blogAdminResponse.getAdminUserDetailsDTO())){
+            return webUtils.invalidRequest();
+        }
+        try {
+            AdminUserDetailsDTO adminUserDetailsDTO = blogAdminResponse.getAdminUserDetailsDTO();
+
+            UserDetails userDetails = dbMgmtFacade.findUserByUserId(adminUserDetailsDTO.getUserId());
+            String response = new Gson().toJson(blogAdminResponse);
+            AdminResponseManager adminResponseManager = buildAdminResponse(response, userDetails, EobPageType.BLOG);
+
+            dbMgmtFacade.saveAdminResponse(adminResponseManager);
+            return webUtils.buildSuccessResponse(WebConstants.SUCCESS);
+
+        }catch (Exception e){
+            log.info("Exception occurred while submitting blog",e);
+        }
+        return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.SERVER_ERROR);
     }
 
     //build vacancy details
@@ -402,8 +485,9 @@ public class FormAdminService {
                     applicationForm.setAdmitId(formId);
                 else if(pageType.equalsIgnoreCase("result"))
                     applicationForm.setResultId(formId);
+
+                dbMgmtFacade.saveApplicationForm(applicationForm);
             }
-            dbMgmtFacade.saveApplicationForm(applicationForm);
         }
 
         if(Objects.nonNull(wrapperGenericAdminResponseV1DTO.getApplicationSeoDetailsDTO())){
@@ -557,7 +641,10 @@ public class FormAdminService {
             WrapperGenericAdminResponseV1DTO wrapperGenericAdminResponseV1DTO = new Gson().
                     fromJson(adminResponseManager.getResponse(), WrapperGenericAdminResponseV1DTO.class);
             response = pushUpcomingFormsToDb(wrapperGenericAdminResponseV1DTO);
-        } else {
+        } else if(adminResponseManager.getResponseType().equalsIgnoreCase(EobPageType.BLOG)){
+            BlogAdminResponse blogAdminResponse = new Gson().fromJson(adminResponseManager.getResponse(), BlogAdminResponse.class);
+            response = processAndSaveBlogData(blogAdminResponse);
+        }else {
             response = pushAdminGenericResV1ToDb(adminResponseManager);
         }
 

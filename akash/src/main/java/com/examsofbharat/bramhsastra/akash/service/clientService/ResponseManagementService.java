@@ -2,6 +2,7 @@ package com.examsofbharat.bramhsastra.akash.service.clientService;
 
 import com.examsofbharat.bramhsastra.akash.constants.AkashConstants;
 import com.examsofbharat.bramhsastra.akash.executor.FormExecutorService;
+import com.examsofbharat.bramhsastra.akash.processors.blogProcessor.ProcessBlogResponse;
 import com.examsofbharat.bramhsastra.akash.utils.*;
 import com.examsofbharat.bramhsastra.akash.utils.mapper.MapperUtils;
 import com.examsofbharat.bramhsastra.jal.constants.ErrorConstants;
@@ -54,6 +55,9 @@ public class ResponseManagementService {
     @Autowired
     private EobInitilizer eobInitilizer;
 
+    @Autowired
+    ProcessBlogResponse processBlogResponse;
+
     private static final Gson gson = new Gson();
 
 
@@ -84,6 +88,9 @@ public class ResponseManagementService {
 
         //Update upcoming forms
         updateUpcomingForm(formLandingPageDTO);
+
+        //update blogData
+        processBlogResponse.processHomeBlog(formLandingPageDTO);
 
         //update home page title and subtitle
         updateHomeTitle(formLandingPageDTO);

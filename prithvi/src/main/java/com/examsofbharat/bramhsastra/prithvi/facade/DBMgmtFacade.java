@@ -73,6 +73,12 @@ public class DBMgmtFacade {
     ApiRequestLogManagerImpl apiRequestLogManagerImpl;
 
     @Autowired
+    BlogHeaderManagerImpl blogHeaderManagerImpl;
+
+    @Autowired
+    BlogUpdatesManagerImpl blogUpdatesManagerImpl;
+
+    @Autowired
     private ApplicationNameDetailsRepository applicationNameDetailsRepository;
     @Autowired
     private GenericContentManagerImpl genericContentManagerImpl;
@@ -314,5 +320,27 @@ public class DBMgmtFacade {
     public List<ApplicationForm> getAppByDay(int days){
         return applicationFormManager.getAllFormOnDate(days);
     }
+
+    public List<BlogHeader> fetchAllBlogHeaderAfterDate(Date startDate){
+        return blogHeaderManagerImpl.getBlogHeadersList(startDate);
+    }
+
+    public BlogHeader fetchBlogHeaderById(String headerId){
+        return blogHeaderManagerImpl.getBlogHeader(headerId);
+    }
+
+    public List<BlogUpdates> fetchAllBlogUpdatesById(String refId){
+        return blogUpdatesManagerImpl.fetchAllBlogUpdatesById(refId);
+    }
+
+    public void saveBlogHeadData(BlogHeader blogHeader){
+        blogHeaderManagerImpl.save(blogHeader);
+    }
+
+    public void saveBlogUpdates(List<BlogUpdates> blogUpdates){
+        blogUpdatesManagerImpl.saveAll(blogUpdates);
+    }
+
+
 
 }

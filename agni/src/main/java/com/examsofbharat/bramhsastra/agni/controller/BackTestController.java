@@ -10,6 +10,7 @@ import com.examsofbharat.bramhsastra.akash.service.clientService.SecondaryPageSe
 import com.examsofbharat.bramhsastra.akash.utils.WebUtils;
 import com.examsofbharat.bramhsastra.jal.dto.request.*;
 import com.examsofbharat.bramhsastra.jal.dto.request.admin.WrapperGenericAdminResponseV1DTO;
+import com.examsofbharat.bramhsastra.jal.dto.response.BlogAdminResponse;
 import com.examsofbharat.bramhsastra.jal.utils.StringUtil;
 import com.examsofbharat.bramhsastra.prithvi.manager.ApplicationFormManagerImpl;
 import jakarta.ws.rs.core.Response;
@@ -137,6 +138,12 @@ public class BackTestController {
         return formAdminService.processAndSaveAdminFormResponse(formDetailsDTO);
     }
 
+    @PostMapping("/save/blog/detail")
+    public Response saveBlogAdminResponse(@RequestBody BlogAdminResponse blogAdminResponse){
+        log.info("Save blog detail request reached ::{}" ,blogAdminResponse.toString());
+        return formAdminService.saveBlogAdminResponse(blogAdminResponse);
+    }
+
 
     //Generic API for admit, result and anskey
     @PostMapping("/save/result")
@@ -150,9 +157,6 @@ public class BackTestController {
         log.info("Save upcoming detail request reached ::{}" ,wrapperGenericAdminResponseV1DTO.toString());
         return formAdminService.processAndSaveUpcomingForm(wrapperGenericAdminResponseV1DTO);
     }
-
-
-
 
 
     @GetMapping("/get/form/details")
@@ -205,6 +209,21 @@ public class BackTestController {
             return Response.status(401).build();
         }
         return clientFacade.buildAndGetAdmitCard(appId, utmSource, "anskey");
+    }
+
+    /**
+     * FETCH BLOG THIRD PAGE
+     * @param blogId
+     * @return
+     */
+    @GetMapping("/get/blog")
+    public Response fetchBlogResponse(@RequestHeader(value = "App-Id", required = false) String app_Id,
+                                      @RequestParam String blogId){
+        log.info("blog request reached blogId::{}" ,blogId);
+        if(StringUtil.isEmpty(app_Id) || !"abcd".equals(app_Id)){
+            return Response.status(401).build();
+        }
+        return clientFacade.fetchBlogData(blogId);
     }
 
 

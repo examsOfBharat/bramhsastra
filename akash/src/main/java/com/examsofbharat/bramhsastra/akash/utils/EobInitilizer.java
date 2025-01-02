@@ -2,6 +2,7 @@ package com.examsofbharat.bramhsastra.akash.utils;
 
 import com.examsofbharat.bramhsastra.akash.constants.AkashConstants;
 import com.examsofbharat.bramhsastra.akash.constants.SystemPropertyProperties;
+import com.examsofbharat.bramhsastra.akash.utils.mapper.BlogHeaderMapper;
 import com.examsofbharat.bramhsastra.prithvi.entity.LogoUrlManager;
 import com.examsofbharat.bramhsastra.prithvi.entity.SystemProperty;
 import com.examsofbharat.bramhsastra.prithvi.facade.DBMgmtFacade;
@@ -23,6 +24,7 @@ public class EobInitilizer {
     Integer otpExpiryTime = 5;
     Integer otpMaxAttempts = 3;
     Integer secPageItemCount = 10;
+    Integer topXBlogPost = 8;
     private static Integer thirdPageColorValue = 10;
 
     private static String otpSub;
@@ -58,6 +60,10 @@ public class EobInitilizer {
 
         secPageItemCount = Integer.parseInt(
                 dbMgmtFacade.getSystemProperty(SystemPropertyProperties.SEC_PAGE_ITEM_COUNT).
+                        getValue());
+
+        topXBlogPost = Integer.parseInt(
+                dbMgmtFacade.getSystemProperty(SystemPropertyProperties.BLOG_POST_MAX_COUNT).
                         getValue());
 
         otpMaxAttempts = Integer.parseInt(
@@ -171,6 +177,8 @@ public class EobInitilizer {
     }
 
     public int getSecPageItemCount(){ return secPageItemCount; }
+
+    public int getBlogMaxCount(){ return topXBlogPost; }
 
 
 }

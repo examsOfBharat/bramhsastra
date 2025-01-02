@@ -1,6 +1,7 @@
 package com.examsofbharat.bramhsastra.akash.facade;
 
 import com.examsofbharat.bramhsastra.akash.executor.FormExecutorService;
+import com.examsofbharat.bramhsastra.akash.processors.blogProcessor.ProcessBlogResponse;
 import com.examsofbharat.bramhsastra.akash.service.clientService.ClientService;
 import com.examsofbharat.bramhsastra.akash.utils.FormUtil;
 import com.examsofbharat.bramhsastra.akash.utils.WebUtils;
@@ -32,6 +33,9 @@ public class ClientFacade {
 
     @Autowired
     WebUtils webUtils;
+
+    @Autowired
+    ProcessBlogResponse processBlogResponse;
 
     public Response saveEventResponse(String event){
         if(StringUtil.isEmpty(event)){
@@ -117,5 +121,15 @@ public class ClientFacade {
             return  Response.ok(admitCardResponseDTO).build();
         }
         return webUtils.buildErrorMessage(WebConstants.ERROR, DATA_NOT_FOUND);
+    }
+
+    public Response fetchBlogData(String blogId){
+        if(StringUtil.isEmpty(blogId)){
+            return webUtils.invalidRequest();
+        }
+
+        //TODO add cache logic here if planned
+
+        return processBlogResponse.processBlogResponse(blogId);
     }
 }

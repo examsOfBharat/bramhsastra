@@ -41,4 +41,10 @@ public class FormLandingPageDTO {
     @SerializedName("upcoming_section")
     private HomeUpcomingFormDTO homeUpcomingFormDTO;
 
+    @SerializedName("blog_section")
+    private BlogHomeUpdateDTO homeBlogUpdateDTO;
+
+    @SerializedName("trend_graph_data")
+    private TrendGraphDTO trendGraphDTO;
+
 }

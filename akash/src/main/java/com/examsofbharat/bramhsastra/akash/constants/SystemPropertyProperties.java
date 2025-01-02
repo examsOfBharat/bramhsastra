@@ -17,6 +17,7 @@ public class SystemPropertyProperties {
     public static final String HOME_PAGE_SUBTITLE = "home.page.subtitle";
     public static final String HOME_PAGE_BG1_URL = "home.page.bg1.url";
     public static final String SEC_PAGE_ITEM_COUNT = "second.page.item.count";
+    public static final String BLOG_POST_MAX_COUNT = "blog.post.max.count";
 
 
     public static final String DEFAULT_OTP_MAIL_SUB = "Verify Your Account - OTP for {}";
