@@ -17,4 +17,5 @@ public class BlogHeaderDTO {
     private List<String> tagsList;
     private String thumbNail;
     private String contentImg;
+    private String logoUrl;
 }

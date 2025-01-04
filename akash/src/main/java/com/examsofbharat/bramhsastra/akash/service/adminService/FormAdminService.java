@@ -296,6 +296,13 @@ public class FormAdminService {
             dbMgmtFacade.saveApplicationContent(applicationContentManagersList);
         }
 
+        if(Objects.nonNull(blogAdminResponse.getApplicationSeoDetailsDTO())){
+            ApplicationSeoDetails applicationSeoDetails = mapper.convertValue(
+                    blogAdminResponse.getApplicationSeoDetailsDTO(), ApplicationSeoDetails.class);
+            applicationSeoDetails.setAppIdRef(blogId);
+            dbMgmtFacade.saveApplicationSeoDetails(applicationSeoDetails);
+        }
+
         //save application name and type
         saveAppNameDetails(blogId, blogAdminResponse.getBlogHeader().getTitle(),dateCreated, EobPageType.BLOG);
 

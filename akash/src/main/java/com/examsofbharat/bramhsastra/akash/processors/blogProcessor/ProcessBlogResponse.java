@@ -5,8 +5,6 @@ import com.examsofbharat.bramhsastra.akash.utils.EobInitilizer;
 import com.examsofbharat.bramhsastra.akash.utils.FormUtil;
 import com.examsofbharat.bramhsastra.akash.utils.WebUtils;
 import com.examsofbharat.bramhsastra.akash.utils.mapper.MapperUtils;
-import com.examsofbharat.bramhsastra.jal.constants.ErrorConstants;
-import com.examsofbharat.bramhsastra.jal.constants.WebConstants;
 import com.examsofbharat.bramhsastra.jal.dto.ApplicationContentManagerDTO;
 import com.examsofbharat.bramhsastra.jal.dto.BlogHeaderDTO;
 import com.examsofbharat.bramhsastra.jal.dto.BlogUpdatesDTO;
@@ -89,9 +87,6 @@ public class ProcessBlogResponse {
             }
         }
 
-        if(Objects.isNull(blogHeaderDto)){
-            return webUtils.buildErrorMessage(WebConstants.ERROR, ErrorConstants.DATA_NOT_FOUND);
-        }
 
         BlogResponseDTO blogResponseDTO  = new BlogResponseDTO();
         blogResponseDTO.setBlogHeader(blogHeaderDto);
@@ -104,15 +99,14 @@ public class ProcessBlogResponse {
         }
 
         blogResponseDTO.setBlogUpdatesList(blogUpdatesDTOList);
-        List<ApplicationContentManager> contentManagers = dbMgmtFacade.getApplicationContentDetails(blogId);
 
+        List<ApplicationContentManager> contentManagers = dbMgmtFacade.getApplicationContentDetails(blogId);
         List<ApplicationContentManagerDTO> contentManagerDTOList = new ArrayList<>();
         for(ApplicationContentManager contentManager : contentManagers){
             contentManagerDTOList.add(MapperUtils.toApplicationContentDTO(contentManager));
         }
 
         ApplicationSeoDetails applicationSeoDetails = dbMgmtFacade.getApplicationSeoDetails(blogId);
-
         blogResponseDTO.setSeoDetailsDTO(MapperUtils.toApplicationSeoDetailsDTO(applicationSeoDetails));
         blogResponseDTO.setContentManagerDTOList(contentManagerDTOList);
         String response = new Gson().toJson(blogResponseDTO);
