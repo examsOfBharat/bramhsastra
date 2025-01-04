@@ -112,6 +112,8 @@ public class ApplicationDbUtil {
             applicationsList = dbMgmtFacade.fetchAllLatestApp(page, size);
         } else if (subType.equals(FormTypeEnum.OLDER_FORMS.name())) {
             applicationsList = dbMgmtFacade.fetchAllOldestApp(page, size);
+        }else if(subType.equals(FormTypeEnum.POPULAR_FORMS.name())){
+            applicationsList = filterPopularForms(dbMgmtFacade.fetchAllLatestApp(page, size));
         }else {
             FormTypeEnum formTypeEnum = FormUtil.getFormType(subType);
             applicationsList = dbMgmtFacade.fetchLatestApplicationsBasedOnType(page, size, subType, formTypeEnum);
@@ -132,6 +134,18 @@ public class ApplicationDbUtil {
             color2++;
         }
         return applicationsListDTO;
+    }
+
+    public List<ApplicationForm> filterPopularForms(List<ApplicationForm> applicationsList){
+
+        List<ApplicationForm> popularFormsList = new ArrayList<>();
+
+        for(ApplicationForm application : applicationsList){
+            if(application.getTotalVacancy() > 0){
+                popularFormsList.add(application);
+            }
+        }
+        return popularFormsList;
     }
 
 

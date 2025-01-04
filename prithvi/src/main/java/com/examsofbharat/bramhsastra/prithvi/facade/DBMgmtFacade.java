@@ -293,6 +293,10 @@ public class DBMgmtFacade {
         return applicationFormManager.getOldestForm(page, size);
     }
 
+    public List<ApplicationForm> fetchAllPopularApp(int page, int size){
+        return applicationFormManager.getOldestForm(page, size);
+    }
+
     public List<ApplicationForm> getFormWithAnsKey(int page, int size, String dateType, Date startDate){
         return applicationFormManager.getFormWithAnsKey(page, size, dateType, startDate);
     }

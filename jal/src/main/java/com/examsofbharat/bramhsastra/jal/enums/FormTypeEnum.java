@@ -4,6 +4,7 @@ public enum FormTypeEnum {
 
     LATEST_FORMS("All Latest Forms"),
     OLDER_FORMS("Form Expiring Soon"),
+    POPULAR_FORMS("All Popular Forms"),
     UPDATES("General Updates"),
     QUALIFICATION_BASED("Forms Based On Qualification"),
     SECTOR_BASED("Forms Based On Sectors"),

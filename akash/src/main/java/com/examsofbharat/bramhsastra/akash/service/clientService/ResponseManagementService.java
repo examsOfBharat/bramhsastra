@@ -320,7 +320,7 @@ public class ResponseManagementService {
 
     private void buildHomeLatestData(LandingSectionDTO landingSectionDTO,
                                                   FormLandingPageDTO formLandingPageDTO){
-        buildAllLatestForms(landingSectionDTO);
+        buildLatestAndPopularForm(landingSectionDTO);
         formLandingPageDTO.getSuperPrimeSectionDTO().getLandingSectionDTOS().add(landingSectionDTO);
     }
 
@@ -367,10 +367,21 @@ public class ResponseManagementService {
         formLandingPageDTO.setHomeGradeSectionDTO(homeGradeSectionDTO);
     }
 
-    private void buildAllLatestForms(LandingSectionDTO landingSectionDTO){
+    private void buildLatestAndPopularForm(LandingSectionDTO landingSectionDTO){
+
+        List<ApplicationForm> latestFormList = dbMgmtFacade.fetchAllLatestApp(0, 10);
+
+        buildAllLatestForms(landingSectionDTO, LATEST_FORMS.name(), latestFormList.subList(0,6));
+
+        List<ApplicationForm> popularFormList = applicationDbUtil.filterPopularForms(latestFormList);
+        buildAllLatestForms(landingSectionDTO, POPULAR_FORMS.name(), popularFormList);
+
+    }
+
+    private void buildAllLatestForms(LandingSectionDTO landingSectionDTO, String formType,
+                                     List<ApplicationForm> latestFormList){
 
         List<LandingSubSectionDTO> landingSubSectionDTOS = new ArrayList<>();
-        List<ApplicationForm> latestFormList = dbMgmtFacade.fetchAllLatestApp(0, 6);
 
         int i = 0;
         for(ApplicationForm applicationForm : latestFormList){
@@ -379,7 +390,7 @@ public class ResponseManagementService {
             landingSubSectionDTO.setExamId(applicationForm.getId());
             landingSubSectionDTO.setUrlTitle(FormUtil.getUrlTitle(FormUtil.getUrlTitle(applicationForm)));
             landingSubSectionDTO.setFormType("form");
-            landingSubSectionDTO.setKey(LATEST_FORMS.name());
+            landingSubSectionDTO.setKey(formType);
             landingSubSectionDTO.setTitle(applicationForm.getExamName());
             landingSubSectionDTO.setCardColor(FormUtil.fetchCardColor(i%4));
             landingSubSectionDTO.setLogoUrl(FormUtil.getLogoByName(applicationForm.getExamName()));

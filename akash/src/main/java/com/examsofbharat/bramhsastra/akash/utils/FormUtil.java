@@ -571,7 +571,7 @@ public class FormUtil {
         boolean viewAll = (formTypeEnum.equals(FormTypeEnum.ADMIT) ||
                 formTypeEnum.equals(FormTypeEnum.RESULT) ||
                 formTypeEnum.equals(LATEST_FORMS) ||
-                formTypeEnum.equals(OLDER_FORMS));
+                formTypeEnum.equals(OLDER_FORMS)) || formTypeEnum.equals(POPULAR_FORMS);
 
         return buildSections(0, formTypeEnum, viewAll);
     }
