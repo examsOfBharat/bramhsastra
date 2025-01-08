@@ -37,9 +37,6 @@ public class ProcessBlogResponse {
     @Autowired
     DBMgmtFacade dbMgmtFacade;
 
-    @Autowired
-    WebUtils webUtils;
-
     public void processHomeBlog(FormLandingPageDTO formLandingPageDTO){
 
         log.info("Loading blog Landing data.............");

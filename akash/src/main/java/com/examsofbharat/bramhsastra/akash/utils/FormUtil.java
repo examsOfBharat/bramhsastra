@@ -370,6 +370,7 @@ public class FormUtil {
         secondPageTitleMap.put("WB","West Bengal State Forms");
 
         secondPageTitleMap.put("LATEST_FORMS", "All Latest Forms");
+        secondPageTitleMap.put("POPULAR_FORMS", "All Popular Forms");
         secondPageTitleMap.put("OLDER_FORMS", "All Forms whose last date is close");
         secondPageTitleMap.put("ANS_KEY", "All Answer Keys");
     }

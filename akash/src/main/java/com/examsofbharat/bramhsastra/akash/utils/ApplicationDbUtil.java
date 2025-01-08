@@ -141,7 +141,7 @@ public class ApplicationDbUtil {
         List<ApplicationForm> popularFormsList = new ArrayList<>();
 
         for(ApplicationForm application : applicationsList){
-            if(application.getTotalVacancy() > 0){
+            if(application.getTotalVacancy() > 100){
                 popularFormsList.add(application);
             }
         }
@@ -339,9 +339,13 @@ public class ApplicationDbUtil {
         if(StringUtil.notEmpty(applicationForm.getResultId())){
             secondaryPageDataDTO.setStatus("Result out");
         } else if (StringUtil.notEmpty(applicationForm.getAnswerKeyUrl())) {
-            secondaryPageDataDTO.setStatus("Answer key out");
+            secondaryPageDataDTO.setStatus("Anskey out");
         } else if(StringUtil.notEmpty(applicationForm.getAdmitId())){
-            secondaryPageDataDTO.setStatus("Admit card released");
+            secondaryPageDataDTO.setStatus("Admit card out");
+        }else if (!applicationForm.getEndDate().before(new Date())) {
+            secondaryPageDataDTO.setStatus("ACTIVE");
+        }else{
+            secondaryPageDataDTO.setStatus("CLOSED");
         }
 
         secondaryPageDataDTO.setSubType(subType);

@@ -69,7 +69,7 @@ public class ApplicationFormManagerImpl extends GenericManager<ApplicationForm, 
         // sorted by creation date
         String dateType = "endDate";
         Date startDate = DateUtils.getStartOfDay(new Date());
-        Date endDate = DateUtils.addDays(new Date(), 5);
+        Date endDate = DateUtils.addDays(new Date(), 10);
         Pageable pageable = PageRequest.of(page, size, Sort.by(dateType).ascending());
         Page<ApplicationForm> pageResult = applicationFormRepository.findByEndDateBetween(startDate, endDate, pageable);
         return pageResult.getContent();

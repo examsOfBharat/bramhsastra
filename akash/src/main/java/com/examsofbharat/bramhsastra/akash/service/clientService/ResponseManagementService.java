@@ -246,18 +246,16 @@ public class ResponseManagementService {
                                            int sortIndex,
                                            FormLandingPageDTO formLandingPageDTO) {
 
-        LandingSectionDTO landingSectionDTO = FormUtil.populateBasicLandingSection(formTypeEnum);
-
         switch (formTypeEnum){
-            case OLDER_FORMS -> buildHomeOlderData(landingSectionDTO, formLandingPageDTO);
-            case LATEST_FORMS -> buildHomeLatestData(landingSectionDTO, formLandingPageDTO);
-            case ADMIT -> buildHomeAdmitDetails(landingSectionDTO, formLandingPageDTO, examMetaDataList);
-            case RESULT -> buildHomeResultDetails(landingSectionDTO, formLandingPageDTO, examMetaDataList);
+            case OLDER_FORMS -> buildHomeOlderData(formLandingPageDTO, formTypeEnum);
+            case LATEST_FORMS -> buildHomeLatestData(formLandingPageDTO);
+            case ADMIT -> buildHomeAdmitDetails(formTypeEnum,formLandingPageDTO, examMetaDataList);
+            case RESULT -> buildHomeResultDetails(formTypeEnum,formLandingPageDTO, examMetaDataList);
             case UPDATES -> buildHomeUpdatesDetails(formLandingPageDTO);
             case ANS_KEY -> buildHomeAnsKeyDetails(formLandingPageDTO, examMetaDataList);
-            case GRADE_BASED -> buildHomeGradeSection(formLandingPageDTO, landingSectionDTO, examMetaDataList);
-            case PROVINCIAL_BASED -> buildHomeProvince(formLandingPageDTO, landingSectionDTO, examMetaDataList);
-            default ->  buildOtherFormDetails(formLandingPageDTO,landingSectionDTO, examMetaDataList);
+            case GRADE_BASED -> buildHomeGradeSection(formLandingPageDTO,formTypeEnum, examMetaDataList);
+            case PROVINCIAL_BASED -> buildHomeProvince(formLandingPageDTO,formTypeEnum, examMetaDataList);
+            default ->  buildOtherFormDetails(formLandingPageDTO, examMetaDataList, formTypeEnum);
         }
     }
 
@@ -279,9 +277,10 @@ public class ResponseManagementService {
         landingSectionDTO.setSubSections(landingSubSectionDTOList);
     }
 
-    private void buildHomeAdmitDetails(LandingSectionDTO landingSectionDTO,
+    private void buildHomeAdmitDetails(FormTypeEnum formTypeEnum,
                                        FormLandingPageDTO formLandingPageDTO, List<ExamMetaData> examMetaDataList){
 
+        LandingSectionDTO landingSectionDTO = FormUtil.populateBasicLandingSection(formTypeEnum);
         buildGenericV1Sections(landingSectionDTO, ADMIT_KEY, ADMIT_TYPE);
         HomeAdmitCardSection homeAdmitCardSection = new HomeAdmitCardSection();
 
@@ -299,8 +298,11 @@ public class ResponseManagementService {
         formLandingPageDTO.getSubPrimeSectionDTO().setHomeAdmitCardSection(homeAdmitCardSection);
     }
 
-    private void buildHomeResultDetails(LandingSectionDTO landingSectionDTO,
-                                        FormLandingPageDTO formLandingPageDTO, List<ExamMetaData> examMetaDataList){
+    private void buildHomeResultDetails(FormTypeEnum formTypeEnum,
+                                        FormLandingPageDTO formLandingPageDTO,
+                                        List<ExamMetaData> examMetaDataList){
+
+        LandingSectionDTO landingSectionDTO = FormUtil.populateBasicLandingSection(formTypeEnum);
         buildGenericV1Sections(landingSectionDTO,RESULT_KEY, RESULT_TYPE);
         HomeResultDetailsDTO homeResultDetailsDTO = new HomeResultDetailsDTO();
         //Checking if we have any new admit card in last 2 days
@@ -318,21 +320,23 @@ public class ResponseManagementService {
         formLandingPageDTO.getSubPrimeSectionDTO().setHomeResultDetailsDTO(homeResultDetailsDTO);
     }
 
-    private void buildHomeLatestData(LandingSectionDTO landingSectionDTO,
-                                                  FormLandingPageDTO formLandingPageDTO){
-        buildLatestAndPopularForm(landingSectionDTO);
-        formLandingPageDTO.getSuperPrimeSectionDTO().getLandingSectionDTOS().add(landingSectionDTO);
+    private void buildHomeLatestData(FormLandingPageDTO formLandingPageDTO){
+
+        buildLatestAndPopularForm(formLandingPageDTO);
     }
 
-    private void buildHomeOlderData(LandingSectionDTO landingSectionDTO,
-                                                 FormLandingPageDTO formLandingPageDTO){
+    private void buildHomeOlderData(FormLandingPageDTO formLandingPageDTO, FormTypeEnum formTypeEnum){
+
+        LandingSectionDTO landingSectionDTO = FormUtil.populateBasicLandingSection(formTypeEnum);
         buildAllOlderForms(landingSectionDTO);
         formLandingPageDTO.getSuperPrimeSectionDTO().getLandingSectionDTOS().add(landingSectionDTO);
     }
 
     private void buildHomeProvince(FormLandingPageDTO formLandingPageDTO,
-                                 LandingSectionDTO landingSectionDTO,
+                                 FormTypeEnum formTypeEnum,
                                    List<ExamMetaData> examMetaDataList){
+
+        LandingSectionDTO landingSectionDTO = FormUtil.populateBasicLandingSection(formTypeEnum);
 
         buildSubSection(examMetaDataList, landingSectionDTO);
         HomeProvinceSectionDTO homeProvinceSectionDTO = new HomeProvinceSectionDTO();
@@ -344,20 +348,21 @@ public class ResponseManagementService {
     }
 
     private void buildOtherFormDetails(FormLandingPageDTO formLandingPageDTO,
-                                       LandingSectionDTO landingSectionDTO,
-                                       List<ExamMetaData> examMetaDataList){
+                                       List<ExamMetaData> examMetaDataList, FormTypeEnum formTypeEnum){
 
+        LandingSectionDTO landingSectionDTO = FormUtil.populateBasicLandingSection(formTypeEnum);
         buildSubSection(examMetaDataList, landingSectionDTO);
         formLandingPageDTO.getPrimeSectionDTO().getLandingSectionDTOS().add(landingSectionDTO);
 
     }
 
     private void buildHomeGradeSection(FormLandingPageDTO formLandingPageDTO,
-                                       LandingSectionDTO landingSectionDTO,
+                                       FormTypeEnum formTypeEnum,
                                        List<ExamMetaData> examMetaDataList){
 
-        buildSubSection(examMetaDataList, landingSectionDTO);
+        LandingSectionDTO landingSectionDTO = FormUtil.populateBasicLandingSection(formTypeEnum);
 
+        buildSubSection(examMetaDataList, landingSectionDTO);
         HomeGradeSectionDTO homeGradeSectionDTO = new HomeGradeSectionDTO();
 
         homeGradeSectionDTO.getLandingSectionDTOS().add(landingSectionDTO);
@@ -367,19 +372,27 @@ public class ResponseManagementService {
         formLandingPageDTO.setHomeGradeSectionDTO(homeGradeSectionDTO);
     }
 
-    private void buildLatestAndPopularForm(LandingSectionDTO landingSectionDTO){
+    private void buildLatestAndPopularForm(FormLandingPageDTO formLandingPageDTO){
 
         List<ApplicationForm> latestFormList = dbMgmtFacade.fetchAllLatestApp(0, 10);
 
-        buildAllLatestForms(landingSectionDTO, LATEST_FORMS.name(), latestFormList.subList(0,6));
+        LandingSectionDTO latestLandingSectionDTO = FormUtil.populateBasicLandingSection(LATEST_FORMS);
+        buildAllLatestForms(latestLandingSectionDTO, LATEST_FORMS.name(), latestFormList.subList(0,5), formLandingPageDTO);
 
         List<ApplicationForm> popularFormList = applicationDbUtil.filterPopularForms(latestFormList);
-        buildAllLatestForms(landingSectionDTO, POPULAR_FORMS.name(), popularFormList);
+        int pageCount = 1;
+        while(popularFormList.size() < 5 || !CollectionUtils.isEmpty(latestFormList)){
+            latestFormList = dbMgmtFacade.fetchAllLatestApp(pageCount, 10);
+            pageCount++;
+            popularFormList.addAll(applicationDbUtil.filterPopularForms(latestFormList));
+        }
+        LandingSectionDTO popularLandingSectionDTO = FormUtil.populateBasicLandingSection(POPULAR_FORMS);
+        buildAllLatestForms(popularLandingSectionDTO, POPULAR_FORMS.name(), popularFormList.subList(0,5), formLandingPageDTO);
 
     }
 
     private void buildAllLatestForms(LandingSectionDTO landingSectionDTO, String formType,
-                                     List<ApplicationForm> latestFormList){
+                                     List<ApplicationForm> latestFormList, FormLandingPageDTO formLandingPageDTO){
 
         List<LandingSubSectionDTO> landingSubSectionDTOS = new ArrayList<>();
 
@@ -427,12 +440,14 @@ public class ResponseManagementService {
             landingSubSectionDTOS.add(landingSubSectionDTO);
         }
         landingSectionDTO.setSubSections(landingSubSectionDTOS);
+
+        formLandingPageDTO.getSuperPrimeSectionDTO().getLandingSectionDTOS().add(landingSectionDTO);
     }
 
 
     private void buildAllOlderForms(LandingSectionDTO landingSectionDTO){
         List<LandingSubSectionDTO> landingSubSectionDTOS = new ArrayList<>();
-        List<ApplicationForm> latestFormList = dbMgmtFacade.fetchAllOldestApp(0, 6);
+        List<ApplicationForm> latestFormList = dbMgmtFacade.fetchAllOldestApp(0, 5);
 
         int i = 0;
         for(ApplicationForm applicationForm : latestFormList){
