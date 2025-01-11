@@ -55,7 +55,7 @@ public class MailUtils {
         byte[] pdfBytes = PdfGeneratorUtil.generateFormPdfDoc(enrichedFormDetailsDTO);
         log.info("PDF generated");
 
-        String to = "bibhu.bhushan0403@gmail.com";
+        String to = "kumarbibhu900@gmail.com";
         String subject = enrichedFormDetailsDTO.getApplicationFormDTO().getExamName();
         String body = FormUtil.buildEmailHtml("Approver", userDetails.getFirstName(),
                 enrichedFormDetailsDTO.getApplicationFormDTO().getExamName());

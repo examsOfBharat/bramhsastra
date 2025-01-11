@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface BlogHeaderRepository extends CrudRepository<BlogHeader, String> {
 
-    List<BlogHeader> findAllOrderByDateCreatedAfter(Date date);
+    List<BlogHeader> findAllOrderByDateCreatedAfterOrderByDateCreatedDesc(Date date);
 
 }

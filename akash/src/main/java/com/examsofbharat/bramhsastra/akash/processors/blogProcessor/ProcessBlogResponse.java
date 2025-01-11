@@ -63,6 +63,8 @@ public class ProcessBlogResponse {
             formLandingPageDTO.setHomeBlogUpdateDTO(blogHomeUpdateDTO);
         }
 
+        log.info("Blog data Loaded Successfully!.............");
+
     }
 
     private List<String> getTagList(BlogHeader blogHeader){

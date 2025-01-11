@@ -472,18 +472,6 @@ public class ResponseManagementService {
         landingSectionDTO.setSubSections(landingSubSectionDTOS);
     }
 
-
-    public LandingSectionDTO buildSections(int sortIndex, FormTypeEnum formTypeEnum, boolean viewALl) {
-
-        LandingSectionDTO landingSectionDTO = new LandingSectionDTO();
-        landingSectionDTO.setType(formTypeEnum);
-        landingSectionDTO.setTitle(formTypeEnum.getVal());
-        landingSectionDTO.setSortIndex(sortIndex);
-        landingSectionDTO.setViewAll(viewALl);
-
-        return landingSectionDTO;
-    }
-
     public void buildFormSubSections(List<LandingSubSectionDTO> landingSubSectionDTOS, ExamMetaData examMetaData, int i) {
 
         LandingSubSectionDTO landingSubSectionDTO = new LandingSubSectionDTO();
@@ -668,9 +656,5 @@ public class ResponseManagementService {
         String relatedResponse = gson.toJson(relatedFormResponseDTO);
 
         saveResponseToDb(formSubType, responseRes, relatedResponse);
-    }
-
-    private void  loadLatestUpdatesData(){
-
     }
 }

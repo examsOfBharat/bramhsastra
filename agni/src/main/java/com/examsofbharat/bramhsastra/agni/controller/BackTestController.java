@@ -134,13 +134,15 @@ public class BackTestController {
      */
     @PostMapping("/save/form/detail")
     public Response saveFormDetail(@RequestBody EnrichedFormDetailsDTO formDetailsDTO){
-        log.info("Save form detail request reached ::{}" ,formDetailsDTO.toString());
+        log.info("New Application Form Reached Name ::{}" ,
+                formDetailsDTO.getApplicationFormDTO().getExamName());
+
         return formAdminService.processAndSaveAdminFormResponse(formDetailsDTO);
     }
 
     @PostMapping("/save/blog/detail")
     public Response saveBlogAdminResponse(@RequestBody BlogAdminResponse blogAdminResponse){
-        log.info("Save blog detail request reached ::{}" ,blogAdminResponse.toString());
+        log.info("New Blog Post Reached Name ::{}" ,blogAdminResponse.getBlogHeader().getTitle());
         return formAdminService.saveBlogAdminResponse(blogAdminResponse);
     }
 
@@ -148,7 +150,9 @@ public class BackTestController {
     //Generic API for admit, result and anskey
     @PostMapping("/save/result")
     public Response saveResult(@RequestBody WrapperGenericAdminResponseV1DTO wrapperGenericAdminResponseV1DTO){
-        log.info("Save result detail request reached ::{}" ,wrapperGenericAdminResponseV1DTO.toString());
+        log.info("New Result Reached Name ::{}" ,
+                wrapperGenericAdminResponseV1DTO.getAdminGenericResponseV1().getTitle());
+
         return formAdminService.processAndSaveGenericResV1(wrapperGenericAdminResponseV1DTO);
     }
 

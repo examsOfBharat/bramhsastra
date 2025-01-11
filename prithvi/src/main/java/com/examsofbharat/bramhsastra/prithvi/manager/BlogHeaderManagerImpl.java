@@ -21,7 +21,7 @@ public class BlogHeaderManagerImpl extends GenericManager<BlogHeader, String> {
     }
 
     public List<BlogHeader> getBlogHeadersList(Date dateCriteria){
-        return blogHeaderRepository.findAllOrderByDateCreatedAfter(dateCriteria);
+        return blogHeaderRepository.findAllOrderByDateCreatedAfterOrderByDateCreatedDesc(dateCriteria);
     }
 
     public BlogHeader getBlogHeader(String headerId){

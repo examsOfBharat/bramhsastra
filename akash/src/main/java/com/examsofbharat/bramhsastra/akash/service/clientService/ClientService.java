@@ -81,24 +81,21 @@ public class ClientService {
     }
 
     public void updateLatestFormInCache() {
-
+        // Load 30 days data into cache
         List<ApplicationForm> appList = dbMgmtFacade.getAppByDay(30);
-        if(CollectionUtils.isEmpty(appList)){
-            return;
-        }
+        if (CollectionUtils.isEmpty(appList)) {return;}
 
-        //TODO Below can done in async mode
-        for(ApplicationForm applicationForm : appList){
-            //fetch form detail from db
-            FormExecutorService.appCacheService.submit(()->
-            {
-                try {
-                    buildLatestAppCache(applicationForm);
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
-                }});
-        }
+        appList.forEach(applicationForm ->
+                FormExecutorService.appCacheService.submit(() -> {
+                    try {
+                        buildLatestAppCache(applicationForm);
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+        );
     }
+
 
     private void buildLatestAppCache(ApplicationForm applicationForm) throws JsonProcessingException {
         EnrichedFormDetailsDTO enrichedFormDetailsDTO = getEnrichedFormDetails(applicationForm);

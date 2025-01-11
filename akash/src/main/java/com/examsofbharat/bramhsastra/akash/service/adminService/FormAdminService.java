@@ -1,7 +1,6 @@
 package com.examsofbharat.bramhsastra.akash.service.adminService;
 
 import com.examsofbharat.bramhsastra.akash.constants.EobPageType;
-import com.examsofbharat.bramhsastra.akash.service.mailService.EmailService;
 import com.examsofbharat.bramhsastra.akash.service.clientService.ResponseManagementService;
 import com.examsofbharat.bramhsastra.akash.service.mailService.MailUtils;
 import com.examsofbharat.bramhsastra.akash.utils.*;
@@ -21,7 +20,6 @@ import com.examsofbharat.bramhsastra.jal.enums.StatusEnum;
 import com.examsofbharat.bramhsastra.jal.utils.StringUtil;
 import com.examsofbharat.bramhsastra.prithvi.entity.*;
 import com.examsofbharat.bramhsastra.prithvi.facade.DBMgmtFacade;
-import com.examsofbharat.bramhsastra.prithvi.manager.ApplicationNameDetailsManagerImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import jakarta.ws.rs.core.Response;
@@ -47,12 +45,6 @@ public class FormAdminService {
     ResponseManagementService responseManagementService;;
 
     @Autowired
-    ApplicationNameDetailsManagerImpl applicationNameDetailsManager;
-
-    @Autowired
-    EmailService emailService;
-
-    @Autowired
     MailUtils mailUtils;
 
     ObjectMapper mapper = new ObjectMapper();
@@ -76,8 +68,9 @@ public class FormAdminService {
             AdminResponseManager adminResponseManager = buildAdminResponse(response, userDetails, "form");
 
             dbMgmtFacade.saveAdminResponse(adminResponseManager);
-            mailUtils.buildFormPdfAndSendMail(enrichedFormDetailsDTO, userDetails);
+            log.info("Form save successfully into temp table");
 
+            mailUtils.buildFormPdfAndSendMail(enrichedFormDetailsDTO, userDetails);
             return webUtils.buildSuccessResponse(WebConstants.SUCCESS);
         }catch (Exception e){
             log.info("Exception occurred while submitting form",e);
@@ -97,7 +90,7 @@ public class FormAdminService {
         }
 
         final String examId = UUIDUtil.generateUUID();
-        log.info("Saving form with id {}", examId);
+        log.info("Saving Application Form with id :: {}", examId);
 
         final Date dateCreated = new Date();
 
@@ -170,12 +163,14 @@ public class FormAdminService {
             dbMgmtFacade.saveApplicationVacancyDetail(vacancyDetailList);
             dbMgmtFacade.saveEligibilityDetails(eligibilityDetailsList);
         }
+        log.info("Application Form Saved Successfully!");
 
         //save application name and type
         saveAppNameDetails(examId, applicationFormDTO.getExamName(),dateCreated, "form");
 
         //save and update application meta-data
         saveOrUpdateApplicationMetaData(applicationFormDTO, applicationVacancyDTOList);
+        log.info("Meta-Data updated Successfully!");
 
         return Response.ok().build();
     }
@@ -325,8 +320,8 @@ public class FormAdminService {
             UserDetails userDetails = dbMgmtFacade.findUserByUserId(adminUserDetailsDTO.getUserId());
             String response = new Gson().toJson(blogAdminResponse);
             AdminResponseManager adminResponseManager = buildAdminResponse(response, userDetails, EobPageType.BLOG);
-
             dbMgmtFacade.saveAdminResponse(adminResponseManager);
+
             return webUtils.buildSuccessResponse(WebConstants.SUCCESS);
 
         }catch (Exception e){
