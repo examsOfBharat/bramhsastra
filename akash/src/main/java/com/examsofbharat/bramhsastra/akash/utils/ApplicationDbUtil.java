@@ -13,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static com.examsofbharat.bramhsastra.akash.constants.AkashConstants.*;
 
@@ -31,33 +28,30 @@ public class ApplicationDbUtil {
         wrapperSecondaryPageDataDTO.setTitle(FormUtil.getSecondPageTitle(formSubTypeEnum));
         wrapperSecondaryPageDataDTO.setSeoDetailsDTO(FormUtil.getSecondPageSeo(formSubTypeEnum));
 
-        if(formSubTypeEnum.equals(FormSubTypeEnum.ADMIT.name())){
-            List<SecondaryPageDataDTO> admitCardList = getAdmitCardsList(page, size, formSubTypeEnum, relatedForms);
-            wrapperSecondaryPageDataDTO.setFormList(admitCardList);
-            return (new Gson()).toJson(wrapperSecondaryPageDataDTO);
-        }
-
-        if(formSubTypeEnum.equals(FormSubTypeEnum.RESULT.name())){
-            List<SecondaryPageDataDTO> resultDetailsDTOList = getResultsList(page, size, formSubTypeEnum, relatedForms);
-            wrapperSecondaryPageDataDTO.setFormList(resultDetailsDTOList);
-            return  (new Gson()).toJson(wrapperSecondaryPageDataDTO);
-        }
-
-        if(formSubTypeEnum.equals(FormSubTypeEnum.ANS_KEY.name())){
-            List<SecondaryPageDataDTO> ansKeyDataList = getGenericSecondPageList(page, size, formSubTypeEnum,relatedForms,"ANSKEY");
-            wrapperSecondaryPageDataDTO.setFormList(ansKeyDataList);
-            return (new Gson()).toJson(wrapperSecondaryPageDataDTO);
-        }
-
-        if(formSubTypeEnum.equals("UPCOMING")){
+        List<SecondaryPageDataDTO> formList = fetchFormListByType(formSubTypeEnum, page, size, relatedForms);
+        if (formList != null) {
+            wrapperSecondaryPageDataDTO.setFormList(formList);
+        } else if (formSubTypeEnum.equals("UPCOMING")) {
             return buildSecDataForUpcomingForm(page, size);
+        } else {
+            wrapperSecondaryPageDataDTO.setFormList(getApplicationsList(page, size, formSubTypeEnum, relatedForms));
         }
 
-        List<SecondaryPageDataDTO> applicationFormDTOList = getApplicationsList(page,size, formSubTypeEnum, relatedForms);
-        wrapperSecondaryPageDataDTO.setFormList(applicationFormDTOList);
-        return  (new Gson()).toJson(wrapperSecondaryPageDataDTO);
+        return (new Gson()).toJson(wrapperSecondaryPageDataDTO);
     }
 
+    private List<SecondaryPageDataDTO> fetchFormListByType(String formSubTypeEnum, int page, int size, List<RelatedFormDTO> relatedForms) {
+        switch (formSubTypeEnum) {
+            case "ADMIT":
+                return getAdmitCardsList(page, size, formSubTypeEnum, relatedForms);
+            case "RESULT":
+                return getResultsList(page, size, formSubTypeEnum, relatedForms);
+            case "ANS_KEY":
+                return getGenericSecondPageList(page, size, formSubTypeEnum, relatedForms, "ANSKEY");
+            default:
+                return null;
+        }
+    }
 
     /**
      * 2nd page dto build for upcoming forms
@@ -88,53 +82,50 @@ public class ApplicationDbUtil {
 
             upcomingSecData.add(secondaryPageDataDTO);
         }
-
         WrapperSecondaryPageDataDTO wrapperSecondaryPageDataDTO = new WrapperSecondaryPageDataDTO();
         wrapperSecondaryPageDataDTO.setTitle("Upcoming Forms");
         wrapperSecondaryPageDataDTO.setSeoDetailsDTO(FormUtil.getSecondPageSeo("UPCOMING"));
-
         wrapperSecondaryPageDataDTO.setFormList(upcomingSecData);
-
         return  (new Gson()).toJson(wrapperSecondaryPageDataDTO);
     }
-
-
-
-
 
     //fetch application form based on page, size, subtype and its formTypeEnum;
     public List<SecondaryPageDataDTO> getApplicationsList(int page, int size, String subType, List<RelatedFormDTO> relatedForms) {
 
-        List<ApplicationForm> applicationsList;
-
-        //Actually these are not subType but have handled to reUse code
-        if(subType.equals(FormTypeEnum.LATEST_FORMS.name())){
-            applicationsList = dbMgmtFacade.fetchAllLatestApp(page, size);
-        } else if (subType.equals(FormTypeEnum.OLDER_FORMS.name())) {
-            applicationsList = dbMgmtFacade.fetchAllOldestApp(page, size);
-        }else if(subType.equals(FormTypeEnum.POPULAR_FORMS.name())){
-            applicationsList = filterPopularForms(dbMgmtFacade.fetchAllLatestApp(page, size));
-        }else {
-            FormTypeEnum formTypeEnum = FormUtil.getFormType(subType);
-            applicationsList = dbMgmtFacade.fetchLatestApplicationsBasedOnType(page, size, subType, formTypeEnum);
+        // Fetch applications list based on the subType
+        List<ApplicationForm> applicationsList = fetchApplicationsByType(page, size, subType);
+        if (CollectionUtils.isEmpty(applicationsList)) {
+            return null;
         }
-
-        if(CollectionUtils.isEmpty(applicationsList)) return null;
 
         List<SecondaryPageDataDTO> applicationsListDTO = new ArrayList<>();
-        int color = 0;
-        int color2 = 0;
-        for(ApplicationForm application : applicationsList) {
-            //at the time of 0th page we will populate related form and keep in response-management
-            if(relatedForms != null && FormUtil.getSectorFormTypeList().contains(subType)){
-                relatedForms.add(buildRelatedForm(application, color));
-                color++;
+        int relatedFormColorIndex = 0;
+        int pageDataColorIndex = 0;
+
+        for (ApplicationForm application : applicationsList) {
+            // Populate related forms for specific subType
+            if (relatedForms != null && FormUtil.getSectorFormTypeList().contains(subType)) {
+                relatedForms.add(buildRelatedForm(application, relatedFormColorIndex++));
             }
-            applicationsListDTO.add(buildFormSecondaryPage(application, subType, color2));
-            color2++;
+            applicationsListDTO.add(buildFormSecondaryPage(application, subType, pageDataColorIndex++));
         }
+
         return applicationsListDTO;
     }
+
+    private List<ApplicationForm> fetchApplicationsByType(int page, int size, String subType) {
+        if (FormTypeEnum.LATEST_FORMS.name().equals(subType)) {
+            return dbMgmtFacade.fetchAllLatestApp(page, size);
+        } else if (FormTypeEnum.OLDER_FORMS.name().equals(subType)) {
+            return dbMgmtFacade.fetchAllOldestApp(page, size);
+        } else if (FormTypeEnum.POPULAR_FORMS.name().equals(subType)) {
+            return filterPopularForms(dbMgmtFacade.fetchAllLatestApp(page, size));
+        } else {
+            FormTypeEnum formTypeEnum = FormUtil.getFormType(subType);
+            return dbMgmtFacade.fetchLatestApplicationsBasedOnType(page, size, subType, formTypeEnum);
+        }
+    }
+
 
     public List<ApplicationForm> filterPopularForms(List<ApplicationForm> applicationsList){
 
@@ -167,22 +158,30 @@ public class ApplicationDbUtil {
 
 
     //return result list based on page number and record count
-    public List<SecondaryPageDataDTO> getResultsList(int page, int size, String subType,List<RelatedFormDTO> relatedForms) {
-        List<GenericResponseV1> resultDetailsList = dbMgmtFacade.getLatestResponseV1List(page, size, "dateCreated","RESULT");
+    public List<SecondaryPageDataDTO> getResultsList(int page, int size, String subType, List<RelatedFormDTO> relatedForms) {
+        // Fetch the list of latest responses from the database
+        List<GenericResponseV1> resultDetailsList = dbMgmtFacade.getLatestResponseV1List(page, size, "dateCreated", "RESULT");
+
+        if (CollectionUtils.isEmpty(resultDetailsList)) {
+            return Collections.emptyList();
+        }
 
         List<SecondaryPageDataDTO> resultDetailsDTOList = new ArrayList<>();
-        int color = 0;
-        int color1 = 0;
-        for(GenericResponseV1 resultDetails : resultDetailsList) {
-            if(relatedForms != null){
-                relatedForms.add(buildRelatedResult(resultDetails, color));
-                color++;
+        int relatedFormColorIndex = 0;
+        int pageDataColorIndex = 0;
+
+        for (GenericResponseV1 resultDetails : resultDetailsList) {
+            // Add to related forms if applicable
+            if (relatedForms != null) {
+                relatedForms.add(buildRelatedResult(resultDetails, relatedFormColorIndex++));
             }
-            resultDetailsDTOList.add(buildResultSecondaryPage(resultDetails, subType, color1));
-            color1++;
+            // Build secondary page data and add to the list
+            resultDetailsDTOList.add(buildResultSecondaryPage(resultDetails, subType, pageDataColorIndex++));
         }
+
         return resultDetailsDTOList;
     }
+
 
     //return result list based on page number and record count
     public List<SecondaryPageDataDTO> getAnsKeyList(int page, int size, String subType) {
@@ -319,60 +318,68 @@ public class ApplicationDbUtil {
         return secondaryPageDataDTO;
     }
 
-    public SecondaryPageDataDTO buildFormSecondaryPage(ApplicationForm applicationForm, String subType, int i){
+    public SecondaryPageDataDTO buildFormSecondaryPage(ApplicationForm applicationForm, String subType, int index) {
 
         SecondaryPageDataDTO secondaryPageDataDTO = new SecondaryPageDataDTO();
 
+        // Basic Details
         secondaryPageDataDTO.setId(applicationForm.getId());
         secondaryPageDataDTO.setPageType("form");
         secondaryPageDataDTO.setTitle(applicationForm.getExamName());
-
         secondaryPageDataDTO.setReleaseDate(DateUtils.getFormatedDate1(applicationForm.getDateCreated()));
-//        secondaryPageDataDTO.setReleaseDateColor(FormUtil.getLastXDaysDateColor(applicationForm.getStartDate()));
 
-        if(applicationForm.getTotalVacancy() > 0) {
-            secondaryPageDataDTO.setTotalVacancy(FormUtil.formatIntoIndianNumSystem(applicationForm.getTotalVacancy()));
-        }else{
-            secondaryPageDataDTO.setTotalVacancy("Not Available");
-        }
+        // Total Vacancy
+        String totalVacancy = applicationForm.getTotalVacancy() > 0
+                ? FormUtil.formatIntoIndianNumSystem(applicationForm.getTotalVacancy())
+                : "Not Available";
+        secondaryPageDataDTO.setTotalVacancy(totalVacancy);
 
-        if(StringUtil.notEmpty(applicationForm.getResultId())){
-            secondaryPageDataDTO.setStatus("Result out");
+        // Status
+        String status;
+        if (StringUtil.notEmpty(applicationForm.getResultId())) {
+            status = "Result out";
         } else if (StringUtil.notEmpty(applicationForm.getAnswerKeyUrl())) {
-            secondaryPageDataDTO.setStatus("Anskey out");
-        } else if(StringUtil.notEmpty(applicationForm.getAdmitId())){
-            secondaryPageDataDTO.setStatus("Admit card out");
-        }else if (!applicationForm.getEndDate().before(new Date())) {
-            secondaryPageDataDTO.setStatus("ACTIVE");
-        }else{
-            secondaryPageDataDTO.setStatus("CLOSED");
+            status = "Anskey out";
+        } else if (StringUtil.notEmpty(applicationForm.getAdmitId())) {
+            status = "Admit card out";
+        } else if (!applicationForm.getEndDate().before(new Date())) {
+            status = "ACTIVE";
+        } else {
+            status = "CLOSED";
         }
+        secondaryPageDataDTO.setStatus(status);
 
+        // Other Details
         secondaryPageDataDTO.setSubType(subType);
-        secondaryPageDataDTO.setCardColor(FormUtil.fetchCardColor(i%4));
+        secondaryPageDataDTO.setCardColor(FormUtil.fetchCardColor(index % 4));
         secondaryPageDataDTO.setLastDate(DateUtils.getFormatedDate1(applicationForm.getEndDate()));
         secondaryPageDataDTO.setLastDateColor(FormUtil.getExpiryDateColor(applicationForm.getEndDate()));
         secondaryPageDataDTO.setNewFlag(FormUtil.dateIsWithinXDays(applicationForm.getStartDate()));
 
-        //form status banner condition
-        if(applicationForm.getDateModified().compareTo(DateUtils.addDays(applicationForm.getDateCreated(), 5)) > 0){
-            secondaryPageDataDTO.setFormStatus("UPDATES");
-            secondaryPageDataDTO.setReleaseDateColor(BLUE_COLOR_CODE);
-        }else if(new Date().after(applicationForm.getEndDate())){
-            secondaryPageDataDTO.setFormStatus("EXPIRED");
-            secondaryPageDataDTO.setReleaseDateColor(RED_COLOR);
-        }else if(FormUtil.dateIsWithinXDays(applicationForm.getStartDate())){
-            secondaryPageDataDTO.setFormStatus("NEW");
-            secondaryPageDataDTO.setReleaseDateColor(GREEN_COLOR);
-        }else{
-            secondaryPageDataDTO.setReleaseDateColor(BLUE_COLOR_CODE);
+        // Form Status Banner
+        String formStatus = null;
+        String releaseDateColor;
+        if (applicationForm.getDateModified().compareTo(DateUtils.addDays(applicationForm.getDateCreated(), 5)) > 0) {
+            formStatus = "UPDATES";
+            releaseDateColor = BLUE_COLOR_CODE;
+        } else if (new Date().after(applicationForm.getEndDate())) {
+            formStatus = "EXPIRED";
+            releaseDateColor = RED_COLOR;
+        } else if (FormUtil.dateIsWithinXDays(applicationForm.getStartDate())) {
+            formStatus = "NEW";
+            releaseDateColor = GREEN_COLOR;
+        } else {
+            releaseDateColor = BLUE_COLOR_CODE;
         }
+        secondaryPageDataDTO.setFormStatus(formStatus);
+        secondaryPageDataDTO.setReleaseDateColor(releaseDateColor);
 
-        //convert title into url title
-        secondaryPageDataDTO.setUrlTitle(FormUtil.getUrlTitle(FormUtil.getUrlTitle(applicationForm)));
+        // URL Title
+        secondaryPageDataDTO.setUrlTitle(FormUtil.getUrlTitle(applicationForm));
 
         return secondaryPageDataDTO;
     }
+
 
     private RelatedFormDTO buildRelatedForm(ApplicationForm applicationForm, int color){
         RelatedFormDTO relatedFormDTO = new RelatedFormDTO();

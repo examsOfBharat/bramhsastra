@@ -24,10 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -64,72 +62,28 @@ public class ResponseManagementService {
     public Response buildAndUpdateClientHomePage() {
         List<ExamMetaData> examMetaDataList = dbMgmtFacade.getExamMetaData();
 
-        FormLandingPageDTO formLandingPageDTO = new FormLandingPageDTO();
-        SuperPrimeSectionDTO superPrimeSectionDTO =  new SuperPrimeSectionDTO();
-        SubPrimeSectionDTO subPrimeSectionDTO = new SubPrimeSectionDTO();
-        PrimeSectionDTO primeSectionDTO = new PrimeSectionDTO();
+        FormLandingPageDTO formLandingPageDTO = initializeFormLandingPageDTO();
 
-        formLandingPageDTO.setSuperPrimeSectionDTO(superPrimeSectionDTO);
-        formLandingPageDTO.setSubPrimeSectionDTO(subPrimeSectionDTO);
-        formLandingPageDTO.setPrimeSectionDTO(primeSectionDTO);
-
-        //TODO shortIndex should be configurable (please try to configure from db)
-        
         int sortIndex = 1;
         for (FormTypeEnum formType : FormTypeEnum.values()) {
-            List<ExamMetaData> examList = examMetaDataList.stream()
-                    .filter(examMetaData -> examMetaData.getExamCategory().equalsIgnoreCase(formType.name()))
-                    .collect(Collectors.toList());
-
-            buildAndParse(examList, formType, sortIndex, formLandingPageDTO);
-
-            sortIndex ++;
+            List<ExamMetaData> examList = filterExamMetaDataByCategory(examMetaDataList, formType);
+            buildAndParse(examList, formType, sortIndex++, formLandingPageDTO);
         }
 
-        //Update upcoming forms
         updateUpcomingForm(formLandingPageDTO);
-
-        //update blogData
         processBlogResponse.processHomeBlog(formLandingPageDTO);
-
-        //update home page title and subtitle
         updateHomeTitle(formLandingPageDTO);
-
-        //Update header count
         updateHeaderCountDate(formLandingPageDTO);
-
-        //Update today's count (form and vacancy of today)
         buildAndCacheTodayUpdate(formLandingPageDTO);
 
         String response = gson.toJson(formLandingPageDTO);
-        //push data to cache
         FormUtil.cacheData.put("HOME_PAGE", response);
         pushResponseToDb("HOME_PAGE", response, null);
 
-        //update second page and related form parallel
         buildAndSaveSecAndRelatedData();
 
-        try {
-            //refresh in async
-            Future<?> future = FormExecutorService.genResCacheService.submit(()->
-            {
-                clientService.updateLatestFormInCache();
-            });
-            Future<?> future1 = FormExecutorService.genResCacheService.submit(()->
-            {
-                clientService.cacheGenResponse();
-            });
+        executeAsyncTasks();
 
-            try {
-                future.get();
-                future1.get();// This will block until the task completes
-            } catch (ExecutionException | InterruptedException | CancellationException e) {
-                e.printStackTrace();
-            }
-            log.info("******Loading data has been completed! *******");
-        }catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
         return webUtils.buildSuccessResponse("SUCCESS");
     }
 
@@ -198,8 +152,6 @@ public class ResponseManagementService {
         if(!upcomingFormsList.isEmpty()){
             homeUpcomingFormDTO.setLastReleasedCount(String.valueOf(upcomingFormsList.size()));
         }
-
-
 
         formLandingPageDTO.setHomeUpcomingFormDTO(homeUpcomingFormDTO);
     }
@@ -392,35 +344,27 @@ public class ResponseManagementService {
     }
 
     private void buildAllLatestForms(LandingSectionDTO landingSectionDTO, String formType,
-                                     List<ApplicationForm> latestFormList, FormLandingPageDTO formLandingPageDTO){
+                                     List<ApplicationForm> latestFormList, FormLandingPageDTO formLandingPageDTO) {
 
-        List<LandingSubSectionDTO> landingSubSectionDTOS = new ArrayList<>();
-
-        int i = 0;
-        for(ApplicationForm applicationForm : latestFormList){
+        List<LandingSubSectionDTO> landingSubSectionDTOS = latestFormList.stream().map(applicationForm -> {
             LandingSubSectionDTO landingSubSectionDTO = new LandingSubSectionDTO();
 
             landingSubSectionDTO.setExamId(applicationForm.getId());
-            landingSubSectionDTO.setUrlTitle(FormUtil.getUrlTitle(FormUtil.getUrlTitle(applicationForm)));
+            landingSubSectionDTO.setUrlTitle(FormUtil.getUrlTitle(applicationForm));
             landingSubSectionDTO.setFormType("form");
             landingSubSectionDTO.setKey(formType);
             landingSubSectionDTO.setTitle(applicationForm.getExamName());
-            landingSubSectionDTO.setCardColor(FormUtil.fetchCardColor(i%4));
+            landingSubSectionDTO.setCardColor(FormUtil.fetchCardColor(latestFormList.indexOf(applicationForm) % 4));
             landingSubSectionDTO.setLogoUrl(FormUtil.getLogoByName(applicationForm.getExamName()));
 
             Date fiveDaysAfter = DateUtils.addDays(applicationForm.getDateCreated(), 5);
 
-            //form status banner condition
-            if(applicationForm.getDateModified().compareTo(fiveDaysAfter) > 0){
+            if (applicationForm.getDateModified().compareTo(fiveDaysAfter) > 0) {
                 landingSubSectionDTO.setFormStatus("UPDATES");
-            }else if(FormUtil.dateIsWithinXDays(applicationForm.getStartDate())){
-                landingSubSectionDTO.setFormStatus("NEW");
-            }
-
-            if(applicationForm.getDateModified().compareTo(fiveDaysAfter) > 0){
                 landingSubSectionDTO.setShowDateTitle("Updated On");
                 landingSubSectionDTO.setShowDateColor("#4A235A");
-            }else{
+            } else if (FormUtil.dateIsWithinXDays(applicationForm.getStartDate())) {
+                landingSubSectionDTO.setFormStatus("NEW");
                 landingSubSectionDTO.setShowDateTitle("Released On");
                 landingSubSectionDTO.setShowDateColor(FormUtil.getLastXDaysDateColor(applicationForm.getDateModified()));
             }
@@ -435,15 +379,13 @@ public class ResponseManagementService {
             landingSubSectionDTO.setTotalVacancy(totalVacancy);
 
             landingSubSectionDTO.setFormLogoUrl(FormUtil.getLogoByName(applicationForm.getExamName()));
-            i++;
 
-            landingSubSectionDTOS.add(landingSubSectionDTO);
-        }
+            return landingSubSectionDTO;
+        }).collect(Collectors.toList());
+
         landingSectionDTO.setSubSections(landingSubSectionDTOS);
-
         formLandingPageDTO.getSuperPrimeSectionDTO().getLandingSectionDTOS().add(landingSectionDTO);
     }
-
 
     private void buildAllOlderForms(LandingSectionDTO landingSectionDTO){
         List<LandingSubSectionDTO> landingSubSectionDTOS = new ArrayList<>();
@@ -531,31 +473,47 @@ public class ResponseManagementService {
         landingSectionDTO.setSubSections(landingSubSectionDTOS);
     }
 
+    private void buildHomeAnsKeyDetails(FormLandingPageDTO formLandingPageDTO, List<ExamMetaData> examMetaDataList) {
+        HomeAnsKeySectionDTO homeAnsKeySectionDTO = createHomeAnsKeySectionDTO();
 
-    private void buildHomeAnsKeyDetails(FormLandingPageDTO formLandingPageDTO, List<ExamMetaData> examMetaDataList){
+        List<String> ansNameList = fetchLatestAnsKeyNames();
+        homeAnsKeySectionDTO.setResultNameList(ansNameList);
+
+        setTotalApplicationsIfPresent(homeAnsKeySectionDTO, examMetaDataList);
+
+        setLastResultReleaseCount(homeAnsKeySectionDTO);
+
+        homeAnsKeySectionDTO.setUpdatedDate(DateUtils.getFormatedDate1(new Date()));
+        formLandingPageDTO.setHomeAnsKeySectionDTO(homeAnsKeySectionDTO);
+    }
+
+    private HomeAnsKeySectionDTO createHomeAnsKeySectionDTO() {
         HomeAnsKeySectionDTO homeAnsKeySectionDTO = new HomeAnsKeySectionDTO();
         homeAnsKeySectionDTO.setTitle(FormTypeEnum.ANS_KEY.getVal());
         homeAnsKeySectionDTO.setAnsKeyType(ANS_KEY.name());
         homeAnsKeySectionDTO.setSubTitle("Click view all to check all answer key");
         homeAnsKeySectionDTO.setCardColor(FormUtil.fetchCardColor(0));
+        return homeAnsKeySectionDTO;
+    }
 
-        List<String> ansNameList = new ArrayList<>();
-        List<GenericResponseV1> ansKeyList = dbMgmtFacade.getLatestResponseV1List(0,5, AkashConstants.DATE_MODIFIED,"ANSKEY");
-        ansKeyList.forEach(genericResponseV1 -> ansNameList.add(genericResponseV1.getTitle()));
-        homeAnsKeySectionDTO.setResultNameList(ansNameList);
+    private List<String> fetchLatestAnsKeyNames() {
+        return dbMgmtFacade.getLatestResponseV1List(0, 5, AkashConstants.DATE_MODIFIED, "ANSKEY")
+                .stream()
+                .map(GenericResponseV1::getTitle)
+                .collect(Collectors.toList());
+    }
 
-        if(!CollectionUtils.isEmpty(examMetaDataList)){
+    private void setTotalApplicationsIfPresent(HomeAnsKeySectionDTO homeAnsKeySectionDTO, List<ExamMetaData> examMetaDataList) {
+        if (!CollectionUtils.isEmpty(examMetaDataList)) {
             homeAnsKeySectionDTO.setTotalApplication(examMetaDataList.get(0).getTotalForm());
         }
+    }
 
-        //Checking if we have any new admit card in last 2 days
-        List<GenericResponseV1> answerDetailsList = dbMgmtFacade.getLastXDayResponseV1List(2,"ANSKEY");
-        if(Objects.nonNull(answerDetailsList)){
+    private void setLastResultReleaseCount(HomeAnsKeySectionDTO homeAnsKeySectionDTO) {
+        List<GenericResponseV1> answerDetailsList = dbMgmtFacade.getLastXDayResponseV1List(2, "ANSKEY");
+        if (Objects.nonNull(answerDetailsList)) {
             homeAnsKeySectionDTO.setLastResultReleaseCount(String.valueOf(answerDetailsList.size()));
         }
-
-        homeAnsKeySectionDTO.setUpdatedDate(DateUtils.getFormatedDate1(new Date()));
-        formLandingPageDTO.setHomeAnsKeySectionDTO(homeAnsKeySectionDTO);
     }
 
     //prepare update section for form
@@ -573,21 +531,20 @@ public class ResponseManagementService {
         formLandingPageDTO.setUpdatesSectionDTO(updatesSectionDTO);
     }
 
-    private void buildAndCacheTodayUpdate(FormLandingPageDTO formLandingPageDTO){
+    private void buildAndCacheTodayUpdate(FormLandingPageDTO formLandingPageDTO) {
         String dateType = "dateCreated";
-        Date startDate = com.examsofbharat.bramhsastra.prithvi.util.DateUtils.getStartOfDay(new Date());
+        Date startDate = DateUtils.getStartOfDay(new Date());
 
-        List<ApplicationForm> todayData = dbMgmtFacade.getFormAfterDateCreated(0,15, dateType, startDate);
-        int newForm = todayData.size();
-        int todayVacancy = todayData.stream()
+        List<ApplicationForm> todayData = dbMgmtFacade.getFormAfterDateCreated(0, 15, dateType, startDate);
+        int newFormCount = todayData.size();
+        int todayVacancyCount = todayData.stream()
                 .mapToInt(ApplicationForm::getTotalVacancy)
                 .sum();
 
-        //Update today's count both form and vacancy
-        formLandingPageDTO.getHomePageCountDataDTO().setTodayForm(newForm);
-        formLandingPageDTO.getHomePageCountDataDTO().setTodayVacancy(todayVacancy);
+        HomePageCountDataDTO homePageCountData = formLandingPageDTO.getHomePageCountDataDTO();
+        homePageCountData.setTodayForm(newFormCount);
+        homePageCountData.setTodayVacancy(todayVacancyCount);
     }
-
 
     public void saveResponseToDb(String responseType, String response, String relatedResponse) {
         FormExecutorService.responseSaveService.submit(()->
@@ -611,24 +568,15 @@ public class ResponseManagementService {
 
 
     //build secondary page response based on type and subType
-    public void buildAndSaveSecAndRelatedData(){
-
+    public void buildAndSaveSecAndRelatedData() {
         int size = eobInitilizer.getSecPageItemCount();
-        for(FormSubTypeEnum formSubTypeEnum : FormSubTypeEnum.values()){
-            if(formSubTypeEnum.equals(FormSubTypeEnum.STATE)){
-                //will think latter based on response because to save each state it will have huge data in response table
-                continue;
-            }
-            //should be sync call, populating map for caching data
-            fetchBuildAndSaveSecAndRelatedData(formSubTypeEnum.name(), size);
-        }
+        Arrays.stream(FormSubTypeEnum.values())
+                .filter(formSubTypeEnum -> !formSubTypeEnum.equals(FormSubTypeEnum.STATE))
+                .forEach(formSubTypeEnum -> fetchBuildAndSaveSecAndRelatedData(formSubTypeEnum.name(), size));
 
-        //save and cache latest data, keep sync call
         fetchBuildAndSaveSecAndRelatedData(LATEST_FORMS.name(), size);
-        //save and cache older data, keep sync call
         fetchBuildAndSaveSecAndRelatedData(OLDER_FORMS.name(), size);
 
-        //save upcoming forms
         fetchAndCacheUpcomingForms();
     }
 
@@ -656,5 +604,35 @@ public class ResponseManagementService {
         String relatedResponse = gson.toJson(relatedFormResponseDTO);
 
         saveResponseToDb(formSubType, responseRes, relatedResponse);
+    }
+
+    private FormLandingPageDTO initializeFormLandingPageDTO() {
+        FormLandingPageDTO formLandingPageDTO = new FormLandingPageDTO();
+        formLandingPageDTO.setSuperPrimeSectionDTO(new SuperPrimeSectionDTO());
+        formLandingPageDTO.setSubPrimeSectionDTO(new SubPrimeSectionDTO());
+        formLandingPageDTO.setPrimeSectionDTO(new PrimeSectionDTO());
+        return formLandingPageDTO;
+    }
+
+    private List<ExamMetaData> filterExamMetaDataByCategory(List<ExamMetaData> examMetaDataList, FormTypeEnum formType) {
+        return examMetaDataList.stream()
+                .filter(examMetaData -> examMetaData.getExamCategory().equalsIgnoreCase(formType.name()))
+                .collect(Collectors.toList());
+    }
+
+    private void executeAsyncTasks() {
+        try {
+            Future<?> future = FormExecutorService.genResCacheService.submit(clientService::updateLatestFormInCache);
+            Future<?> future1 = FormExecutorService.genResCacheService.submit(clientService::cacheGenResponse);
+
+            future.get();
+            future1.get();
+
+            log.info("******Loading data has been completed! *******");
+        } catch (ExecutionException | InterruptedException | CancellationException e) {
+            log.error(e.getMessage(), e);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
     }
 }

@@ -3,7 +3,6 @@ package com.examsofbharat.bramhsastra.akash.processors.blogProcessor;
 import com.examsofbharat.bramhsastra.akash.utils.DateUtils;
 import com.examsofbharat.bramhsastra.akash.utils.EobInitilizer;
 import com.examsofbharat.bramhsastra.akash.utils.FormUtil;
-import com.examsofbharat.bramhsastra.akash.utils.WebUtils;
 import com.examsofbharat.bramhsastra.akash.utils.mapper.MapperUtils;
 import com.examsofbharat.bramhsastra.jal.dto.ApplicationContentManagerDTO;
 import com.examsofbharat.bramhsastra.jal.dto.BlogHeaderDTO;
