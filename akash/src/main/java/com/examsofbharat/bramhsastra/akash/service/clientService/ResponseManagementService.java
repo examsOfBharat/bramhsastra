@@ -399,6 +399,7 @@ public class ResponseManagementService {
             landingSubSectionDTO.setFormType("form");
             landingSubSectionDTO.setKey(OLDER_FORMS.name());
             landingSubSectionDTO.setTitle(applicationForm.getExamName());
+            landingSubSectionDTO.setUrlTitle(FormUtil.getUrlTitle(applicationForm));
             landingSubSectionDTO.setCardColor(FormUtil.fetchCardColor(i%4));
             landingSubSectionDTO.setShowDate(DateUtils.getFormatedDate1(applicationForm.getEndDate()));
             landingSubSectionDTO.setSortDate(applicationForm.getDateModified());

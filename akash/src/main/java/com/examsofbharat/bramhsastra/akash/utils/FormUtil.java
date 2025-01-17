@@ -428,8 +428,8 @@ public class FormUtil {
 
     public static String getUrlTitle(ApplicationForm applicationForm){
         return StringUtil.notEmpty(applicationForm.getSortName()) ?
-                applicationForm.getSortName() :
-                applicationForm.getExamName();
+                getUrlTitle(applicationForm.getSortName()) :
+                getUrlTitle(applicationForm.getExamName());
     }
 
 
